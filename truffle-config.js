@@ -75,6 +75,13 @@ module.exports = {
       // network_id: 2111,   // This network is yours, in the cloud.
       // production: true    // Treats this network as if it was a public net. (default: false)
     // }
+
+    ganache: {
+         host: "localhost",
+         port: 7545,
+         network_id: "*" // Match any network id
+    }
+
   },
 
   // Set default mocha options here, use special reporters etc.

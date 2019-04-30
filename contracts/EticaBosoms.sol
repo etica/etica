@@ -1,4 +1,4 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.2;
 // ----------------------------------------------------------------------------
 //this ICO smart contract has been compiled and tested with the Solidity Version 0.5.2
 //There are some minor changes comparing to ICO contract compiled with versions < 0.5.0
@@ -25,6 +25,8 @@ contract EticaToken is ERC20Interface{
 
     uint public supply;
     uint public maxsupply;
+    uint public centuryreward; // Amount of ETI issued every 100 years
+    uint public weeklyreward; // Amount of ETI issued every week
     address public founder;
 
     mapping(address => uint) public balances;
@@ -39,10 +41,13 @@ contract EticaToken is ERC20Interface{
 
 
     constructor() public{
-      maxsupply = 1000000000.000000000000000000; // 1 Billion ETI
-      supply = 618033980.000000000000000000; // initial supply equals 618033980 ETI fibonacci golden ratio
+      maxsupply = 1000000000 * (10**18); // 1 Billion ETI
+      supply = 618033980 * (10**18); // initial supply equals 618033980 ETI fibonacci golden ratio
+      centuryreward = 381966020 * (10**18); // 381966020 ETI issued per century
+      weeklyreward = 73253697051755847871906; // 381966020 ETI per century equals 73253,697051755847871905858707513 ETI Issued each week : (centuryreward / (100 * 52,1429));
       founder = msg.sender;
-      balances[founder] = supply;
+      balances[founder] = supply * 8 / 100;
+      balances[address(this)] = supply - balances[founder];
     }
 
 

@@ -25,6 +25,7 @@ contract EticaToken is ERC20Interface{
 
     uint public supply;
     uint public maxsupply;
+    uint public initialreserve;
     uint public centuryreward; // Amount of ETI issued every 100 years
     uint public weeklyreward; // Amount of ETI issued every week
     address public founder;
@@ -47,7 +48,8 @@ contract EticaToken is ERC20Interface{
       weeklyreward = 73253697051755847871906; // 381966020 ETI per century equals 73253,697051755847871905858707513 ETI Issued each week : (centuryreward / (100 * 52,1429));
       founder = msg.sender;
       balances[founder] = supply * 8 / 100;
-      balances[address(this)] = supply - balances[founder];
+      balances[address(this)] = 100 * (10**18); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations 
+      initialreserve = supply - balances[founder] - balances[address(this)];
     }
 
 
@@ -183,14 +185,15 @@ contract EticaBosoms is EticaToken{
 
         uint tokens = msg.value / tokenPrice;
 
-        //hardCap not reached
-        require(raisedAmount + msg.value <= hardCap);
+        //initial supply not raised
+        require( tokens <= initialreserve);
 
         raisedAmount += msg.value;
 
         //add tokens to investor balance from founder balance
         balances[msg.sender] += tokens;
-        balances[founder] -= tokens;
+        // retrieve tokens from initil supply
+        initialreserve -= tokens;
 
         deposit.transfer(msg.value);//transfer eth to the deposit address
 
@@ -198,7 +201,6 @@ contract EticaBosoms is EticaToken{
         emit Invest(msg.sender, msg.value, tokens);
 
         return true;
-
 
     }
 

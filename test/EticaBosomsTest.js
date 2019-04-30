@@ -71,26 +71,25 @@ contract('EticaBosoms', function(accounts){
     })
   });
 
-  it("contract balance must equal the initial supply minus the founder's balance", function() {
-    let balance_founder;
-    let etica_initialsupply;
-    let supplyminusfounder;
+  it("contract balance must equal  to 100 ETI", function() {
     return EticaBosoms.deployed().then(function(instance){
       eticaBosomsInstance = instance;
-      return eticaBosomsInstance.founder();
-    }).then(function(founder){
-      return eticaBosomsInstance.balanceOf(founder);
-    }).then(function(founderbalance){
-      balance_founder = founderbalance;
-      return eticaBosomsInstance.supply();
-    }).then(function(supply){
-      etica_initialsupply = supply;
-      supplyminusfounder = supply - balance_founder;
       return eticaBosomsInstance.balanceOf(eticaBosomsInstance.address);
     }).then(function(contractbalance){
-      // Contract balance should be equal to supply minus founder balance:
-      assert.equal(contractbalance, supplyminusfounder, "contract balance should equal initialsupply minus founderbalance ->" + supplyminusfounder);
+      // Contract balance should be equal to 100 ETI:
+      assert.equal(web3.utils.fromWei(contractbalance, "ether" ), "100", "contract balance should equal 100 ETI");
       console.log('checked contract balance success -> contract balance is: ', web3.utils.fromWei(contractbalance, "ether" ), 'ETI');
+    })
+  });
+
+  it("initial reserve must equal 568591161.6 ETI (initial supply minus the founder's balance minus contract's balance)", function() {
+    return EticaBosoms.deployed().then(function(instance){
+      eticaBosomsInstance = instance;
+      return eticaBosomsInstance.initialreserve();
+    }).then(function(initialreserve){
+      console.log('checking initialreserve -> initialreserve is: ', web3.utils.fromWei(initialreserve, "ether" ), 'ETI');
+      assert.equal(web3.utils.fromWei(initialreserve, "ether" ), "568591161.6", "initialreserve should equal 568591161.6 ETI (initialsupply minus founderbalance minus contractbalance) Instead initialreserve is ->" + web3.utils.fromWei(initialreserve, "ether" ));
+      console.log('checked initialreserve with success -> initialreserve is: ', web3.utils.fromWei(initialreserve, "ether" ), 'ETI');
     })
   });
 

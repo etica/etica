@@ -40,7 +40,7 @@ contract('EticaToken', function(accounts){
     })
   });
 
-  it("centuryreward should equal 381966020 ETI and weeklyreward should equal 73253.697051755847871906 ETI", function() {
+  /*it("centuryreward should equal 381966020 ETI and weeklyreward should equal 73253.697051755847871906 ETI", function() {
     return EticaToken.deployed().then(function(instance){
       EticaTokenInstance = instance;
       return EticaTokenInstance.centuryreward();
@@ -54,7 +54,7 @@ contract('EticaToken', function(accounts){
       console.log(resp.toString());
       assert.equal(web3.utils.fromWei(resp, "ether" ), "73253.697051755847871906", "weeklyreward must equal 73253.697051755847871906, not:" + resp.toString());
     })
-  });
+  });*/
 
 
   it("founder should have 49442718.4 ETI (8% of initial supply)", function() {

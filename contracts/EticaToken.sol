@@ -24,7 +24,9 @@ contract EticaToken is ERC20Interface{
     uint public decimals = 18;
 
     uint public supply;
+    // fixed inflation rate after etica supply has reached 21 Million
     uint public inflationrate;
+    int public  reward; // Amount of ETI issued every week
     uint public initialreserve;
     uint public weeklyreward; // Amount of ETI issued every week
     address public founder;
@@ -44,10 +46,9 @@ contract EticaToken is ERC20Interface{
       // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656; (need to multiple by 10^(-34) to get 0.26180339887498948482045868343656);
       inflationrate = 26180339887498948482045868343656‬;
       supply = 100 * (10**18); // initial supply equals 100 ETI
+      balances[address(this)] = 100 * (10**18); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
       weeklyreward = 73253697051755847871906; // 381966020 ETI per century equals 73253,697051755847871905858707513 ETI Issued each week : (centuryreward / (100 * 52,1429));
       founder = msg.sender;
-      balances[founder] = supply * 8 / 100;
-      balances[address(this)] = 100 * (10**18); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
       initialreserve = supply - balances[founder] - balances[address(this)];
     }
 

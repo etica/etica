@@ -36,7 +36,7 @@ contract('EticaToken', function(accounts){
     }).then(function(receipt){
       // supply must equal initial supply
       console.log(receipt.toString());
-      assert.equal(web3.utils.fromWei(receipt, "ether" ), "618033980", "supply must equal 618033980.000000000000000000");
+      assert.equal(web3.utils.fromWei(receipt, "ether" ), "100", "supply must equal 618033980.000000000000000000");
     })
   });
 

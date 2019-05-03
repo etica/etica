@@ -4,6 +4,66 @@ pragma solidity ^0.5.2;
 //There are some minor changes comparing to ICO contract compiled with versions < 0.5.0
 // ----------------------------------------------------------------------------
 
+
+// ----------------------------------------------------------------------------
+
+// Safe maths
+
+// ----------------------------------------------------------------------------
+
+library SafeMath {
+
+    function add(uint a, uint b) internal pure returns (uint c) {
+
+        c = a + b;
+
+        require(c >= a);
+
+    }
+
+    function sub(uint a, uint b) internal pure returns (uint c) {
+
+        require(b <= a);
+
+        c = a - b;
+
+    }
+
+    function mul(uint a, uint b) internal pure returns (uint c) {
+
+        c = a * b;
+
+        require(a == 0 || c / a == b);
+
+    }
+
+    function div(uint a, uint b) internal pure returns (uint c) {
+
+        require(b > 0);
+
+        c = a / b;
+
+    }
+
+}
+
+
+
+library ExtendedMath {
+
+
+    //return the smaller of the two inputs (a or b)
+    function limitLessThan(uint a, uint b) internal pure returns (uint c) {
+
+        if(a > b) return b;
+
+        return a;
+
+    }
+}
+
+
+
 contract ERC20Interface {
     function totalSupply() public view returns (uint);
     function balanceOf(address tokenOwner) public view returns (uint balance);
@@ -19,6 +79,10 @@ contract ERC20Interface {
 }
 
 contract EticaToken is ERC20Interface{
+
+    using SafeMath for uint;
+    using ExtendedMath for uint;
+
     string public name = "Etica";
     string public symbol = "ETI";
     uint public decimals = 18;
@@ -45,7 +109,7 @@ contract EticaToken is ERC20Interface{
 
     constructor() public{
       supply = 100 * (10**18); // initial supply equals 100 ETI
-      balances[address(this)] = 100 * (10**18); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
+      balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
 
       // PHASE 1
 
@@ -99,16 +163,16 @@ contract EticaToken is ERC20Interface{
 
     //transfer tokens from the  owner account to the account that calls the function
     function transferFrom(address from, address to, uint tokens) public returns(bool){
-        require(allowed[from][to] >= tokens);
-        require(balances[from] >= tokens);
 
-        balances[from] -= tokens;
-        balances[to] += tokens;
+      balances[from] = balances[from].sub(tokens);
 
+      allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
 
-        allowed[from][to] -= tokens;
+      balances[to] = balances[to].add(tokens);
 
-        return true;
+      emit Transfer(from, to, tokens);
+
+      return true;
     }
 
     function totalSupply() public view returns (uint){
@@ -121,11 +185,14 @@ contract EticaToken is ERC20Interface{
 
 
     function transfer(address to, uint tokens) public returns (bool success){
-         require(balances[msg.sender] >= tokens && tokens > 0);
+         require(tokens > 0);
 
-         balances[to] += tokens;
-         balances[msg.sender] -= tokens;
+         balances[msg.sender] = balances[msg.sender].sub(tokens);
+
+         balances[to] = balances[to].add(tokens);
+
          emit Transfer(msg.sender, to, tokens);
+
          return true;
      }
 }

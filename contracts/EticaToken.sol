@@ -78,6 +78,27 @@ contract ERC20Interface {
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
 }
 
+
+
+// -------- 0xBitcoin ----------------  //
+// ----------------------------------------------------------------------------
+
+// Contract function to receive approval and execute function in one call
+
+//
+
+// Borrowed from MiniMeToken
+
+// ----------------------------------------------------------------------------
+
+contract ApproveAndCallFallBack {
+
+    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
+
+}
+
+// ---------- 0xBitcoin ------------ //
+
 contract EticaToken is ERC20Interface{
 
     using SafeMath for uint;
@@ -273,7 +294,7 @@ contract EticaToken is ERC20Interface{
 
 
              //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
-             bytes32 digest =  keccak256(challengeNumber, msg.sender, nonce );
+             bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
 
              //the challenge digest must match the expected
              if (digest != challenge_digest) revert();
@@ -306,7 +327,7 @@ contract EticaToken is ERC20Interface{
 
               _startNewMiningEpoch();
 
-               Mint(msg.sender, reward_amount, epochCount, challengeNumber );
+               emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
 
             return true;
 
@@ -340,7 +361,7 @@ contract EticaToken is ERC20Interface{
 
        //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
        //do this last since this is a protection mechanism in the mint() function
-       challengeNumber = block.blockhash(block.number - 1);
+       challengeNumber = blockhash(block.number - 1);
 
 
 
@@ -403,16 +424,16 @@ contract EticaToken is ERC20Interface{
 
 
      //this is a recent ethereum block hash, used to prevent pre-mining future blocks
-     function getChallengeNumber() public constant returns (bytes32) {
+     function getChallengeNumber() public view returns (bytes32) {
          return challengeNumber;
      }
 
      //the number of zeroes the digest of the PoW solution requires.  Auto adjusts
-      function getMiningDifficulty() public constant returns (uint) {
+      function getMiningDifficulty() public view returns (uint) {
          return _MAXIMUM_TARGET.div(miningTarget);
      }
 
-     function getMiningTarget() public constant returns (uint) {
+     function getMiningTarget() public view returns (uint) {
         return miningTarget;
     }
 
@@ -420,7 +441,7 @@ contract EticaToken is ERC20Interface{
 
      //21m coins total
      //reward begins at 50 and is cut in half every reward era (as tokens are mined)
-     function getMiningReward() public constant returns (uint) {
+     function getMiningReward() public view returns (uint) {
          //once we get half way thru the coins, only get 25 per block
 
           //every reward era, the reward amount halves.
@@ -432,7 +453,7 @@ contract EticaToken is ERC20Interface{
      //help debug mining software
      function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns (bytes32 digesttest) {
 
-         bytes32 digest = keccak256(challenge_number,msg.sender,nonce);
+         bytes32 digest = keccak256(abi.encodePacked(challenge_number,msg.sender,nonce));
 
          return digest;
 
@@ -441,7 +462,7 @@ contract EticaToken is ERC20Interface{
          //help debug mining software
        function checkMintSolution(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number, uint testTarget) public view returns (bool success) {
 
-           bytes32 digest = keccak256(challenge_number,msg.sender,nonce);
+           bytes32 digest = keccak256(abi.encodePacked(challenge_number,msg.sender,nonce));
 
            if(uint256(digest) > testTarget) revert();
 
@@ -462,13 +483,13 @@ contract EticaToken is ERC20Interface{
 
      // ------------------------------------------------------------------------
 
-     function approveAndCall(address spender, uint tokens, bytes data) public returns (bool success) {
+     function approveAndCall(address spender, uint tokens, bytes memory data) public returns (bool success) {
 
          allowed[msg.sender][spender] = tokens;
 
-         Approval(msg.sender, spender, tokens);
+         emit Approval(msg.sender, spender, tokens);
 
-         ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, this, data);
+         ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
 
          return true;
 
@@ -482,25 +503,12 @@ contract EticaToken is ERC20Interface{
 
      // ------------------------------------------------------------------------
 
-     function () public payable {
+     function () payable external {
 
          revert();
 
      }
 
-
-
-     // ------------------------------------------------------------------------
-
-     // Owner can transfer out any accidentally sent ERC20 tokens
-
-     // ------------------------------------------------------------------------
-
-     function transferAnyERC20Token(address tokenAddress, uint tokens) public onlyOwner returns (bool success) {
-
-         return ERC20Interface(tokenAddress).transfer(owner, tokens);
-
-     }
 
 // ------------------      0xbitcoin functions   -------------------------  //
 

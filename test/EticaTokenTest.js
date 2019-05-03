@@ -1,8 +1,8 @@
-var EticaBosoms = artifacts.require("./EticaBosoms.sol");
+var EticaToken = artifacts.require("./EticaToken.sol");
 
 // test suite
-contract('EticaBosoms', function(accounts){
-  var eticaBosomsInstance;
+contract('EticaToken', function(accounts){
+  var EticaTokenInstance;
   var coinbaseuser = accounts[0];
   var eptestusersa = accounts[1];
   var eptestusersb = accounts[2];
@@ -30,9 +30,9 @@ contract('EticaBosoms', function(accounts){
 
 
   it("supply must equal initial supply 618033980 ETI", function() {
-    return EticaBosoms.deployed().then(function(instance){
-      eticaBosomsInstance = instance;
-      return eticaBosomsInstance.totalSupply();
+    return EticaToken.deployed().then(function(instance){
+      EticaTokenInstance = instance;
+      return EticaTokenInstance.totalSupply();
     }).then(function(receipt){
       // supply must equal initial supply
       console.log(receipt.toString());
@@ -41,14 +41,14 @@ contract('EticaBosoms', function(accounts){
   });
 
   it("centuryreward should equal 381966020 ETI and weeklyreward should equal 73253.697051755847871906 ETI", function() {
-    return EticaBosoms.deployed().then(function(instance){
-      eticaBosomsInstance = instance;
-      return eticaBosomsInstance.centuryreward();
+    return EticaToken.deployed().then(function(instance){
+      EticaTokenInstance = instance;
+      return EticaTokenInstance.centuryreward();
     }).then(function(receipt){
       // century reward must equal 381966020 ETI
       console.log(receipt.toString());
       assert.equal(web3.utils.fromWei(receipt, "ether" ), "381966020", "centuryreward must equal 381966020.000000000000000000" + receipt.toString());
-      return eticaBosomsInstance.weeklyreward();
+      return EticaTokenInstance.weeklyreward();
     }).then(function(resp){
       // weekly reward must equal 73253.697051755847871906 ETI
       console.log(resp.toString());
@@ -58,11 +58,11 @@ contract('EticaBosoms', function(accounts){
 
 
   it("founder should have 49442718.4 ETI (8% of initial supply)", function() {
-    return EticaBosoms.deployed().then(function(instance){
-      eticaBosomsInstance = instance;
-      return eticaBosomsInstance.founder();
+    return EticaToken.deployed().then(function(instance){
+      EticaTokenInstance = instance;
+      return EticaTokenInstance.founder();
     }).then(function(founder){
-      return eticaBosomsInstance.balanceOf(founder);
+      return EticaTokenInstance.balanceOf(founder);
     }).then(function(founderbalance){
       // founder must have 8% of the initial token supply
       console.log("checking founder balance is 8% of initial supply");
@@ -72,9 +72,9 @@ contract('EticaBosoms', function(accounts){
   });
 
   it("contract balance must equal  to 100 ETI", function() {
-    return EticaBosoms.deployed().then(function(instance){
-      eticaBosomsInstance = instance;
-      return eticaBosomsInstance.balanceOf(eticaBosomsInstance.address);
+    return EticaToken.deployed().then(function(instance){
+      EticaTokenInstance = instance;
+      return EticaTokenInstance.balanceOf(EticaTokenInstance.address);
     }).then(function(contractbalance){
       // Contract balance should be equal to 100 ETI:
       assert.equal(web3.utils.fromWei(contractbalance, "ether" ), "100", "contract balance should equal 100 ETI");
@@ -83,9 +83,9 @@ contract('EticaBosoms', function(accounts){
   });
 
   it("initial reserve must equal 568591161.6 ETI (initial supply minus the founder's balance minus contract's balance)", function() {
-    return EticaBosoms.deployed().then(function(instance){
-      eticaBosomsInstance = instance;
-      return eticaBosomsInstance.initialreserve();
+    return EticaToken.deployed().then(function(instance){
+      EticaTokenInstance = instance;
+      return EticaTokenInstance.initialreserve();
     }).then(function(initialreserve){
       console.log('checking initialreserve -> initialreserve is: ', web3.utils.fromWei(initialreserve, "ether" ), 'ETI');
       assert.equal(web3.utils.fromWei(initialreserve, "ether" ), "568591161.6", "initialreserve should equal 568591161.6 ETI (initialsupply minus founderbalance minus contractbalance) Instead initialreserve is ->" + web3.utils.fromWei(initialreserve, "ether" ));
@@ -95,9 +95,9 @@ contract('EticaBosoms', function(accounts){
 
   it("all balances except founder and contract must be at 0 ETI", function() {
     for (i = 1; i < 10; i++) {
-    return EticaBosoms.deployed().then(function(instance){
-      eticaBosomsInstance = instance;
-      return eticaBosomsInstance.balanceOf(accounts[i]);
+    return EticaToken.deployed().then(function(instance){
+      EticaTokenInstance = instance;
+      return EticaTokenInstance.balanceOf(accounts[i]);
     }).then(function(receipt){
       // supply must equal initial supply
       assert.equal(web3.utils.fromWei(receipt, "ether" ), 0x0, "this account should not have any ETI! index of accounts is:" + i);

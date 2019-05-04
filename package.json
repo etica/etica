@@ -10,5 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Kevin Wad Osséni",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "ethereumjs-tx": "^1.3.7",
+    "leftpad": "0.0.1"
+  }
 }

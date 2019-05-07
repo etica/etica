@@ -14,11 +14,12 @@ var lastSubmittedMiningSolutionChallengeNumber;
 module.exports =  {
 
 
-  init(web3,tokenContract,account)
+  init(web3,tokenContract,account,accounts)
   {
     this.web3=web3;
     this.tokenContract = tokenContract;
     this.account=account;
+    this.accounts = accounts;
 
     busySendingSolution = false;
 
@@ -44,6 +45,8 @@ module.exports =  {
       {
         if(queuedMiningSolutions.length > 0)
         {
+          console.log('publishing EticaToken stats before EticaToken.mint() has been called');
+          this.publishtokenstats('before');
           busySendingSolution = true;
           var nextSolution = queuedMiningSolutions.pop();
 
@@ -62,7 +65,10 @@ module.exports =  {
           }
 
 
-          console.log('response',response)
+          console.log('response (transaction hash) of network-interface-helper.submitMiningSolution() from network-interface-helper.sendMiningSolutions() is:',response)
+          // publish accounts balances:
+          console.log('publishing EticaToken stats after EticaToken.mint() has been called');
+          this.publishtokenstats('after');
           busySendingSolution = false;
         }
       }
@@ -151,6 +157,7 @@ module.exports =  {
 
        this.sendSignedRawTransaction(this.web3,txOptions,addressFrom,this.account, function(err, res) {
         if (err) error(err)
+         console.log('response (transaction hash) of EticaToken.mint() is :', res)
           result(res)
       })
 
@@ -229,7 +236,20 @@ module.exports =  {
       return s.substring(2);
     }
     return s;
-  }
+  },
+
+
+// status: before or after EticaToken.mint() call
+  publishtokenstats(status){
+
+        for (i = 9; i < 10; i++) {
+          return tokenContract.balanceOf(this.accounts[i]).then(function(receipt){
+          // supply must equal initial supply
+          console.log('------- > account', i, ': ETI balance', status, 'EticaToken.mint() has been called is:', web3.utils.fromWei(receipt, "ether" ), 'ETI  <-------- ')
+        })
+        }
+  },
+
 
 
 

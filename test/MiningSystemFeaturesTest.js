@@ -31,16 +31,7 @@ contract('EticaToken', function(accounts){
   var oldbalancei = accounts[9];
 
   var i;
-
-/*
- FORMER test_account value used by 0xBitcoin
-   var test_account= {
-      'address': '0x087964cd8b33ea47c01fbe48b70113ce93481e01',
-      'privateKey': 'dca672104f895219692175d87b04483d31f53af8caad1d7348d269b35e21c3df'
-  } // send ether to test_account so that it can pay gas for on chain transactions
-  // web3.eth.sendTransaction({to:'0x087964cd8b33ea47c01fbe48b70113ce93481e01', from:eptestusersi, value:web3.utils.toWei("1.0", "ether")})
-
-  */
+  
   var test_account= {
      'address': '0xBa2bD26950957368558dF231f13C3F767b904EC3',
      'privateKey': 'a04ea152108d978903f48b00feb753c4108ed3d39c4602d3f3e5b158129fba82'

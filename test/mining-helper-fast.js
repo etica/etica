@@ -84,11 +84,14 @@ module.exports =  {
     var miningTarget = web3.utils.toBN(miningTargetString)
 
     var challengeNumber = await tokenContract.getChallengeNumber.call() ;
+    var supplyString = await tokenContract.supply.call()  ;
+    var supply = parseInt(supplyString)
 
     console.log('blockreward:', blockreward);
     console.log('difficulty:', miningDifficulty);
     console.log('target:', miningTarget);
     console.log('challenge number:', challengeNumber)
+    console.log('ETI supply:', supply)
 
     contractData.miningDifficulty= miningDifficulty;
       contractData.challengeNumber= challengeNumber;

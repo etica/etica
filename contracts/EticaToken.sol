@@ -153,9 +153,6 @@ contract EticaToken is ERC20Interface{
     bytes32 public challengeNumber;   //generate a new one when a new reward is minted
 
 
-
-    uint public rewardEra;
-
     uint public blockreward;
 
 
@@ -206,7 +203,6 @@ contract EticaToken is ERC20Interface{
 
       tokensMinted = 0;
 
-      rewardEra = 0;
 
       // The amount of etica mined per 7 days will be twice of first rewards of phase 2
       // Calculation of first rewards of phase 2:

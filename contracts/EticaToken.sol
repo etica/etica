@@ -155,7 +155,6 @@ contract EticaToken is ERC20Interface{
 
 
     uint public rewardEra;
-    uint public maxSupplyForEra;
 
 
     address public lastRewardTo;
@@ -210,7 +209,6 @@ contract EticaToken is ERC20Interface{
       tokensMinted = 0;
 
       rewardEra = 0;
-      maxSupplyForEra = _totalMiningSupply.div(2);
 
       miningTarget = _MAXIMUM_TARGET;
 
@@ -311,13 +309,15 @@ contract EticaToken is ERC20Interface{
 
              uint reward_amount = getMiningReward();
 
-             balances[msg.sender] = balances[msg.sender].add(reward_amount);
+
+
+
+             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply + reward_amount
+             assert(tokensMinted < _totalMiningSupply);
 
              tokensMinted = tokensMinted.add(reward_amount);
-
-
-             //Cannot mint more tokens than there are
-             assert(tokensMinted <= maxSupplyForEra);
+             supply = supply.add(reward_amount);
+             balances[msg.sender] = balances[msg.sender].add(reward_amount);
 
              //set readonly diagnostics data
              lastRewardTo = msg.sender;
@@ -337,18 +337,6 @@ contract EticaToken is ERC20Interface{
      //a new 'block' to be mined
      function _startNewMiningEpoch() internal {
 
-       //if max supply for the era will be exceeded next reward round then enter the new era before that happens
-
-       //40 is the final reward era, almost all tokens minted
-       //once the final era is reached, more tokens will not be given out because the assert function
-       if( tokensMinted.add(getMiningReward()) > maxSupplyForEra && rewardEra < 39)
-       {
-         rewardEra = rewardEra + 1;
-       }
-
-       //set the next minted supply at which the era will change
-       // total supply is 2100000000000000  because of 8 decimal places
-       maxSupplyForEra = _totalMiningSupply - _totalMiningSupply.div( 2**(rewardEra + 1));
 
        epochCount = epochCount.add(1);
 

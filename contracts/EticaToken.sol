@@ -218,13 +218,11 @@ contract EticaToken is ERC20Interface{
 
       _startNewMiningEpoch();
 
-
-
       // PHASE 1 <--
 
       // --> PHASE 2
-      // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656; (need to multiple by 10^(-34) to get 0.26180339887498948482045868343656);
-      inflationrate = 26180339887498948482045868343656;
+      // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656;
+      inflationrate = 26180339887498948482045868343656; // (need to multiple by 10^(-33) to get 0.026180339887498948482045868343656);
 
        // PHASE 2 <--
 
@@ -346,11 +344,6 @@ contract EticaToken is ERC20Interface{
        //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
        //do this last since this is a protection mechanism in the mint() function
        challengeNumber = blockhash(block.number - 1);
-
-
-
-
-
 
      }
 

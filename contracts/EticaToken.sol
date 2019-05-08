@@ -202,7 +202,7 @@ contract EticaToken is ERC20Interface{
 
       // phase1 mining:
 
-      _totalMiningSupply = 21000000 * 10**uint(decimals);
+      _totalMiningSupply = 10500000 * 10**uint(decimals);
 
       if(locked) revert();
       locked = true;
@@ -219,10 +219,6 @@ contract EticaToken is ERC20Interface{
       _startNewMiningEpoch();
 
 
-      //The owner gets nothing! You must mine this ERC20 token
-      //balances[owner] = _totalMiningSupply;
-      //Transfer(address(0), owner, _totalMiningSupply);
-
 
       // PHASE 1 <--
 
@@ -233,7 +229,9 @@ contract EticaToken is ERC20Interface{
        // PHASE 2 <--
 
 
-
+       //The founder gets nothing! You must mine or earn the Etica ERC20 token
+       //balances[founder] = _totalMiningSupply;
+       //Transfer(address(0), founder, _totalMiningSupply);
       founder = msg.sender;
       foundermsgproof = "Discovering our best Futures. Kevin Wad";
     }

@@ -73,8 +73,8 @@ module.exports =  {
 
 
 
-    var lastRewardAmountString = await tokenContract.lastRewardAmount.call()  ;
-    var lastRewardAmount = parseInt(lastRewardAmountString)
+    var blockrewardString = await tokenContract.blockreward.call()  ;
+    var blockreward = parseInt(blockrewardString)
 
 
     var miningDifficultyString = await tokenContract.getMiningDifficulty.call()  ;
@@ -85,7 +85,7 @@ module.exports =  {
 
     var challengeNumber = await tokenContract.getChallengeNumber.call() ;
 
-    console.log('lastRewardAmount:', lastRewardAmount);
+    console.log('blockreward:', blockreward);
     console.log('difficulty:', miningDifficulty);
     console.log('target:', miningTarget);
     console.log('challenge number:', challengeNumber)

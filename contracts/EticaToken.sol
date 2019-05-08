@@ -160,7 +160,6 @@ contract EticaToken is ERC20Interface{
 
 
     address public lastRewardTo;
-    uint public lastRewardAmount;
     uint public lastRewardEthBlockNumber;
 
     bool locked = false;
@@ -323,7 +322,6 @@ contract EticaToken is ERC20Interface{
 
              //set readonly diagnostics data
              lastRewardTo = msg.sender;
-             lastRewardAmount = blockreward;
              lastRewardEthBlockNumber = block.number;
 
 

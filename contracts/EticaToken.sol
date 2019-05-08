@@ -80,25 +80,6 @@ contract ERC20Interface {
 
 
 
-// -------- Mining system ----------------  //
-// ----------------------------------------------------------------------------
-
-// Contract function to receive approval and execute function in one call
-
-//
-
-// Borrowed from MiniMeToken
-
-// ----------------------------------------------------------------------------
-
-contract ApproveAndCallFallBack {
-
-    function receiveApproval(address from, uint256 tokens, address token, bytes memory data) public;
-
-}
-
-// ---------- Mining system ------------ //
-
 contract EticaToken is ERC20Interface{
 
     using SafeMath for uint;
@@ -434,31 +415,6 @@ contract EticaToken is ERC20Interface{
            return (digest == challenge_digest);
 
          }
-
-
-
-
-     // ------------------------------------------------------------------------
-
-     // Token owner can approve for `spender` to transferFrom(...) `tokens`
-
-     // from the token owner's account. The `spender` contract function
-
-     // `receiveApproval(...)` is then executed
-
-     // ------------------------------------------------------------------------
-
-     function approveAndCall(address spender, uint tokens, bytes memory data) public returns (bool success) {
-
-         allowed[msg.sender][spender] = tokens;
-
-         emit Approval(msg.sender, spender, tokens);
-
-         ApproveAndCallFallBack(spender).receiveApproval(msg.sender, tokens, address(this), data);
-
-         return true;
-
-     }
 
 
 

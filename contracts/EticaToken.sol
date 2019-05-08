@@ -80,7 +80,7 @@ contract ERC20Interface {
 
 
 
-// -------- 0xBitcoin ----------------  //
+// -------- Mining system ----------------  //
 // ----------------------------------------------------------------------------
 
 // Contract function to receive approval and execute function in one call
@@ -97,7 +97,7 @@ contract ApproveAndCallFallBack {
 
 }
 
-// ---------- 0xBitcoin ------------ //
+// ---------- Mining system ------------ //
 
 contract EticaToken is ERC20Interface{
 
@@ -123,8 +123,8 @@ contract EticaToken is ERC20Interface{
 
     //allowed[0x1111....][0x22222...] = 100;
 
-    // 0xbitcoin state variables
-    uint public _totalSupply;
+    // Mining system state variables
+    uint public _totalMiningSupply;
 
 
 
@@ -168,7 +168,7 @@ contract EticaToken is ERC20Interface{
 
     uint public tokensMinted;
 
-    // 0xbitcoin state variables
+    // Mining system state variables
 
 
 
@@ -182,26 +182,27 @@ contract EticaToken is ERC20Interface{
       supply = 100 * (10**18); // initial supply equals 100 ETI
       balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
 
-      // PHASE 1
 
-      // --- PAHSE 1 (before 21 Million ETI has been reached) --->  //
+      // PHASE 1 (before 21 Million ETI has been reached) -->
+
       // 10 500 000 ETI to be issued as periodrewardtemp for ETICA reward system
       // 10 500 000 ETI to be MINED
 
-      // phase1 periodrewardtemp
+      // phase1 periodrewardtemp:
       // fixed Etica issued per period during phase1 (before 21 Million ETI has been reached)
       // calculation:
-      // The amount of reward has to be half of first rewards of phase 2
+      // The amount of reward will be half of first rewards of phase 2
+      // Calculation of first rewards of phase 2:
       // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
       // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2)
       // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
-      periodrewardtemp = 21087708494827787412014415585507; // 21087,708494827787412014415585507 ETI will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
+      periodrewardtemp = 21087708494827787412014415585507; // 21087,708494827787412014415585507 ETI per period (7 days) will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
 
 
 
-      // phase1 mining
+      // phase1 mining:
 
-      _totalSupply = 21000000 * 10**uint(decimals);
+      _totalMiningSupply = 21000000 * 10**uint(decimals);
 
       if(locked) revert();
       locked = true;
@@ -209,7 +210,7 @@ contract EticaToken is ERC20Interface{
       tokensMinted = 0;
 
       rewardEra = 0;
-      maxSupplyForEra = _totalSupply.div(2);
+      maxSupplyForEra = _totalMiningSupply.div(2);
 
       miningTarget = _MAXIMUM_TARGET;
 
@@ -219,17 +220,17 @@ contract EticaToken is ERC20Interface{
 
 
       //The owner gets nothing! You must mine this ERC20 token
-      //balances[owner] = _totalSupply;
-      //Transfer(address(0), owner, _totalSupply);
+      //balances[owner] = _totalMiningSupply;
+      //Transfer(address(0), owner, _totalMiningSupply);
 
 
-      // PHASE 1
+      // PHASE 1 <--
 
-      // PHASE 2
+      // --> PHASE 2
       // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656; (need to multiple by 10^(-34) to get 0.26180339887498948482045868343656);
       inflationrate = 26180339887498948482045868343656;
 
-       // PHASE 2
+       // PHASE 2 <--
 
 
 
@@ -289,7 +290,7 @@ contract EticaToken is ERC20Interface{
      }
 
 
-     // -------------  0xbitcoin functions ---------------- //
+     // -------------  Mining system functions ---------------- //
 
          function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
 
@@ -349,7 +350,7 @@ contract EticaToken is ERC20Interface{
 
        //set the next minted supply at which the era will change
        // total supply is 2100000000000000  because of 8 decimal places
-       maxSupplyForEra = _totalSupply - _totalSupply.div( 2**(rewardEra + 1));
+       maxSupplyForEra = _totalMiningSupply - _totalMiningSupply.div( 2**(rewardEra + 1));
 
        epochCount = epochCount.add(1);
 
@@ -384,7 +385,7 @@ contract EticaToken is ERC20Interface{
          uint ethBlocksSinceLastDifficultyPeriod = block.number - latestDifficultyPeriodStarted;
          //assume 360 ethereum blocks per hour
 
-         //we want miners to spend 10 minutes to mine each 'block', about 60 ethereum blocks = one 0xbitcoin epoch
+         //we want miners to spend 10 minutes to mine each 'block', about 60 ethereum blocks = one Mining system epoch
          uint epochsMined = _BLOCKS_PER_READJUSTMENT; //256
 
          uint targetEthBlocksPerDiffPeriod = epochsMined * 60; //should be 60 times slower than ethereum
@@ -511,7 +512,7 @@ contract EticaToken is ERC20Interface{
      }
 
 
-// ------------------      0xbitcoin functions   -------------------------  //
+// ------------------      Mining system functions   -------------------------  //
 
 
 

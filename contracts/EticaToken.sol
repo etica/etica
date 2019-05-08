@@ -176,7 +176,7 @@ contract EticaToken is ERC20Interface{
 
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
-    event Mint(address indexed from, uint reward_amount, uint epochCount, bytes32 newChallengeNumber);
+    event Mint(address indexed from, uint blockreward, uint epochCount, bytes32 newChallengeNumber);
 
 
     constructor() public{
@@ -314,27 +314,22 @@ contract EticaToken is ERC20Interface{
               if(solution != 0x0) revert();  //prevent the same answer from awarding twice
 
 
-             uint reward_amount = getMiningReward();
-
-
-
-
-             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply + reward_amount
+             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply + blockreward
              assert(tokensMinted < _totalMiningSupply);
 
-             tokensMinted = tokensMinted.add(reward_amount);
-             supply = supply.add(reward_amount);
-             balances[msg.sender] = balances[msg.sender].add(reward_amount);
+             tokensMinted = tokensMinted.add(blockreward);
+             supply = supply.add(blockreward);
+             balances[msg.sender] = balances[msg.sender].add(blockreward);
 
              //set readonly diagnostics data
              lastRewardTo = msg.sender;
-             lastRewardAmount = reward_amount;
+             lastRewardAmount = blockreward;
              lastRewardEthBlockNumber = block.number;
 
 
               _startNewMiningEpoch();
 
-               emit Mint(msg.sender, reward_amount, epochCount, challengeNumber );
+               emit Mint(msg.sender, blockreward, epochCount, challengeNumber );
 
             return true;
 
@@ -432,18 +427,6 @@ contract EticaToken is ERC20Interface{
         return miningTarget;
     }
 
-
-
-     //21m coins total
-     //reward begins at 50 and is cut in half every reward era (as tokens are mined)
-     function getMiningReward() public view returns (uint) {
-         //once we get half way thru the coins, only get 25 per block
-
-          //every reward era, the reward amount halves.
-
-          return (50 * 10**uint(decimals) ).div( 2**rewardEra ) ;
-
-     }
 
      //help debug mining software
      function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns (bytes32 digesttest) {

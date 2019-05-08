@@ -86,16 +86,19 @@ module.exports =  {
     var challengeNumber = await tokenContract.getChallengeNumber.call() ;
     var supplyString = await tokenContract.supply.call()  ;
     var supply = parseInt(supplyString)
+    var tokensMintedString = await tokenContract.tokensMinted.call()  ;
+    var tokensMinted = parseInt(tokensMinted)
 
     console.log('blockreward:', blockreward);
     console.log('difficulty:', miningDifficulty);
     console.log('target:', miningTarget);
     console.log('challenge number:', challengeNumber)
     console.log('ETI supply:', supply)
+    console.log('ETI mined:', tokensMinted)
 
     contractData.miningDifficulty= miningDifficulty;
-      contractData.challengeNumber= challengeNumber;
-      contractData.miningTarget= miningTarget;
+    contractData.challengeNumber= challengeNumber;
+    contractData.miningTarget= miningTarget;
 
 
     return contractData;

@@ -499,7 +499,7 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 // ----  Get bosoms and add Stake ------  //
 // ------- STAKING ---------- //
 
-
+// get boms balance of user:
 function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
      return bosoms[tokenOwner];
  }

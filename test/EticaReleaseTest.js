@@ -116,10 +116,7 @@ contract('EticaRelease', function(accounts){
 
     console.log(tokenContract.address)
 
-  /*  var test_account= {
-        'address': '0x087964cd8b33ea47c01fbe48b70113ce93481e01',
-        'privateKey': 'dca672104f895219692175d87b04483d31f53af8caad1d7348d269b35e21c3df'
-    } */
+   // ganache account 10 (index 9):
     var test_account= {
        'address': '0xBa2bD26950957368558dF231f13C3F767b904EC3',
        'privateKey': 'a04ea152108d978903f48b00feb753c4108ed3d39c4602d3f3e5b158129fba82'
@@ -131,6 +128,61 @@ contract('EticaRelease', function(accounts){
         networkInterfaceHelper.init(web3,tokenContract,test_account,accounts);
         miningHelper.init(web3,tokenContract,test_account,networkInterfaceHelper);
 
+
+  });
+
+
+
+  it("can start tests with balances :", async function () {
+    console.log('test with balances started');
+
+    function timeout(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// wait long enough so that test_account has mined a block and thus has ETI available
+await timeout(30000);
+return EticaRelease.deployed().then(function(instance){
+  EticaReleaseInstance = instance;
+  return EticaReleaseInstance.balanceOf(test_account.address);
+}).then(function(receipt){
+console.log('asserting test_account balance');
+assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mined ETI after 30000 ms!');
+}).then(async function(){
+  console.log('transfering 1 ETI to eptestusersa');
+  let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+  let eptestusersabalancebefore = await EticaReleaseInstance.balanceOf(eptestusersa);
+  console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+  console.log('eptestusersa ETI balance before:', web3.utils.fromWei(eptestusersabalancebefore, "ether" ));
+  return EticaReleaseInstance.transfer(eptestusersa,  web3.utils.toBN(1000000000000000000), {from: test_account.address});
+
+}).then(async function(){
+  let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+  let eptestusersabalanceafter = await EticaReleaseInstance.balanceOf(eptestusersa);
+  console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+  console.log('eptestusersa ETI balance after:', web3.utils.fromWei(eptestusersabalanceafter, "ether" ));
+})
+
+  });
+
+// test eticatobosom
+  it("can stake eticas for bosoms :", async function () {
+    console.log('Asserting Staking is operational');
+    let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+    let test_accountbosomsbefore = await EticaReleaseInstance.bosomsOf(test_account.address);
+    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+    console.log('test_account Bosoms balance before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+   // try staking 2 ETI:
+      return EticaReleaseInstance.eticatobosoms(test_account.address,  web3.utils.toBN(2000000000000000000), {from: test_account.address}).then(async function(receipt){
+    let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+    let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
+    let newtest_accountbalance = test_accountbalancebefore - 2;
+    console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+    console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
+    assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), "2", 'test_account should have 2 Bosoms!');
+    assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "2", 'test_account should have 2 Eticas less!');
+    console.log('Staking has been tested successfully');
+    })
 
   });
 

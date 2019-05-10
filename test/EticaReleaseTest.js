@@ -176,7 +176,6 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
       return EticaReleaseInstance.eticatobosoms(test_account.address,  web3.utils.toBN(2000000000000000000), {from: test_account.address}).then(async function(receipt){
     let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
     let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
-    let newtest_accountbalance = test_accountbalancebefore - 2;
     console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
     console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
     assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), "2", 'test_account should have 2 Bosoms!');
@@ -185,6 +184,30 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
     })
 
   });
+
+  // Should fail try to stake more eticas than available in wallet
+    it("cannot OVER stake eticas for bosoms :", async function () {
+      console.log('Asserting Over Staking is not possible');
+      let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+      let test_accountbosomsbefore = await EticaReleaseInstance.bosomsOf(test_account.address);
+      console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+      console.log('test_account Bosoms balance before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+      let stakeamount = 300000;
+      let overstake = web3.utils.toWei(stakeamount.toString(), 'ether');
+     // try staking 300000 ETI:
+        return EticaReleaseInstance.eticatobosoms(test_account.address,  web3.utils.toBN(overstake), {from: test_account.address}).then(assert.fail)
+        .catch(async function(error){
+          assert(true);
+          let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+          let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
+          console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+          console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
+          assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), web3.utils.fromWei(test_accountbosomsbefore, "ether" ), 'test_account should not have more Bosoms!');
+          assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "0", 'test_account should not have less Eticas!');
+          console.log('Over Staking has been tested successfully');
+        })
+
+    });
 
 
   async function printBalances(accounts) {

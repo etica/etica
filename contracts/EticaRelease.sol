@@ -92,7 +92,7 @@ contract EticaToken is ERC20Interface{
     uint public supply;
     // fixed inflation rate after etica supply has reached 21 Million
     uint public inflationrate;
-    int public  periodrewardtemp; // Amount of ETI issued per period during phase1
+    uint public  periodrewardtemp; // Amount of ETI issued per period during phase1
 
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
@@ -441,17 +441,85 @@ contract EticaRelease is EticaToken {
 uint STAKING_DURATION = 168000; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 uint ETICA_TO_BOSOM_RATIO = 1; //
 
+
+struct Period{
+    uint id;
+    uint interval;
+    uint curation_sum;
+    uint editor_sum;
+    uint total_voters; // TOTAL nb of voters in this period
+}
+
   struct Stake{
       uint amount;
       uint startBlock;
       uint endBlock;
   }
 
-
+mapping(uint => Period) periods;
+uint public periodsCounter;
+mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have already issued ETI
+uint public PeriodsIssuedCounter;
 mapping(address => uint) public bosoms;
 mapping(address => Stake[]) public stakes;
+// stakes ----> slashing function will need to loop trough stakes. Can create issues for claiming votes:
+// will create a function to gather stakes when user has to much stakes.
+// The function will take a completion_time as parameter and will loop trough 50 indexes and will put all stakes with
+// lower completion_time into a  single new stake with parameter completion_time
 
+event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
+
+
+
+// -------------  Reward system functions ---------------- //
+
+function issue(uint _id) internal returns (bool success) {
+  // we check whether there is at least one period
+  require(periodsCounter > 0);
+
+  // we check that the period exists
+  require(_id > 0 && _id <= periodsCounter);
+
+  // we retrieve the period
+  Period storage period = periods[_id];
+
+  // we check that the period is legit and has been retrieved
+  require(period.id != 0X0);
+
+
+//only allow one issuance for each period
+uint rwd = PeriodsIssued[period.id];
+if(rwd != 0x0) revert();  //prevent the same period from issuing twice
+
+uint _periodsupply;
+
+// era 2 (after 21 000 000 ETI has been reached)
+if(supply >= 21000000 * 10**(decimals)){
+ uint _rate = inflationrate / 10**(33);
+ _periodsupply = supply * _rate;
+}
+// era 1 (before 21 000 000 ETI has been reached)
+else {
+  _periodsupply = periodrewardtemp;
+}
+
+supply = supply + _periodsupply;
+balances[address(this)] = balances[address(this)].add(_periodsupply);
+PeriodsIssued[period.id] = _periodsupply;
+PeriodsIssuedCounter = PeriodsIssuedCounter + 1;
+
+return true;
+
+}
+
+
+
+
+
+
+// -------------  Reward system functions ---------------- //
+
 
 // ------- STAKING ---------- //
 // Stake etica in exchange for bosom

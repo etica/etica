@@ -437,7 +437,8 @@ function () payable external {
 
 
 contract EticaRelease is EticaToken {
-
+uint TESTING_STARTING_BLOCK_NUMBER = 7739267; // used only for testing as ganache starts at block number 0
+uint REWARD_INTERVAL = 42000; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
 uint STAKING_DURATION = 168000; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 uint ETICA_TO_BOSOM_RATIO = 1; //
 
@@ -456,7 +457,7 @@ struct Period{
       uint endBlock;
   }
 
-mapping(uint => Period) periods;
+mapping(uint => Period) public periods;
 uint public periodsCounter;
 mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have already issued ETI
 uint public PeriodsIssuedCounter;
@@ -467,6 +468,7 @@ mapping(address => Stake[]) public stakes;
 // The function will take a completion_time as parameter and will loop trough 50 indexes and will put all stakes with
 // lower completion_time into a  single new stake with parameter completion_time
 
+event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
 
@@ -485,7 +487,7 @@ function issue(uint _id) internal returns (bool success) {
   Period storage period = periods[_id];
 
   // we check that the period is legit and has been retrieved
-  require(period.id != 0X0);
+  require(period.id != 0);
 
 
 //only allow one issuance for each period
@@ -496,7 +498,7 @@ uint _periodsupply;
 
 // era 2 (after 21 000 000 ETI has been reached)
 if(supply >= 21000000 * 10**(decimals)){
- uint _rate = inflationrate / 10**(33);
+ uint _rate = uint(inflationrate / 10**(33));
  _periodsupply = supply * _rate;
 }
 // era 1 (before 21 000 000 ETI has been reached)
@@ -509,11 +511,35 @@ balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
 PeriodsIssuedCounter = PeriodsIssuedCounter + 1;
 
+emit IssuedPeriod(periodsCounter, _periodsupply);
+
 return true;
 
 }
 
+// --- WARNING this function should be internal
+// let public for testing only
+// create a period
+function newPeriod() public {
 
+  uint _interval = uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
+
+  periodsCounter++;
+
+  // store this interval period
+  periods[periodsCounter] = Period(
+    periodsCounter,
+    _interval,
+    0x0, //_curation_sum
+    0x0, //_editor_sum
+    0x0 //_total_voters; // TOTAL nb of voters in this period
+  );
+
+  // issue ETI for this Period Reward
+  issue(periodsCounter);
+
+  emit CreatedPeriod(periodsCounter, _interval);
+}
 
 
 
@@ -532,7 +558,6 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
   // Get bosoms and add Stake
   bosomget(_staker, _amount);
 
-  emit NewStake(_staker, _amount);
 
   return true;
 
@@ -560,6 +585,8 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     currentStake.endBlock = block.number + STAKING_DURATION;
 
     stakes[_staker].push(currentStake);
+
+    emit NewStake(_staker, _amount);
 
     return true;
 }

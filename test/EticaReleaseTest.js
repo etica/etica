@@ -209,6 +209,32 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
 
     });
 
+    // test Period creation
+      it("can create new Period :", async function () {
+        console.log('Asserting Period Creation is operational');
+        let supply_before = await EticaReleaseInstance.totalSupply();
+        let contractbalancebefore = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
+        console.log('SUPPLY ETI before Period creation:', web3.utils.fromWei(supply_before, "ether" ));
+        console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
+        let first_period = await EticaReleaseInstance.periods(1);
+        let periodsCounter = await EticaReleaseInstance.periodsCounter();
+    console.log('(should be empty) FIRST PERIOD IS:', first_period);
+      console.log('NUMBER OF PERIODS IS:', periodsCounter);
+       // try create new period:
+          return EticaReleaseInstance.newPeriod().then(async function(receipt){
+            let supply_after = await EticaReleaseInstance.totalSupply();
+            let contractbalanceafter = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
+            console.log('SUPPLY ETI after Period creation:', web3.utils.fromWei(supply_after, "ether" ));
+            console.log('CONTRACT ETI balance after Period creation:', web3.utils.fromWei(contractbalanceafter, "ether" ));
+            let first_period = await EticaReleaseInstance.periods(1);
+            let periodsCounter = await EticaReleaseInstance.periodsCounter();
+        console.log('THE FIRST PERIOD IS:', first_period);
+        console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
+          console.log('NUMBER OF PERIODS IS:', periodsCounter);
+        })
+
+      });
+
 
   async function printBalances(accounts) {
     // accounts.forEach(function(ac, i) {

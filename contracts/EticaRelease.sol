@@ -519,7 +519,7 @@ return true;
 
 }
 
-// --- WARNING this function should be internal
+// --- WARNING this function should be internal, will be called by propose proposal function
 // let public for testing only
 // create a period
 function newPeriod() public {
@@ -603,6 +603,46 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 }
 
 // ----  Get bosoms and add Stake ------  //
+
+
+// ----  Redeem a Stake ------  //
+
+function stakeclmid(address claimant, uint stakeidx) {
+  require(msg.sender == claimant);
+  require(stakeidx >= 0);
+
+  Stake storage _stake = stakes[claimant][stakeidx];
+
+  // See if the stake is over
+  require(block.number > _stake.endBlock);
+
+  require(_stake.amount > 0);
+
+  // transfer back ETI from contract to staker:
+  balances[address(this)] = balances[address(this)].sub(_stake.amount);
+
+  balances[msg.sender] = balances[msg.sender].add(_stake.amount);
+
+  emit Transfer(address(this), msg.sender, _stake.amount);
+
+  // deletes the stake
+  _deletestake(msg.sender, stakeidx);
+
+}
+
+function _deletestake(address _staker,uint index) internal {
+  Stake[] storage array = stakes[_staker];
+  require(index < array.length);
+  array[index] = array[array.length-1];
+  delete array[array.length-1];
+  array.length--;
+}
+// ----  Redeem a Stake ------  //
+
+
+
+
+
 // ------- STAKING ---------- //
 
 // get boms balance of user:

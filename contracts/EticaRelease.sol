@@ -461,6 +461,8 @@ mapping(uint => Period) public periods;
 uint public periodsCounter;
 mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have already issued ETI
 uint public PeriodsIssuedCounter;
+mapping(uint => uint) public IntervalsPeriods; // keeps track of which intervals have already a period
+uint public IntervalsPeriodsCounter;
 mapping(address => uint) public bosoms;
 mapping(address => Stake[]) public stakes;
 // stakes ----> slashing function will need to loop trough stakes. Can create issues for claiming votes:
@@ -524,6 +526,11 @@ function newPeriod() public {
 
   uint _interval = uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
 
+  //only allow one period for each interval
+  uint rwd = IntervalsPeriods[_interval];
+  if(rwd != 0x0) revert();  //prevent the same interval from having 2 periods
+
+
   periodsCounter++;
 
   // store this interval period
@@ -534,6 +541,10 @@ function newPeriod() public {
     0x0, //_editor_sum
     0x0 //_total_voters; // TOTAL nb of voters in this period
   );
+
+  // an interval cannot have 2 Periods
+  IntervalsPeriods[_interval] = periodsCounter;
+  IntervalsPeriodsCounter++;
 
   // issue ETI for this Period Reward
   issue(periodsCounter);

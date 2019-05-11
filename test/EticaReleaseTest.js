@@ -209,8 +209,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
 
     });
 
-    // test Period creation
-      it("can create new Period :", async function () {
+    // test Period creation and issuance
+      it("can create new Period and issue Period Reward's ETI:", async function () {
         console.log('Asserting Period Creation is operational');
         let supply_before = await EticaReleaseInstance.totalSupply();
         let contractbalancebefore = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
@@ -218,8 +218,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
         console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
         let first_period = await EticaReleaseInstance.periods(1);
         let periodsCounter = await EticaReleaseInstance.periodsCounter();
-    console.log('(should be empty) FIRST PERIOD IS:', first_period);
-      console.log('NUMBER OF PERIODS IS:', periodsCounter);
+       console.log('(should be empty as no period exists yet) FIRST PERIOD IS:', first_period);
+       console.log('(should be 0 as no period exists yet)NUMBER OF PERIODS IS:', periodsCounter);
        // try create new period:
           return EticaReleaseInstance.newPeriod().then(async function(receipt){
             let supply_after = await EticaReleaseInstance.totalSupply();
@@ -230,10 +230,42 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
             let periodsCounter = await EticaReleaseInstance.periodsCounter();
         console.log('THE FIRST PERIOD IS:', first_period);
         console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
-          console.log('NUMBER OF PERIODS IS:', periodsCounter);
+        console.log('NUMBER OF PERIODS IS:', periodsCounter);
+        assert.equal(first_period.id.toNumber(), 1, 'First period should exists');
+        assert.equal(periodsCounter, 1, 'First period should exists');
         })
 
       });
+
+
+      // test Period multiple issuance should fail
+        it("cannot create 2 Periods with same Interval :", async function () {
+          console.log('cannot create 2 Periods with same Interval ');
+          let supply_before = await EticaReleaseInstance.totalSupply();
+          let contractbalancebefore = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
+          console.log('SUPPLY ETI before Period creation:', web3.utils.fromWei(supply_before, "ether" ));
+          console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
+          let first_period = await EticaReleaseInstance.periods(1);
+          let periodsCounter = await EticaReleaseInstance.periodsCounter();
+         console.log('FIRST PERIOD IS:', first_period);
+         console.log('NUMBER OF PERIODS IS:', periodsCounter);
+         // try create new period:
+            return EticaReleaseInstance.newPeriod().then(assert.fail)
+            .catch(async function(error){
+              assert(true);
+              let supply_after = await EticaReleaseInstance.totalSupply();
+              let contractbalanceafter = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
+              console.log('SUPPLY ETI after Period creation:', web3.utils.fromWei(supply_after, "ether" ));
+              console.log('CONTRACT ETI balance after Period creation:', web3.utils.fromWei(contractbalanceafter, "ether" ));
+              let first_period = await EticaReleaseInstance.periods(1);
+              let periodsCounter = await EticaReleaseInstance.periodsCounter();
+          console.log('THE FIRST PERIOD IS:', first_period);
+          console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
+          console.log('NUMBER OF PERIODS IS:', periodsCounter);
+          assert.equal(periodsCounter, 1, 'Only First period should exist, no other period should have been created for same interval');
+            })
+
+        });
 
 
   async function printBalances(accounts) {

@@ -267,6 +267,27 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'test_account should have mi
 
         });
 
+        // test Stake claiming too soon should fail
+          it("cannot claim stake too early :", async function () {
+            console.log('starting test cannot cannot claim stake too early ');
+            let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+            let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 0);
+            console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+            console.log('test_account Stake before:', test_accountstakebefore);
+           // try create new period:
+              return EticaReleaseInstance.stakeclmidx(0, {from: test_account.address}).then(assert.fail)
+              .catch(async function(error){
+                assert(true);
+                let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+                let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,0);
+                console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                console.log('test_account Stake after:', test_accountstakeafter);
+                assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "0", 'test_account should not have more Eticas!');
+                console.log('Too early Staking has been tested successfully');
+              });
+
+          });
+
 
   async function printBalances(accounts) {
     // accounts.forEach(function(ac, i) {

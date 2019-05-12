@@ -473,6 +473,7 @@ mapping(address => Stake[]) public stakes;
 event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
+event StakeClaimed(uint stakeidx);
 
 
 
@@ -607,11 +608,10 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 
 // ----  Redeem a Stake ------  //
 
-function stakeclmid(address claimant, uint stakeidx) {
-  require(msg.sender == claimant);
-  require(stakeidx >= 0);
+function stakeclmidx (uint _stakeidx) public {
+  require(_stakeidx >= 0);
 
-  Stake storage _stake = stakes[claimant][stakeidx];
+  Stake storage _stake = stakes[msg.sender][_stakeidx];
 
   // See if the stake is over
   require(block.number > _stake.endBlock);
@@ -624,9 +624,10 @@ function stakeclmid(address claimant, uint stakeidx) {
   balances[msg.sender] = balances[msg.sender].add(_stake.amount);
 
   emit Transfer(address(this), msg.sender, _stake.amount);
+  emit StakeClaimed(_stakeidx);
 
   // deletes the stake
-  _deletestake(msg.sender, stakeidx);
+  _deletestake(msg.sender, _stakeidx);
 
 }
 

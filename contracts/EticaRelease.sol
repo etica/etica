@@ -437,9 +437,17 @@ function () payable external {
 
 
 contract EticaRelease is EticaToken {
+  /* --------- PROD -------------
 uint TESTING_STARTING_BLOCK_NUMBER = 7739267; // used only for testing as ganache starts at block number 0
 uint REWARD_INTERVAL = 42000; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
 uint STAKING_DURATION = 168000; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
+uint ETICA_TO_BOSOM_RATIO = 1; //
+     --------- PROD ------------- */
+
+
+uint TESTING_STARTING_BLOCK_NUMBER = 7739267; // used only for testing as ganache starts at block number 0
+uint REWARD_INTERVAL = 42; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
+uint STAKING_DURATION = 168; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 uint ETICA_TO_BOSOM_RATIO = 1; //
 
 

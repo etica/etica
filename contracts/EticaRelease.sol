@@ -636,21 +636,31 @@ function stakeclmidx (uint _stakeidx) public {
 
   // deletes the stake
   _deletestake(msg.sender, _stakeidx);
+  //stakes[msg.sender].length = 0x0;
 
 }
 
-function _deletestake(address _staker,uint index) internal {
-  Stake[] storage array = stakes[_staker];
-  require(index < array.length);
-  array[index] = array[array.length-1];
-  delete array[array.length-1];
-  array.length--;
+function _deletestake(address _staker,uint _index) internal {
+  require(_index < stakes[_staker].length);
+  stakes[_staker][_index] = stakes[_staker][stakes[_staker].length-1];
+  delete stakes[_staker][stakes[_staker].length-1];
+  //stakes[_staker].length = 0;
 }
 // ----  Redeem a Stake ------  //
 
 
+function stakeslength(address _staker) public view returns (uint slength){
+  return stakes[_staker].length;
+}
 
+function frontdeletestake(address _staker,uint _stakeidx) public {
+  // _deletestakebis(_staker, _stakeidx);
+  stakes[_staker].length = 1;
+}
 
+function _deletestakebis(address _staker,uint _index) internal {
+  stakes[_staker].length = 2;
+}
 
 // ------- STAKING ---------- //
 

@@ -472,7 +472,8 @@ uint public PeriodsIssuedCounter;
 mapping(uint => uint) public IntervalsPeriods; // keeps track of which intervals have already a period
 uint public IntervalsPeriodsCounter;
 mapping(address => uint) public bosoms;
-mapping(address => Stake[]) public stakes;
+mapping(address => mapping(uint => Stake)) public stakes;
+mapping(address => uint) public stakesCounters; // keeps track of how many stakes for each user
 // stakes ----> slashing function will need to loop trough stakes. Can create issues for claiming votes:
 // will create a function to gather stakes when user has to much stakes.
 // The function will take a completion_time as parameter and will loop trough 50 indexes and will put all stakes with
@@ -481,7 +482,7 @@ mapping(address => Stake[]) public stakes;
 event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
-event StakeClaimed(uint stakeidx);
+event StakeClaimed(address indexed staker, uint stakeidx);
 
 
 
@@ -597,14 +598,20 @@ bosoms[_staker] = bosoms[_staker].add(newBosoms);
 
 }
 
+
 function addStake(address _staker, uint _amount) internal returns (bool success) {
-    Stake memory currentStake;
 
-    currentStake.amount = _amount;
-    currentStake.startBlock = block.number;
-    currentStake.endBlock = block.number + STAKING_DURATION;
+    require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
+    stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
-    stakes[_staker].push(currentStake);
+    uint endBlock = block.number + STAKING_DURATION;
+
+    // store this stake in _staker's stakes with the index stakesCounters[_staker]
+    stakes[_staker][stakesCounters[_staker]] = Stake(
+      _amount, // stake amount
+      block.number, // StartBlock
+      endBlock // EndBlock
+    );
 
     emit NewStake(_staker, _amount);
 
@@ -617,11 +624,14 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 // ----  Redeem a Stake ------  //
 
 function stakeclmidx (uint _stakeidx) public {
-  require(_stakeidx >= 0);
 
+  // we check that the stake exists
+  require(_stakeidx > 0 && _stakeidx <= stakesCounters[msg.sender]);
+
+  // we retrieve the stake
   Stake storage _stake = stakes[msg.sender][_stakeidx];
 
-  // See if the stake is over
+  // The stake must be over
   require(block.number > _stake.endBlock);
 
   require(_stake.amount > 0);
@@ -632,34 +642,36 @@ function stakeclmidx (uint _stakeidx) public {
   balances[msg.sender] = balances[msg.sender].add(_stake.amount);
 
   emit Transfer(address(this), msg.sender, _stake.amount);
-  emit StakeClaimed(_stakeidx);
+  emit StakeClaimed(msg.sender, _stakeidx);
 
   // deletes the stake
   _deletestake(msg.sender, _stakeidx);
-  //stakes[msg.sender].length = 0x0;
 
 }
 
 function _deletestake(address _staker,uint _index) internal {
-  require(_index < stakes[_staker].length);
-  stakes[_staker][_index] = stakes[_staker][stakes[_staker].length-1];
-  delete stakes[_staker][stakes[_staker].length-1];
-  //stakes[_staker].length = 0;
+  // we check that the stake exists
+  require(_index > 0 && _index <= stakesCounters[_staker]);
+
+  // replace value of stake to be deleted by value of last stake
+  stakes[_staker][_index] = stakes[_staker][stakesCounters[_staker]];
+
+  // remove last stake
+  stakes[_staker][stakesCounters[_staker]] = Stake(
+    0x0, // amount
+    0x0, // StartBlock
+    0x0 // EndBlock
+    );
+
+  // updates stakesCounter of _staker
+  stakesCounters[_staker] = stakesCounters[_staker] - 1;
 }
+
 // ----  Redeem a Stake ------  //
 
 
-function stakeslength(address _staker) public view returns (uint slength){
-  return stakes[_staker].length;
-}
-
-function frontdeletestake(address _staker,uint _stakeidx) public {
-  // _deletestakebis(_staker, _stakeidx);
-  stakes[_staker].length = 1;
-}
-
-function _deletestakebis(address _staker,uint _index) internal {
-  stakes[_staker].length = 2;
+function stakescount(address _staker) public view returns (uint slength){
+  return stakesCounters[_staker];
 }
 
 // ------- STAKING ---------- //

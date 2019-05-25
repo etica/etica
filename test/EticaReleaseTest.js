@@ -145,19 +145,19 @@ contract('EticaRelease', function(accounts){
   it("can get stakes length", async function () {
     return EticaRelease.deployed().then(function(instance){
       EticaReleaseInstance = instance;
-      return EticaReleaseInstance.stakeslength(test_account.address);
+      return EticaReleaseInstance.stakescount(test_account.address);
     }).then(async function(response){
-      console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-      console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-      console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-      console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-    console.log('STAKES LENGTH IS', response);
-    let stakesl = await EticaReleaseInstance.stakeslength(test_account.address);
+      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    console.log('test_acount NUMBER OF STAKES IS', response);
+    let stakesl = await EticaReleaseInstance.stakescount(test_account.address);
     console.log('RESPONSE IS::::', stakesl);
-    console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-    console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-    console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-    console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
+    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
     })
 
 
@@ -298,19 +298,19 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
       it("can get stakes length", async function () {
         return EticaRelease.deployed().then(function(instance){
           EticaReleaseInstance = instance;
-          return EticaReleaseInstance.stakeslength(test_account.address);
+          return EticaReleaseInstance.stakescount(test_account.address);
         }).then(async function(response){
-          console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-          console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-          console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-          console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-        console.log('STAKES LENGTH IS', response);
-        let stakesl = await EticaReleaseInstance.stakeslength(test_account.address);
+          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        console.log('test_acount NUMBER OF STAKES IS', response);
+        let stakesl = await EticaReleaseInstance.stakescount(test_account.address);
         console.log('RESPONSE IS::::', stakesl);
-        console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-        console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-        console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
-        console.log('!!!!!!!!!! STAKES LENGTH !!!!!!!!!!!!!');
+        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
         })
 
 
@@ -358,17 +358,17 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             console.log('------------------------------- Starting test ---------------------------');
             console.log('.......................... Cannot CLAIM STAKE TOO EARLY ? ..................... ');
             let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
-            let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 0);
+            let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
             console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
             console.log('test_account Stake before:', test_accountstakebefore);
             console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
            // try create new period:
-              return EticaReleaseInstance.stakeclmidx(0, {from: test_account.address}).then(assert.fail)
+              return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
                 let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
-                let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,0);
+                let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
                 console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
                 console.log('test_account Stake after:', test_accountstakeafter);
                 assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "0", 'test_account should not have more Eticas!');
@@ -383,7 +383,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('------------------------------- Starting test ---------------------------');
               console.log('.......................... Cannot CLAIM STAKE TOO EARLY 2 (just before stake end) ?  ..................... ');
               let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
-              let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 0);
+              let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
               console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
               console.log('test_account Stake before:', test_accountstakebefore);
               console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
@@ -403,11 +403,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('------------- BLOCKS ADVANCED --------------');
 
              // try create new period:
-                return EticaReleaseInstance.stakeclmidx(0, {from: test_account.address}).then(assert.fail)
+                return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(assert.fail)
                 .catch(async function(error){
                   assert(true);
                   let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
-                  let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,0);
+                  let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
                   console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
                   console.log('test_account Stake after:', test_accountstakeafter);
                   assert.equal(web3.utils.fromWei(test_accountbalanceafter, "ether" ) - web3.utils.fromWei(test_accountbalancebefore, "ether" ), "0", 'test_account should not have more Eticas!');
@@ -423,7 +423,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('------------------------------- Starting test ---------------------------');
               console.log('.......................... Can claim STAKE after THE STAKE END ? ..................... ');
               let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
-              let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 0);
+              let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
               console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
               console.log('test_account Stake before:', test_accountstakebefore);
               console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
@@ -439,10 +439,10 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('------------- BLOCKS ADVANCED --------------');
 
              // try create to claim a stake after it has ended:
-                return EticaReleaseInstance.stakeclmidx(0, {from: test_account.address}).then(async function(resp){
+                return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(async function(resp){
                   assert(true);
                   let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
-                  let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,0);
+                  let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
                   let stakenoldbalance = web3.utils.toBN(test_accountbalancebefore).add(web3.utils.toBN(test_accountstakebefore.amount)).toString();
                   console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
                   console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
@@ -460,19 +460,19 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             it("can get stakes length", async function () {
               return EticaRelease.deployed().then(function(instance){
                 EticaReleaseInstance = instance;
-                return EticaReleaseInstance.stakeslength(test_account.address);
+                return EticaReleaseInstance.stakescount(test_account.address);
               }).then(async function(response){
-                console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-                console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-                console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-                console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('STAKES LENGTH IS', response);
-              let stakesl = await EticaReleaseInstance.stakeslength(test_account.address);
+                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              console.log('test_acount NUMBER OF STAKES IS', response);
+              let stakesl = await EticaReleaseInstance.stakescount(test_account.address);
               console.log('RESPONSE IS::::', stakesl);
-              console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('!!!!!!!!!! STAKES LENGTH AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
               })
 
 

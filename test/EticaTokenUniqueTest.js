@@ -1,7 +1,7 @@
-var EticaToken = artifacts.require("./EticaToken.sol");
+var EticaTokenUniqueTest = artifacts.require("./EticaTokenUniqueTest.sol");
 
 // test suite
-contract('EticaToken', function(accounts){
+contract('EticaTokenUniqueTest', function(accounts){
   var EticaTokenInstance;
   var coinbaseuser = accounts[0];
   var eptestusersa = accounts[1];
@@ -30,7 +30,7 @@ contract('EticaToken', function(accounts){
 
 
   it("supply must equal initial supply 100 ETI", function() {
-    return EticaToken.deployed().then(function(instance){
+    return EticaTokenUniqueTest.deployed().then(function(instance){
       EticaTokenInstance = instance;
       return EticaTokenInstance.totalSupply();
     }).then(function(receipt){
@@ -41,7 +41,7 @@ contract('EticaToken', function(accounts){
   });
 
   it("contract balance must equal  to 100 ETI", function() {
-    return EticaToken.deployed().then(function(instance){
+    return EticaTokenUniqueTest.deployed().then(function(instance){
       EticaTokenInstance = instance;
       return EticaTokenInstance.balanceOf(EticaTokenInstance.address);
     }).then(function(contractbalance){
@@ -54,7 +54,7 @@ contract('EticaToken', function(accounts){
   // NO PREMINE! NO FOUNDER TOKEN ISSUANCE! ETICA WILL BE FULLY DECENTRALISED
     it("all balances must be at 0 ETI", function() {
       for (i = 0; i < 10; i++) {
-      return EticaToken.deployed().then(function(instance){
+      return EticaTokenUniqueTest.deployed().then(function(instance){
         EticaTokenInstance = instance;
         return EticaTokenInstance.balanceOf(accounts[i]);
       }).then(function(receipt){

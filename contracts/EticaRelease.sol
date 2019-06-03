@@ -496,7 +496,7 @@ struct Period{
   }
 
   struct Disease{
-      uint id;
+      bytes32 uniquehash;
       string name;
       string description;
   }
@@ -507,6 +507,14 @@ mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have
 uint public PeriodsIssuedCounter;
 mapping(uint => uint) public IntervalsPeriods; // keeps track of which intervals have already a period
 uint public IntervalsPeriodsCounter;
+
+
+mapping(uint => Disease) public diseases; // keeps track of which intervals have already a period
+uint public DiseasesCounter;
+mapping(bytes32 => uint) public diseasesbyIds; // example:    [leiojej757575ero] => [0]  where leiojej757575ero is id of a Disease
+mapping(string => bytes32) private diseasesbyNames; // example:    ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is id of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
+
+
 mapping(address => uint) public bosoms;
 mapping(address => mapping(uint => Stake)) public stakes;
 mapping(address => uint) public stakesCounters; // keeps track of how many stakes for each user
@@ -519,6 +527,7 @@ event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
+event NewDisease(uint diseaseindex, string title, string description);
 
 
 
@@ -711,6 +720,34 @@ function stakescount(address _staker) public view returns (uint slength){
 }
 
 // ------- STAKING ---------- //
+
+
+
+
+
+function createdisease(string memory _name, string memory _description) public {
+
+  bytes32 _diseasehash = sha256(abi.encodePacked(_name));
+
+  DiseasesCounter = DiseasesCounter + 1; // notice that first disease will have the index of 1 thus not 0 !
+
+  //check: if the disease is new we continue, otherwise we exit
+   if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will nott have index of 0 thus should pass this check
+
+
+   // store this stake in _staker's stakes with the index stakesCounters[_staker]
+   diseases[DiseasesCounter] = Disease(
+     _diseasehash,
+     _name,
+     _description
+   );
+
+   emit NewDisease(DiseasesCounter, _name, _description);
+
+}
+
+
+
 
 // get boms balance of user:
 function bosomsOf(address tokenOwner) public view returns (uint _bosoms){

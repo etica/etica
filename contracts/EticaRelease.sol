@@ -495,6 +495,12 @@ struct Period{
       string freefield; // used by front end apps and communities to fit their needs and process
   }
 
+  struct Disease{
+      uint id;
+      string name;
+      string description;
+  }
+
 mapping(uint => Period) public periods;
 uint public periodsCounter;
 mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have already issued ETI

@@ -465,6 +465,36 @@ struct Period{
       uint endBlock;
   }
 
+
+// Stuct used only inside Proposals as Proposals' s Targets.
+// The software has no independent Target structs with Target ids and details ...
+  struct Target{
+      string name;
+      string kind; // Example: GPCR, Enzyme, Protein Activity ...
+      uint status; // Example: Exploration, Validation, Fully Validated, Null ...
+      string freefield; // used by front end apps and communities to fit their needs and process
+  }
+
+  // Stuct used only inside Proposals as Proposals' s Compounds.
+  // The software has no independent Compounds structs with Compounds ids and details ...
+    struct Compound{
+        string name;
+        string kind; // Example: Small Organic Molecules, Large Protein Molecules ...
+        uint result; // Example: Failure, Success, Undertermined, Null ...
+        string freefield; // used by front end apps and communities to fit their needs and process
+    }
+
+  struct Proposal{
+      uint id;
+      uint disease_id;
+      string ipfshash;
+      string name;
+      string summary;
+      Target[] targets;
+      Compound[] compounds;
+      string freefield; // used by front end apps and communities to fit their needs and process
+  }
+
 mapping(uint => Period) public periods;
 uint public periodsCounter;
 mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have already issued ETI

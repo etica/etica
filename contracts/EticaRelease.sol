@@ -496,7 +496,7 @@ struct Period{
   }
 
   struct Disease{
-      bytes32 uniquehash;
+      bytes32 diseasehash;
       string name;
       string description;
   }
@@ -510,7 +510,7 @@ uint public IntervalsPeriodsCounter;
 
 
 mapping(uint => Disease) public diseases; // keeps track of which intervals have already a period
-uint public DiseasesCounter;
+uint public diseasesCounter;
 mapping(bytes32 => uint) public diseasesbyIds; // example:    [leiojej757575ero] => [0]  where leiojej757575ero is id of a Disease
 mapping(string => bytes32) private diseasesbyNames; // example:    ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is id of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
@@ -729,20 +729,20 @@ function createdisease(string memory _name, string memory _description) public {
 
   bytes32 _diseasehash = sha256(abi.encodePacked(_name));
 
-  DiseasesCounter = DiseasesCounter + 1; // notice that first disease will have the index of 1 thus not 0 !
+  diseasesCounter = diseasesCounter + 1; // notice that first disease will have the index of 1 thus not 0 !
 
   //check: if the disease is new we continue, otherwise we exit
    if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will nott have index of 0 thus should pass this check
 
 
    // store this stake in _staker's stakes with the index stakesCounters[_staker]
-   diseases[DiseasesCounter] = Disease(
+   diseases[diseasesCounter] = Disease(
      _diseasehash,
      _name,
      _description
    );
 
-   emit NewDisease(DiseasesCounter, _name, _description);
+   emit NewDisease(diseasesCounter, _name, _description);
 
 }
 

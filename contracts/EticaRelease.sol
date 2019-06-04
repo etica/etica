@@ -489,9 +489,30 @@ struct Period{
   struct Proposal{
       uint id;
       uint disease_id;
-      string ipfshash;
-      string name;
-      string summary;
+      uint period_id;
+      string proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
+
+      // IPFS hashes of the files:
+      string raw_release_hash; // IPFS hash of the files of the proposal
+      string old_release_hash; // raw IPFS hash of the old version
+      string grandparent_hash; // raw IPFS hash of the grandparent
+      address proposer; // account address of the proposer
+      string title; // Title of the Proposal
+      string description; // Description of the Proposal
+      uint starttime; // epoch time of the proposal
+      uint endtime;  // voting limite
+      uint finalized_time; // when first voteclm() was called
+      uint status; // will be initialized with value ProposalStatus.Pending
+      bool istie;  // will be initialized with value 0. if prop is tie it won't slash nor reward participants
+
+      uint prestatus; // will be initialzed with value ProposalStatus.Pending
+      uint nbvoters;
+      uint slashingratio; // will be initialized with value 0. solidity does not support float type. So will emulate float type by using uint
+      uint forvotes;
+      uint againstvotes;
+      uint lastcuration_weight; // will be initialized with value 0.
+      uint lasteditor_weight; // will be initialized with value 0.
+
       Target[] targets;
       Compound[] compounds;
       string freefield; // used by front end apps and communities to fit their needs and process
@@ -502,6 +523,9 @@ struct Period{
       string name;
       string description;
   }
+
+
+enum ProposalStatus { Rejected, Accepted, Pending, Singlevoter }
 
 mapping(uint => Period) public periods;
 uint public periodsCounter;

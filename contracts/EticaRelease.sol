@@ -498,7 +498,7 @@ struct Period{
   }
 
   struct Disease{
-      bytes32 diseasehash;
+      bytes32 disease_hash;
       string name;
       string description;
   }
@@ -759,6 +759,28 @@ function createdisease(string memory _name, string memory _description) public {
 
 }
 
+
+
+function propose(string memory _title, string memory _description, bytes32 _diseasehash, string memory _ipfshash, string memory raw_release_hash, string memory old_release_hash, string memory grandparent_hash) public {
+
+  //check if the disease exits
+   require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
+   if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+
+
+  // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  // make sure the user has enough ETI to create a disease
+  require(balances[msg.sender] >= DISEASE_CREATION_AMOUNT);
+  // transfer DISEASE_CREATION_AMOUNT ETI from user wallet to contract wallet:
+  transfer(address(this), DISEASE_CREATION_AMOUNT);
+
+  // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+
+   // emit NewProposal(_diseasehash, _title, _description);
+
+}
 
 
 

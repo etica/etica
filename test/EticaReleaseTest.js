@@ -542,6 +542,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toWei('100', 'ether'), {from: miner_account.address}).then(async function(response){
 
               let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
+              let test_accountbalance_before_createdisease = await EticaReleaseInstance.balanceOf(test_account.address);
               console.log('miner account balance after is', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
 
             let first_disease = await EticaReleaseInstance.diseases(1);
@@ -549,16 +550,25 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
            console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
            console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
            console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+           console.log('test_account balance before Disease Creation is', web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ));
            // try create new disease:
               return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !", {from: test_account.address}).then(async function(receipt){
                 let first_disease = await EticaReleaseInstance.diseases(1);
                 let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
+                let test_accountbalance_after_createdisease = await EticaReleaseInstance.balanceOf(test_account.address);
             console.log('THE FIRST DISEASE IS:', first_disease);
             console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
             console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
             console.log('NUMBER OF DISEASES IS:', diseasesCounter);
-            assert.equal(first_disease.diseasehash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists');
+            console.log('test_account balance after Disease Creation is', web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ));
+            assert.equal(first_disease.disease_hash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists');
             assert.equal(diseasesCounter, 1, 'First disease should exists');
+
+            // test_account should have paid 100 ETI to contract
+               // test_account should have 100 ETI less
+            assert.equal(web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ) - web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ), 100);
+
+
             console.log('................................  CAN CREATE A DISEASE  ....................... ');
             console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
             })

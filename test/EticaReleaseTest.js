@@ -174,7 +174,7 @@ contract('EticaRelease', function(accounts){
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-// wait long enough so that test_account has mined a block and thus has ETI available
+// wait long enough so that miner_account has mined a block and thus has ETI available
 await timeout(30000);
 return EticaRelease.deployed().then(function(instance){
   EticaReleaseInstance = instance;
@@ -483,29 +483,89 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
 
 
+
+
+            // test Disease creation without enough ETI should fail
+              it("cannot create a new disease if account has not enough ETI:", async function () {
+                console.log('------------------------------- Starting test ---------------------------');
+                console.log('.......................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS ENOUGH ETI ?  ..................... ');
+                let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+                let first_disease = await EticaReleaseInstance.diseases(1);
+                let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
+                console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+                console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+                assert.equal(diseasesCounter, "0", 'THERE SHOULD NOT BE ANY DISEASE YET');
+
+
+               // try create new disease:
+                  return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !").then(assert.fail)
+                  .catch(async function(error){
+                    assert(true);
+                    let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+                    let first_disease = await EticaReleaseInstance.diseases(1);
+                    let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
+                    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                    console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+                    console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+                    assert.equal(diseasesCounter, "0", 'THERE SHOULD NOT BE ANY DISEASE YET');
+                    console.log('........................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS ENOUGH ETI ....................... ');
+                    console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+                  });
+
+              });
+
+
+
             // test Diseases creation
               it("can create new Disease", async function () {
                 console.log('------------------------------------ Starting test ---------------------------');
                 console.log('................................  CAN CREATE A DISEASE ? .......................');
+                let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                console.log('miner account balance before is', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                let diseasesCreationAmount = await EticaReleaseInstance.DISEASE_CREATION_AMOUNT();
+                console.log('DISEASES CREATION AMOUNT IS:', diseasesCreationAmount);
+
+
+                console.log('------------------------------------- WAITING FOR MINER_ACCOUNT TO MINE MORE ETI ---------------------------');
+                function timeout(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // wait long enough so that miner_account has mined enough blocks and thus has enough ETI available (more than DISEASE_CREATION_AMOUNT)
+            await timeout(60000);
+
+            let miner_balance = await EticaReleaseInstance.balanceOf(miner_account.address);
+            console.log('asserting miner_account balance(', web3.utils.fromWei(miner_balance, "ether" ),'ETI) is greater than DISEASE_CREATION_AMOUNT');
+            assert(web3.utils.fromWei(miner_balance, "ether" ) > 100, 'miner_account should have mined more than 100 ETI after 60000 ms!');
+
+            return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toWei('100', 'ether'), {from: miner_account.address}).then(async function(response){
+
+              let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
+              console.log('miner account balance after is', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
+
+            let first_disease = await EticaReleaseInstance.diseases(1);
+            let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
+           console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+           console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+           console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+           // try create new disease:
+              return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !", {from: test_account.address}).then(async function(receipt){
                 let first_disease = await EticaReleaseInstance.diseases(1);
                 let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
-               console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
-               console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
-               console.log('NUMBER OF DISEASES IS:', diseasesCounter);
-               // try create new disease:
-                  return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !").then(async function(receipt){
-                    let first_disease = await EticaReleaseInstance.diseases(1);
-                    let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
-                console.log('THE FIRST DISEASE IS:', first_disease);
-                console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
-                console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
-                console.log('NUMBER OF DISEASES IS:', diseasesCounter);
-                assert.equal(first_disease.diseasehash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists');
-                assert.equal(diseasesCounter, 1, 'First disease should exists');
-                console.log('................................  CAN CREATE A DISEASE  ....................... ');
-                console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
-                })
-              });
+            console.log('THE FIRST DISEASE IS:', first_disease);
+            console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
+            console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
+            console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+            assert.equal(first_disease.diseasehash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists');
+            assert.equal(diseasesCounter, 1, 'First disease should exists');
+            console.log('................................  CAN CREATE A DISEASE  ....................... ');
+            console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+            })
+
+            })
+
+                });
 
 
   async function printBalances(accounts) {

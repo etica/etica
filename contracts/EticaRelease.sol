@@ -450,6 +450,8 @@ uint REWARD_INTERVAL = 42; // periods duration (in number of blocks) 42000 block
 uint STAKING_DURATION = 168; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 uint ETICA_TO_BOSOM_RATIO = 1; //
 
+uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
+
 
 struct Period{
     uint id;
@@ -726,6 +728,17 @@ function stakescount(address _staker) public view returns (uint slength){
 
 
 function createdisease(string memory _name, string memory _description) public {
+
+
+  // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  // make sure the user has enough ETI to create a disease
+  require(balances[msg.sender] >= DISEASE_CREATION_AMOUNT);
+  // transfer DISEASE_CREATION_AMOUNT ETI from user wallet to contract wallet:
+  transfer(address(this), DISEASE_CREATION_AMOUNT);
+
+  // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
 
   bytes32 _diseasehash = sha256(abi.encodePacked(_name));
 

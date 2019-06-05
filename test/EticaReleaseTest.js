@@ -563,8 +563,19 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
             console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
             console.log('NUMBER OF DISEASES IS:', diseasesCounter);
-            assert.equal(first_disease.disease_hash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists');
-            assert.equal(diseasesCounter, 1, 'First disease should exists');
+
+            // check diseases mapping insertion:
+            assert.equal(first_disease.disease_hash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists with right diseasehash');
+            assert.equal(first_disease.name, 'Malaria', 'First disease should exists with right name');
+            assert.equal(first_disease.description, 'Malaria is a disease that kills millions of people each year !', 'First disease should exists with right description');
+            assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this point');
+
+            // check diseasesbyIds and diseasesbyNames mappings insertion:
+            let indexfromhash = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+            let hashfromname = await EticaReleaseInstance.getdiseasehashbyName('Malaria');
+
+            assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
+            assert.equal(hashfromname, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
 
             // test_account should have paid 100 ETI to contract
                // test_account should have 100 ETI less

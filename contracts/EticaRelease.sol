@@ -824,5 +824,9 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
      return bosoms[tokenOwner];
  }
 
+ function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
+     return diseasesbyNames[_name];
+ }
+
 
 }

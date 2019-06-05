@@ -451,6 +451,7 @@ uint STAKING_DURATION = 168; // default stake duration (in number of blocks) 168
 uint ETICA_TO_BOSOM_RATIO = 1; //
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
+uint public PROPOSAL_CREATION_AMOUNT = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
 struct Period{
@@ -554,6 +555,8 @@ event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
+
+event DebugProposal(bytes32 disease_hash,string raw_release_hash, uint diseasesIndex, bytes32 structhash);
 
 
 
@@ -779,27 +782,35 @@ function createdisease(string memory _name, string memory _description) public {
      _description
    );
 
+   // Updates diseasesbyIds and diseasesbyNames mappings:
+   diseasesbyIds[_diseasehash] = diseasesCounter;
+   diseasesbyNames[_name] = _diseasehash;
+
    emit NewDisease(diseasesCounter, _name, _description);
 
 }
 
 
 
-function propose(string memory _title, string memory _description, bytes32 _diseasehash, string memory _ipfshash, string memory raw_release_hash, string memory old_release_hash, string memory grandparent_hash) public {
+function propose(string memory _title, string memory _description, bytes32 _diseasehash, string memory raw_release_hash,
+  string memory old_release_hash, string memory grandparent_hash) public {
 
+  emit DebugProposal(_diseasehash, raw_release_hash, diseasesbyIds[_diseasehash], diseases[diseasesbyIds[_diseasehash]].disease_hash );
   //check if the disease exits
    require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
-   if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+  // if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
 
-  // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
   // make sure the user has enough ETI to create a disease
-  require(balances[msg.sender] >= DISEASE_CREATION_AMOUNT);
-  // transfer DISEASE_CREATION_AMOUNT ETI from user wallet to contract wallet:
-  transfer(address(this), DISEASE_CREATION_AMOUNT);
+  require(balances[msg.sender] >= PROPOSAL_CREATION_AMOUNT);
 
-  // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  // Place the default vote
+  // votebyhash( msg.sender, concate_me, true, PROPOSAL_CREATION_AMOUNT );
+
+  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
    // emit NewProposal(_diseasehash, _title, _description);

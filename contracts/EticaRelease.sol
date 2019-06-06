@@ -468,6 +468,8 @@ struct Period{
       uint endBlock;
   }
 
+  // -----------  PROPOSALS  ------------  //
+
 
 // Stuct used only inside Proposals as Proposals' s Targets.
 // The software has no independent Target structs with Target ids and details ...
@@ -487,37 +489,55 @@ struct Period{
         string freefield; // used by front end apps and communities to fit their needs and process
     }
 
+
+// general information of Proposal:
   struct Proposal{
       uint id;
-      uint disease_id;
+      bytes32 proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
+      bytes32 disease_id;
       uint period_id;
-      string proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
-
-      // IPFS hashes of the files:
-      string raw_release_hash; // IPFS hash of the files of the proposal
-      string old_release_hash; // raw IPFS hash of the old version
-      string grandparent_hash; // raw IPFS hash of the grandparent
       address proposer; // account address of the proposer
       string title; // Title of the Proposal
       string description; // Description of the Proposal
+  }
+
+// main data of Proposal:
+  struct ProposalData{
+
       uint starttime; // epoch time of the proposal
       uint endtime;  // voting limite
       uint finalized_time; // when first voteclm() was called
-      uint status; // will be initialized with value ProposalStatus.Pending
+      ProposalStatus status; // will be initialized with value ProposalStatus.Pending
+      ProposalStatus prestatus; // will be initialzed with value ProposalStatus.Pending
       bool istie;  // will be initialized with value 0. if prop is tie it won't slash nor reward participants
-
-      uint prestatus; // will be initialzed with value ProposalStatus.Pending
       uint nbvoters;
       uint slashingratio; // will be initialized with value 0. solidity does not support float type. So will emulate float type by using uint
       uint forvotes;
       uint againstvotes;
       uint lastcuration_weight; // will be initialized with value 0.
       uint lasteditor_weight; // will be initialized with value 0.
+  }
 
+  struct ProposalIpfs{
+    // IPFS hashes of the files:
+    string raw_release_hash; // IPFS hash of the files of the proposal
+    string old_release_hash; // raw IPFS hash of the old version
+    string grandparent_hash; // raw IPFS hash of the grandparent
+  }
+
+  struct ProposalFreefield{
+    string firstfield;
+    string secondfield;
+    string thirdfield;
+  }
+
+
+  struct ProposalTenor{
       Target[] targets;
       Compound[] compounds;
-      string freefield; // used by front end apps and communities to fit their needs and process
   }
+
+  // -----------  PROPOSALS  ------------  //
 
   struct Disease{
       bytes32 disease_hash;
@@ -541,6 +561,15 @@ uint public diseasesCounter;
 mapping(bytes32 => uint) public diseasesbyIds; // example:    [leiojej757575ero] => [0]  where leiojej757575ero is id of a Disease
 mapping(string => bytes32) private diseasesbyNames; // example:    ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is id of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
+// -----------  PROPOSALS  ------------  //
+mapping(bytes32 => Proposal) public proposals;
+uint public proposalsCounter;
+
+mapping(bytes32 => ProposalData) public propsdatas;
+mapping(bytes32 => ProposalIpfs) public propsipfs;
+mapping(bytes32 => ProposalFreefield) public propsfreefields;
+mapping(bytes32 => ProposalTenor) private propstenors;
+// -----------  PROPOSALS  ------------  //
 
 mapping(address => uint) public bosoms;
 mapping(address => mapping(uint => Stake)) public stakes;
@@ -555,8 +584,6 @@ event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
-
-event DebugProposal(bytes32 disease_hash,string raw_release_hash, uint diseasesIndex, bytes32 structhash);
 
 
 
@@ -795,10 +822,55 @@ function createdisease(string memory _name, string memory _description) public {
 function propose(string memory _title, string memory _description, bytes32 _diseasehash, string memory raw_release_hash,
   string memory old_release_hash, string memory grandparent_hash) public {
 
-  emit DebugProposal(_diseasehash, raw_release_hash, diseasesbyIds[_diseasehash], diseases[diseasesbyIds[_diseasehash]].disease_hash );
-  //check if the disease exits
-   require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
-  // if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+    // make sure the user has enough ETI to create a disease
+    require(balances[msg.sender] >= PROPOSAL_CREATION_AMOUNT);
+
+    //check if the disease exits
+     require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
+     if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+
+
+     bytes32 _proposed_release_hash = sha256(abi.encodePacked(raw_release_hash, _diseasehash));
+
+     proposalsCounter = proposalsCounter + 1; // notice that first proposal will have the index of 1 thus not 0 !
+
+
+     // store this disease in diseases mapping.
+     // ------- Warning ----
+     // Need to  implement check that proposal does not already exitsts
+     Proposal storage proposal = proposals[_proposed_release_hash];
+     // ------- Warning ----
+
+       proposal.id = proposalsCounter;
+       proposal.disease_id = _diseasehash; // _diseasehash has already been checked to equal diseases[diseasesbyIds[_diseasehash]].disease_hash
+       // periodid,
+       proposal.proposed_release_hash = _proposed_release_hash; // Hash of "raw_release_hash + name of Disease",
+       proposal.proposer = msg.sender;
+       proposal.title = _title;
+       proposal.description = _description;
+
+
+       // Proposal IPFS:
+       ProposalIpfs storage proposalipfs = propsipfs[_proposed_release_hash];
+       proposalipfs.raw_release_hash = raw_release_hash;
+       proposalipfs.old_release_hash = old_release_hash;
+       proposalipfs.grandparent_hash = grandparent_hash;
+
+
+       //  Proposal Data:
+       ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
+       //starttime,
+       //endtime,
+       //finalized_time,
+       proposaldata.status = ProposalStatus.Pending;
+       proposaldata.istie = false;
+       proposaldata.prestatus = ProposalStatus.Pending;
+       proposaldata.nbvoters = 1;
+       proposaldata.slashingratio = 0;
+       proposaldata.forvotes = PROPOSAL_CREATION_AMOUNT;
+       proposaldata.againstvotes = 0;
+       proposaldata.lastcuration_weight = 0;
+       proposaldata.lasteditor_weight = 0;
 
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //

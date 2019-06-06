@@ -584,6 +584,7 @@ event IssuedPeriod(uint period_id, uint periodreward);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
+event NewProposal(bytes32 proposed_release_hash, bytes32 diseasehash, string title, string description);
 
 
 
@@ -819,7 +820,7 @@ function createdisease(string memory _name, string memory _description) public {
 
 
 
-function propose(string memory _title, string memory _description, bytes32 _diseasehash, string memory raw_release_hash,
+function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
   string memory old_release_hash, string memory grandparent_hash) public {
 
     // make sure the user has enough ETI to create a disease
@@ -885,7 +886,7 @@ function propose(string memory _title, string memory _description, bytes32 _dise
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
-   // emit NewProposal(_diseasehash, _title, _description);
+    emit NewProposal(_proposed_release_hash, _diseasehash, _title, _description);
 
 }
 

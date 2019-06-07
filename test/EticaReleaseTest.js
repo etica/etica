@@ -42,6 +42,8 @@ contract('EticaRelease', function(accounts){
     'privateKey': '16b271fdb3eb17a065d4227a3087fa140ba0f88d0d66e7eaa778e3e5c0c6838c'
 }
 
+var PROPOSAL_CREATION_AMOUNT = 10;
+
 
 
     it("can be minted", async function () {
@@ -181,7 +183,7 @@ return EticaRelease.deployed().then(function(instance){
   return EticaReleaseInstance.balanceOf(miner_account.address);
 }).then(function(receipt){
 console.log('asserting test_account balance');
-assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have mined ETI after 30000 ms!');
+assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have mined ETI after 30000 ms! Please relaunch the test, you will be more lucky next time !');
 }).then(async function(){
   console.log('transfering 10 ETI from miner_account to test_account');
   let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
@@ -537,7 +539,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
             let miner_balance = await EticaReleaseInstance.balanceOf(miner_account.address);
             console.log('asserting miner_account balance(', web3.utils.fromWei(miner_balance, "ether" ),'ETI) is greater than DISEASE_CREATION_AMOUNT');
-            assert(web3.utils.fromWei(miner_balance, "ether" ) > 100, 'miner_account should have mined more than 100 ETI after 80000 ms!');
+            assert(web3.utils.fromWei(miner_balance, "ether" ) > 100, 'miner_account should have mined more than 100 ETI after 80000 ms! Please relaunch the test, you will be more lucky next time !');
 
             return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toWei('100', 'ether'), {from: miner_account.address}).then(async function(response){
 
@@ -606,7 +608,37 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     return EticaReleaseInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
 
+                    let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                    let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                    console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
+                    let first_proposal_ipfs = await EticaReleaseInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                    console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
+
+                    let first_proposal_data = await EticaReleaseInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                    console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+
+                    // check Proposal's general information:
+                    assert.equal(first_proposal.disease_id, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First proposal should exist with right disease_id');
+                    assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
+                    assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
+                    assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
+
+                    // check Proposal's IPFS:
+                    assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
+                    assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right old_release_hash');
+                    assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right grandparent_hash');
+
+                    // check Proposal's DATA:
+                    assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
+                    assert.equal(first_proposal_data.istie, false, 'First proposal should exist with right istie');
+                    assert.equal(first_proposal_data.prestatus, '2', 'First proposal should exist with right prestatus');
+                    assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should exist with right nbvoters');
+                    assert.equal(first_proposal_data.slashingratio, '0', 'First proposal should exist with right slashingratio');
+                    assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_CREATION_AMOUNT, 'First proposal should exist with right forvotes');
+                    assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
+                    assert.equal(first_proposal_data.lastcuration_weight, '0', 'First proposal should exist with right lastcuration_weight');
+                    assert.equal(first_proposal_data.lasteditor_weight, '0', 'First proposal should exist with right lasteditor_weight');
 
                     console.log('................................  CAN CREATE A PROPOSAL  ....................... ');
                     console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');

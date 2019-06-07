@@ -539,6 +539,19 @@ struct Period{
 
   // -----------  PROPOSALS  ------------  //
 
+  // -----------  VOTES  ----------------  //
+  struct Vote{
+    uint id; // not necessary, may remove this field
+    bytes32 proposal_hash; // proposed_release_hash of proposal
+    bytes32 proposed_release_hash; // IPFS hash of the proposed new version
+    bool approve;
+    bool is_editor;
+    uint amount;
+    address voter; // address of the voter
+    uint timestamp; // epoch time of the vote
+  }
+    // -----------  VOTES  ----------------  //
+
   struct Disease{
       bytes32 disease_hash;
       string name;
@@ -571,6 +584,10 @@ mapping(bytes32 => ProposalFreefield) public propsfreefields;
 mapping(bytes32 => ProposalTenor) private propstenors;
 // -----------  PROPOSALS  ------------  //
 
+// -----------  VOTES  ----------------  //
+mapping(bytes32 => mapping(address => Vote)) public votes;
+// -----------  VOTES  ----------------  //
+
 mapping(address => uint) public bosoms;
 mapping(address => mapping(uint => Stake)) public stakes;
 mapping(address => uint) public stakesCounters; // keeps track of how many stakes for each user
@@ -578,6 +595,9 @@ mapping(address => uint) public stakesCounters; // keeps track of how many stake
 // will create a function to gather stakes when user has to much stakes.
 // The function will take a completion_time as parameter and will loop trough 50 indexes and will put all stakes with
 // lower completion_time into a  single new stake with parameter completion_time
+
+// Blocked ETI amount, user has votes with this amount in process and can't retrieve this amount before the system knows if the user has to be slahed
+mapping(address => uint) public blockedeticas;
 
 event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward);

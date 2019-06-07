@@ -892,6 +892,16 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
 
+ function votebyhash(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
+
+
+  }
+
+
+
+
+
+
 // get boms balance of user:
 function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
      return bosoms[tokenOwner];

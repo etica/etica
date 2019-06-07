@@ -640,6 +640,10 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     assert.equal(first_proposal_data.lastcuration_weight, '0', 'First proposal should exist with right lastcuration_weight');
                     assert.equal(first_proposal_data.lasteditor_weight, '0', 'First proposal should exist with right lasteditor_weight');
 
+                    // ------------ WARNING
+                    // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+                    // ------------ WARNING
+
                     console.log('................................  CAN CREATE A PROPOSAL  ....................... ');
                     console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
                     });

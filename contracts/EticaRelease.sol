@@ -913,6 +913,95 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
 
+ function defaultvote(bytes32 _proposed_release_hash, bool _approved, uint _amount) internal {
+   //check if the proposal exits and we get the right proposal:
+   Proposal storage proposal = proposals[_proposed_release_hash];
+   require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
+
+    bool voterIsProposer = false;
+
+    if (msg.sender == proposal.proposer) {
+    voterIsProposer = true;
+    }
+
+
+   ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
+    // Verify voting is still in progress
+    require( block.number < proposaldata.endtime);
+
+    // Consume bosom:
+    require(bosoms[msg.sender] >= _amount); // may not be necessary as handled by safemath sub function
+    bosoms[msg.sender] = bosoms[msg.sender].sub(_amount);
+
+
+   // get Period of Proposal:
+   Period storage period = periods[proposal.period_id];
+
+   // PROPOSAL VAR UPDATE
+   uint newproposal_forvotes = proposaldata.forvotes;
+   uint newproposal_againstvotes = proposaldata.againstvotes;
+   uint newproposal_slashingratio = proposaldata.slashingratio;
+   uint newproposal_nbvoters = proposaldata.nbvoters;
+   ProposalStatus newproposal_prestatus = proposaldata.prestatus;
+   uint newproposal_curationweight = proposaldata.lastcuration_weight;
+   uint newproposal_editorweight = proposaldata.lasteditor_weight;
+
+   // PERIOD VAR UPDATE
+   uint newperiodcurationbosoms = period.curation_sum;
+   uint newperiodeditorbosoms = period.editor_sum;
+
+
+    // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
+    blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
+
+
+    // store vote:
+    Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
+    vote.proposal_hash = proposal.proposed_release_hash;
+    vote.approve = _approved;
+    vote.is_editor = voterIsProposer;
+    vote.amount = _amount;
+    vote.voter = msg.sender;
+    vote.timestamp = block.number;
+
+   // first vote of Proposal requires less checks thus less gas
+
+
+      // first Vote of Proposal must be a for vote:
+      require(_approved); // First vote must be a for vote as it is done by the author of proposal otherwise it would be incoherent
+
+
+      // PROPOSAL VAR UPDATE
+      newproposal_forvotes = _amount;
+      newproposal_againstvotes = 0; // not necessary
+      newproposal_slashingratio = 100;
+      newproposal_nbvoters = 1;
+      newproposal_prestatus = ProposalStatus.Singlevoter;
+      // Proposal new weight
+      newproposal_curationweight = _amount;
+      newproposal_editorweight = _amount;
+
+      // PERIOD VAR UPDATE
+      // Proposal's Period new weight
+      newperiodcurationbosoms = period.curation_sum + _amount;
+      newperiodeditorbosoms = period.editor_sum + _amount;
+
+
+      // UPDATE PROPOSAL:
+      proposaldata.slashingratio = newproposal_slashingratio;
+      proposaldata.forvotes = newproposal_forvotes;
+      proposaldata.nbvoters = newproposal_nbvoters;
+      proposaldata.prestatus = newproposal_prestatus;
+      proposaldata.lastcuration_weight = newproposal_curationweight;
+      proposaldata.lasteditor_weight = newproposal_editorweight;
+
+      // UPDATE PERIOD:
+      period.curation_sum = newperiodcurationbosoms;
+      period.editor_sum = newperiodeditorbosoms;
+
+ }
+
+
  function votebyhash(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
 
 //check if the proposal exits and we get the right proposal:
@@ -928,7 +1017,7 @@ require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_h
 
 ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
  // Verify voting is still in progress
- require( block.number < proposaldata.endtime);
+ //require( block.number < proposaldata.endtime);
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // may not be necessary as handled by safemath sub function
@@ -937,19 +1026,6 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
 // get Period of Proposal:
 Period storage period = periods[proposal.period_id];
-
-// PROPOSAL VAR UPDATE
-uint newproposal_forvotes = proposaldata.forvotes;
-uint newproposal_againstvotes = proposaldata.againstvotes;
-uint newproposal_slashingratio = proposaldata.slashingratio;
-uint newproposal_nbvoters = proposaldata.nbvoters;
-ProposalStatus newproposal_prestatus = proposaldata.prestatus;
-uint newproposal_curationweight = proposaldata.lastcuration_weight;
-uint newproposal_editorweight = proposaldata.lasteditor_weight;
-
-// PERIOD VAR UPDATE
-uint newperiodcurationbosoms = period.curation_sum;
-uint newperiodeditorbosoms = period.editor_sum;
 
 
  // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
@@ -965,64 +1041,24 @@ uint newperiodeditorbosoms = period.editor_sum;
  vote.voter = msg.sender;
  vote.timestamp = block.number;
 
-// first vote of Proposal requires less checks thus less gas
- if(proposaldata.prestatus == ProposalStatus.Pending){
-   // first Vote of Proposal must be a for vote:
-   require(_approved); // First vote must be a for vote as it is done by the author of proposal otherwise it would be incoherent
-
-
-   // PROPOSAL VAR UPDATE
-   newproposal_forvotes = _amount;
-   newproposal_againstvotes = 0; // not necessary
-   newproposal_slashingratio = 100;
-   newproposal_nbvoters = 1;
-   newproposal_prestatus = ProposalStatus.Singlevoter;
-   // Proposal new weight
-   newproposal_curationweight = _amount;
-   newproposal_editorweight = _amount;
-
-   // PERIOD VAR UPDATE
-   // Proposal's Period new weight
-   newperiodcurationbosoms = period.curation_sum + _amount;
-   newperiodeditorbosoms = period.editor_sum + _amount;
-
-
-   // UPDATE PROPOSAL:
-   proposaldata.slashingratio = newproposal_slashingratio;
-   proposaldata.forvotes = newproposal_forvotes;
-   proposaldata.nbvoters = newproposal_nbvoters;
-   proposaldata.prestatus = newproposal_prestatus;
-   proposaldata.lastcuration_weight = newproposal_curationweight;
-   proposaldata.lasteditor_weight = newproposal_editorweight;
-
-   // UPDATE PERIOD:
-   period.curation_sum = newperiodcurationbosoms;
-   period.editor_sum = newperiodeditorbosoms;
-
-
-   }
-
-
-   // Proposal has already received its first vote:
-   else {
-
+ proposaldata.nbvoters = proposaldata.nbvoters + 1;
 
      // PROPOSAL VAR UPDATE
      if(_approved){
-      newproposal_forvotes = proposaldata.forvotes + _amount;
+      proposaldata.forvotes = proposaldata.forvotes + _amount;
      }
      else {
-       newproposal_againstvotes = proposaldata.againstvotes + _amount;
+       proposaldata.againstvotes = proposaldata.againstvotes + _amount;
      }
 
 
      // Determine slashing conditions
      bool _isapproved = false;
      bool _istie = false;
-     uint totalVotes = newproposal_forvotes + newproposal_againstvotes;
-     uint _forvotes_numerator = newproposal_forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
-     uint _forvotesdiff_numerator = (newproposal_forvotes - newproposal_againstvotes) * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
-     uint _againstvotesdiff_numerator = (newproposal_forvotes - newproposal_againstvotes) * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
+     uint totalVotes = proposaldata.forvotes + proposaldata.againstvotes;
+     uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
+     uint _forvotesdiff_numerator = (proposaldata.forvotes - proposaldata.againstvotes) * 100; // ((newproposal_forvotes - proposaldata.againstvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
+     uint _againstvotesdiff_numerator = (proposaldata.againstvotes - proposaldata.forvotes) * 100; // ((proposaldata.againstvotes - newproposal_forvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
 
      if ((_forvotes_numerator / totalVotes) >= TIER_ONE_THRESHOLD){
     _isapproved = true;
@@ -1031,23 +1067,61 @@ uint newperiodeditorbosoms = period.editor_sum;
     }
     }
 
+    proposaldata.istie = _istie;
+
     if (_isapproved){
-    newproposal_slashingratio = _forvotesdiff_numerator / totalVotes;
+    proposaldata.slashingratio = _forvotesdiff_numerator / totalVotes;
     }
     else{
-    newproposal_slashingratio = _againstvotesdiff_numerator / totalVotes;
+    proposaldata.slashingratio = _againstvotesdiff_numerator / totalVotes;
     }
 
     // Make sure no weird bugs cause the slash reward to under/overflow
-     require(newproposal_slashingratio >=0 && newproposal_slashingratio <= 100);
+     require(proposaldata.slashingratio >=0 && proposaldata.slashingratio <= 100);
 
 
+  /*   // Mark proposal as accepted or rejected. Ties are rejected
+       if ( proposaldata.forvotes > proposaldata.againstvotes){
+             proposaldata.prestatus =  ProposalStatus.Accepted;
+             proposaldata.lastcuration_weight = proposaldata.forvotes * proposaldata.nbvoters;
+             proposaldata.lasteditor_weight = proposaldata.forvotes * proposaldata.nbvoters;
+         }
+         else{
+             proposaldata.prestatus =  ProposalStatus.Rejected;
+             proposaldata.lastcuration_weight = proposaldata.againstvotes * proposaldata.nbvoters;
+             proposaldata.lasteditor_weight = 0;
+         } */
 
 
+         // Proposal and Period new weight
+         if (_istie) {
+         proposaldata.prestatus =  ProposalStatus.Rejected;
+         proposaldata.lastcuration_weight = 0;
+         proposaldata.lasteditor_weight = 0;
+         // Proposal tied, remove proposal curation and editor sum
+         period.curation_sum = period.curation_sum - proposaldata.lastcuration_weight;
+         period.editor_sum = period.editor_sum - proposaldata.lasteditor_weight;
+         }
+         else {
+             // Proposal approved, strengthen curation sum
+         if (_isapproved){
+             proposaldata.prestatus =  ProposalStatus.Accepted;
+             proposaldata.lastcuration_weight = proposaldata.forvotes * proposaldata.nbvoters;
+             proposaldata.lasteditor_weight = proposaldata.forvotes * proposaldata.nbvoters;
+             // Proposal approved, replace proposal curation and editor sum with forvotes
+             period.curation_sum = period.curation_sum - proposaldata.lastcuration_weight + proposaldata.lastcuration_weight;
+             period.editor_sum = period.editor_sum - proposaldata.lasteditor_weight + proposaldata.lasteditor_weight;
+         }
+         else{
+             proposaldata.prestatus =  ProposalStatus.Rejected;
+             proposaldata.lastcuration_weight = proposaldata.againstvotes * proposaldata.nbvoters;
+             proposaldata.lasteditor_weight = 0;
+             // Proposal rejected, replace proposal curation sum with againstvotes and remove proposal editor sum
+             period.curation_sum = period.curation_sum - proposaldata.lastcuration_weight + proposaldata.lastcuration_weight;
+             period.editor_sum = period.editor_sum - proposaldata.lasteditor_weight;
+         }
+         }
 
-
-
-   }
 
 
   }

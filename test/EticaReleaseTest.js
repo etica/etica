@@ -653,6 +653,42 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     });
 
 
+                    // test Proposals vote
+                      it("can vote for Proposal", async function () {
+                        console.log('------------------------------------ Starting test ---------------------------');
+                        console.log('................................  CAN VOTE FOR A PROPOSAL ? .......................');
+
+                        let idofstruct = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+                        console.log('idofstruct id: ', idofstruct);
+
+                        let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                        console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+                        let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+                        console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+
+                        let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
+                        console.log('THE FIRST PROPOSAL VOTE BEFORE VOTEBYHASH IS:', first_proposal_vote_before);
+
+                        return EticaReleaseInstance.votebyhash(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), {from: test_account.address}).then(async function(response){
+
+                          let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
+                          console.log('THE FIRST PROPOSAL VOTE AFTER VOTEBYHASH IS:', first_proposal_vote_after);
+
+                        // ------------ WARNING
+                        // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+                        // ------------ WARNING
+
+                        console.log('................................  CAN VOTE FOR A PROPOSAL  ....................... ');
+                        console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+                        });
+
+
+
+                        });
+
+
   async function printBalances(accounts) {
     // accounts.forEach(function(ac, i) {
        var balance_val = await (web3.eth.getBalance(accounts[0]));

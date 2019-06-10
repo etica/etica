@@ -449,9 +449,10 @@ uint TESTING_STARTING_BLOCK_NUMBER = 7739267; // used only for testing as ganach
 uint REWARD_INTERVAL = 42; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
 uint STAKING_DURATION = 168; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 uint ETICA_TO_BOSOM_RATIO = 1; //
+uint DEFAULT_VOTING_TIME = 168; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
-uint public PROPOSAL_CREATION_AMOUNT = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
+uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
 uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 % 60 would mean 60%
@@ -844,9 +845,6 @@ function createdisease(string memory _name, string memory _description) public {
 function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
   string memory old_release_hash, string memory grandparent_hash) public {
 
-    // make sure the user has enough ETI to create a disease
-    require(balances[msg.sender] >= PROPOSAL_CREATION_AMOUNT);
-
     //check if the disease exits
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
      if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
@@ -887,22 +885,23 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.status = ProposalStatus.Pending;
        proposaldata.istie = false;
        proposaldata.prestatus = ProposalStatus.Pending;
-       proposaldata.nbvoters = 1;
+       proposaldata.nbvoters = 0;
        proposaldata.slashingratio = 0;
-       proposaldata.forvotes = PROPOSAL_CREATION_AMOUNT;
+       proposaldata.forvotes = 0;
        proposaldata.againstvotes = 0;
        proposaldata.lastcuration_weight = 0;
        proposaldata.lasteditor_weight = 0;
+       proposaldata.starttime = block.number;
+       proposaldata.endtime = block.number + DEFAULT_VOTING_TIME;
 
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
-  // make sure the user has enough ETI to create a disease
-  require(balances[msg.sender] >= PROPOSAL_CREATION_AMOUNT);
+  defaultvote(_proposed_release_hash);
 
 
   // Place the default vote
-  // votebyhash( msg.sender, concate_me, true, PROPOSAL_CREATION_AMOUNT );
+  // votebyhash( msg.sender, concate_me, true, PROPOSAL_DEFAULT_VOTE );
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
@@ -913,91 +912,59 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
 
- function defaultvote(bytes32 _proposed_release_hash, bool _approved, uint _amount) internal {
-   //check if the proposal exits and we get the right proposal:
+ function defaultvote(bytes32 _proposed_release_hash) internal {
+
+   require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // may not be necessary as wil be handled by safemath sub function: bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
+
+   //check if the proposal exits and that we get the right proposal:
    Proposal storage proposal = proposals[_proposed_release_hash];
    require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
-    bool voterIsProposer = false;
+   // voterIsProposer can be used for the Linking Reward attribution:
+   bool voterIsProposer = false;
 
-    if (msg.sender == proposal.proposer) {
-    voterIsProposer = true;
-    }
-
+   if (msg.sender == proposal.proposer) {
+   voterIsProposer = true;
+   }
 
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     // Verify voting is still in progress
     require( block.number < proposaldata.endtime);
 
     // Consume bosom:
-    require(bosoms[msg.sender] >= _amount); // may not be necessary as handled by safemath sub function
-    bosoms[msg.sender] = bosoms[msg.sender].sub(_amount);
+    bosoms[msg.sender] = bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
 
 
    // get Period of Proposal:
    Period storage period = periods[proposal.period_id];
 
-   // PROPOSAL VAR UPDATE
-   uint newproposal_forvotes = proposaldata.forvotes;
-   uint newproposal_againstvotes = proposaldata.againstvotes;
-   uint newproposal_slashingratio = proposaldata.slashingratio;
-   uint newproposal_nbvoters = proposaldata.nbvoters;
-   ProposalStatus newproposal_prestatus = proposaldata.prestatus;
-   uint newproposal_curationweight = proposaldata.lastcuration_weight;
-   uint newproposal_editorweight = proposaldata.lasteditor_weight;
-
-   // PERIOD VAR UPDATE
-   uint newperiodcurationbosoms = period.curation_sum;
-   uint newperiodeditorbosoms = period.editor_sum;
-
 
     // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
-    blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
+    blockedeticas[msg.sender] = blockedeticas[msg.sender].add(PROPOSAL_DEFAULT_VOTE);
 
 
     // store vote:
     Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
     vote.proposal_hash = proposal.proposed_release_hash;
-    vote.approve = _approved;
+    vote.approve = true;
     vote.is_editor = voterIsProposer;
-    vote.amount = _amount;
+    vote.amount = PROPOSAL_DEFAULT_VOTE;
     vote.voter = msg.sender;
     vote.timestamp = block.number;
 
-   // first vote of Proposal requires less checks thus less gas
-
-
-      // first Vote of Proposal must be a for vote:
-      require(_approved); // First vote must be a for vote as it is done by the author of proposal otherwise it would be incoherent
-
-
-      // PROPOSAL VAR UPDATE
-      newproposal_forvotes = _amount;
-      newproposal_againstvotes = 0; // not necessary
-      newproposal_slashingratio = 100;
-      newproposal_nbvoters = 1;
-      newproposal_prestatus = ProposalStatus.Singlevoter;
-      // Proposal new weight
-      newproposal_curationweight = _amount;
-      newproposal_editorweight = _amount;
-
-      // PERIOD VAR UPDATE
-      // Proposal's Period new weight
-      newperiodcurationbosoms = period.curation_sum + _amount;
-      newperiodeditorbosoms = period.editor_sum + _amount;
 
 
       // UPDATE PROPOSAL:
-      proposaldata.slashingratio = newproposal_slashingratio;
-      proposaldata.forvotes = newproposal_forvotes;
-      proposaldata.nbvoters = newproposal_nbvoters;
-      proposaldata.prestatus = newproposal_prestatus;
-      proposaldata.lastcuration_weight = newproposal_curationweight;
-      proposaldata.lasteditor_weight = newproposal_editorweight;
+      proposaldata.slashingratio = 100;
+      proposaldata.forvotes = PROPOSAL_DEFAULT_VOTE;
+      proposaldata.nbvoters = 1;
+      proposaldata.prestatus = ProposalStatus.Singlevoter;
+      proposaldata.lastcuration_weight = PROPOSAL_DEFAULT_VOTE;
+      proposaldata.lasteditor_weight = PROPOSAL_DEFAULT_VOTE;
 
       // UPDATE PERIOD:
-      period.curation_sum = newperiodcurationbosoms;
-      period.editor_sum = newperiodeditorbosoms;
+      period.curation_sum = period.curation_sum + PROPOSAL_DEFAULT_VOTE;
+      period.editor_sum = period.editor_sum + PROPOSAL_DEFAULT_VOTE;
 
  }
 
@@ -1018,6 +985,10 @@ require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_h
 ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
  // Verify voting is still in progress
  //require( block.number < proposaldata.endtime);
+
+ require(proposaldata.prestatus != ProposalStatus.Pending); // can vote for proposal only if default vote has changed prestatus of Proposal. Thus can vote only if default vote occured as supposed to
+
+
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // may not be necessary as handled by safemath sub function

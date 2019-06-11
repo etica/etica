@@ -857,18 +857,22 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
      // store this disease in diseases mapping.
      // ------- Warning ----
-     // Need to  implement check that proposal does not already exitsts
-     //only allow one proposal for each {raw_release_hash,  _diseasehash} combination
+     // Check that proposal does not already exist
+     // only allow one proposal for each {raw_release_hash,  _diseasehash} combinasion
       bytes32 existing_proposal = proposals[_proposed_release_hash].proposed_release_hash;
       if(existing_proposal != 0x0 || proposals[_proposed_release_hash].id != 0) revert();  //prevent the same raw_release_hash from being submited twice on same proposal. Double check for better security and slightly higher gas cost even though one would be enough !
 
+      // Create new Period if this current interval did not have its Period created yet
+      if(IntervalsPeriods[uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL))] == 0x0){
+        newPeriod();
+      }
 
      Proposal storage proposal = proposals[_proposed_release_hash];
      // ------- Warning ----
 
        proposal.id = proposalsCounter;
        proposal.disease_id = _diseasehash; // _diseasehash has already been checked to equal diseases[diseasesbyIds[_diseasehash]].disease_hash
-       // periodid,
+       proposal.period_id = IntervalsPeriods[uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL))];
        proposal.proposed_release_hash = _proposed_release_hash; // Hash of "raw_release_hash + name of Disease",
        proposal.proposer = msg.sender;
        proposal.title = _title;

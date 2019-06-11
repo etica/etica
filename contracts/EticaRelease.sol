@@ -899,10 +899,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
   defaultvote(_proposed_release_hash);
 
-
-  // Place the default vote
-  // votebyhash( msg.sender, concate_me, true, PROPOSAL_DEFAULT_VOTE );
-
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
@@ -916,7 +912,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
    require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // may not be necessary as wil be handled by safemath sub function: bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
 
-   //check if the proposal exits and that we get the right proposal:
+   //check if the proposal exists and that we get the right proposal:
    Proposal storage proposal = proposals[_proposed_release_hash];
    require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
@@ -930,6 +926,11 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     // Verify voting is still in progress
     require( block.number < proposaldata.endtime);
+
+
+    // default vote can't be called twice on same proposal:
+    // can vote for proposal only if default vote hasn't changed prestatus of Proposal yet. Thus can default vote only if default vote has not occured yet
+    require(proposaldata.prestatus == ProposalStatus.Pending);
 
     // Consume bosom:
     bosoms[msg.sender] = bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
@@ -971,7 +972,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
  function votebyhash(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
 
-//check if the proposal exits and we get the right proposal:
+//check if the proposal exists and that we get the right proposal:
 Proposal storage proposal = proposals[_proposed_release_hash];
 require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
@@ -1051,19 +1052,6 @@ Period storage period = periods[proposal.period_id];
      require(proposaldata.slashingratio >=0 && proposaldata.slashingratio <= 100);
 
 
-  /*   // Mark proposal as accepted or rejected. Ties are rejected
-       if ( proposaldata.forvotes > proposaldata.againstvotes){
-             proposaldata.prestatus =  ProposalStatus.Accepted;
-             proposaldata.lastcuration_weight = proposaldata.forvotes * proposaldata.nbvoters;
-             proposaldata.lasteditor_weight = proposaldata.forvotes * proposaldata.nbvoters;
-         }
-         else{
-             proposaldata.prestatus =  ProposalStatus.Rejected;
-             proposaldata.lastcuration_weight = proposaldata.againstvotes * proposaldata.nbvoters;
-             proposaldata.lasteditor_weight = 0;
-         } */
-
-
          // Proposal and Period new weight
          if (_istie) {
          proposaldata.prestatus =  ProposalStatus.Rejected;
@@ -1093,8 +1081,6 @@ Period storage period = periods[proposal.period_id];
          }
          }
 
-
-
   }
 
 
@@ -1102,7 +1088,7 @@ Period storage period = periods[proposal.period_id];
 
 
 
-// get boms balance of user:
+// get bosoms balance of user:
 function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
      return bosoms[tokenOwner];
  }

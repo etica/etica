@@ -607,6 +607,48 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 });
 
 
+                // test_account will need more ETI to keep going with tests
+                  it("Get more ETI and stake them for bosoms:", async function () {
+                    console.log('------------------------------------- Starting task ---------------------------');
+                    console.log('................................  CAN GET MORE ETI AND STAKE THEM for more BOSOMS ? .......................');
+                    let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+                    let test_accountbosomsbefore = await EticaReleaseInstance.bosomsOf(test_account.address);
+                    console.log('test_account ETI balance before transfer:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                    console.log('test_account Bosoms balance before transfer:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+
+                    console.log('transfering 10 ETI from miner_account to test_account');
+                    let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                    console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                    return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toBN(10000000000000000000), {from: miner_account.address}).then(async function(receipt){
+
+                      let test_accountbalancebefore_newstaking = await EticaReleaseInstance.balanceOf(test_account.address);
+                      let test_accountbosomsbefore_newstaking = await EticaReleaseInstance.bosomsOf(test_account.address);
+                      console.log('test_account ETI balance before new staking:', web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ));
+                      console.log('test_account Bosoms balance before new staking:', web3.utils.fromWei(test_accountbosomsbefore_newstaking, "ether" ));
+
+                      assert.equal(web3.utils.fromWei(test_accountbosomsbefore, "ether" ), web3.utils.fromWei(test_accountbosomsbefore_newstaking, "ether" ), 'test_account should have same amount of Bosoms!');
+                      assert.equal(web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_accountbalancebefore, "ether" ), "10", 'test_account should have 10 Eticas more!');
+
+                    // try staking 10 ETI more (test_account has already staked 10 ETI thus it should have 20 Bosoms after this stake):
+                      return EticaReleaseInstance.eticatobosoms(test_account.address,  web3.utils.toBN(10000000000000000000), {from: test_account.address}).then(async function(receipt){
+                    let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+                    let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
+                    console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                    console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
+                    assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), "20", 'test_account should have 20 Bosoms!');
+                    assert.equal(web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "10", 'test_account should have 10 Eticas less!');
+
+                    return EticaReleaseInstance.eticatobosoms(test_account2.address,  web3.utils.toBN(2000000000000000000), {from: test_account2.address}).then(async function(receipt){
+
+                    console.log('.....................   CAN GET MORE ETI AND STAKE THEM for more BOSOMS  ....................... ');
+                    console.log('---------------------------------- END OF TASK with SUCCESS ----------------------------');
+                    })
+                    })
+                    })
+
+                  });
+
+
                 // test Proposals creation
                   it("can create new Proposal", async function () {
                     console.log('------------------------------------ Starting test ---------------------------');
@@ -667,6 +709,73 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
 
                     });
+
+
+                    // test Proposals creation
+                      it("cannot create twice same Proposal with same {raw_release_hash, disease_hash} combination", async function () {
+                        console.log('------------------------------------ Starting test ---------------------------');
+                        console.log('................................  CANNOT CREATE TWICE A PROPOSAL WITH SAME {raw_release_hash, disease_hash} ? .......................');
+
+                        let idofstruct = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+                        console.log('id of disease: ', idofstruct);
+
+                        let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+                        console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+
+                        let test_accountbosomsbefore = await EticaReleaseInstance.bosoms(test_account.address);
+                        console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+
+                        assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before VOTEBYHASH (because propose function should fail but not for this reason)');
+
+
+                        return EticaReleaseInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(assert.fail)
+                        .catch(async function(error){
+
+                        // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00) has not changed:
+                        let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                        console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+                        let first_proposal_ipfs = await EticaReleaseInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
+
+                        let first_proposal_data = await EticaReleaseInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+
+                        // check Proposal's general information:
+                        assert.equal(first_proposal.disease_id, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First proposal should have kept the same disease_id');
+                        assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should have kept the same name');
+                        assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should have kept the same description');
+                        assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
+
+                        // check Proposal's IPFS:
+                        assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should have kept the same raw_release_hash');
+                        assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should have kept the same old_release_hash');
+                        assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should have kept the same grandparent_hash');
+
+                        // check Proposal's DATA:
+                        assert.equal(first_proposal_data.status, '2', 'First proposal should have kept the same status');
+                        assert.equal(first_proposal_data.istie, false, 'First proposal should have kept the same istie');
+                        assert.equal(first_proposal_data.prestatus, '3', 'First proposal should have kept the same prestatus');
+                        assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should have kept the same nbvoters');
+                        assert.equal(first_proposal_data.slashingratio.toNumber(), '100', 'First proposal should have kept the same slashingratio');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same forvotes');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should have kept the same againstvotes');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lastcuration_weight');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lasteditor_weight');
+                        // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00) has not changed: done
+
+                        // ------------ WARNING
+                        // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+                        // ------------ WARNING
+
+                        console.log('......................  CANNOT CREATE TWICE A PROPOSAL WITH SAME {raw_release_hash, disease_hash}  ....................... ');
+                        console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+                        });
+
+
+
+                        });
 
 
                     // test Proposals vote

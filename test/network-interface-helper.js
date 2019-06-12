@@ -45,15 +45,15 @@ module.exports =  {
       {
         if(queuedMiningSolutions.length > 0)
         {
-          console.log('publishing EticaToken stats before EticaToken.mint() has been called');
-          this.publishtokenstats('before');
+          //console.log('publishing EticaToken stats before EticaToken.mint() has been called');
+          //this.publishtokenstats('before');
           busySendingSolution = true;
           var nextSolution = queuedMiningSolutions.pop();
 
           if( nextSolution.challenge_number != lastSubmittedMiningSolutionChallengeNumber)
           {
             lastSubmittedMiningSolutionChallengeNumber =  nextSolution.challenge_number;
-            console.log('popping mining solution off stack ')
+            //console.log('popping mining solution off stack ')
 
             try{
             var response = await this.submitMiningSolution(nextSolution.addressFrom,
@@ -67,8 +67,8 @@ module.exports =  {
 
           console.log('response (transaction hash) of network-interface-helper.submitMiningSolution() from network-interface-helper.sendMiningSolutions() is:',response)
           // publish accounts balances:
-          console.log('publishing EticaToken stats after EticaToken.mint() has been called');
-          this.publishtokenstats('after');
+          //console.log('publishing EticaToken stats after EticaToken.mint() has been called');
+          // this.publishtokenstats('after');
           busySendingSolution = false;
         }
       }
@@ -97,15 +97,15 @@ module.exports =  {
     //  var addressFrom = this.vault.getAccount().public_address ;
 
 
-    console.log( 'submitMiningSolution' )
-    console.log( 'solution_number',solution_number )
-    console.log( 'challenge_digest',challenge_digest )
+    //console.log( 'submitMiningSolution' )
+    //console.log( 'solution_number',solution_number )
+    //console.log( 'challenge_digest',challenge_digest )
 
 
 
   try{
     var txCount = await this.web3.eth.getTransactionCount(addressFrom);
-    console.log('txCount',txCount)
+    //console.log('txCount',txCount)
    } catch(error) {  //here goes if someAsyncPromise() rejected}
     console.log(error);
      return error;    //this will result in a resolved promise.
@@ -136,10 +136,10 @@ module.exports =  {
 //    var estimatedGasCost = await mintMethod.estimateGas({from:addressFrom, to: addressTo });
 
   //  console.log('estimatedGasCost',estimatedGasCost);
-    console.log('txData',txData);
+    //console.log('txData',txData);
 
-    console.log('addressFrom',addressFrom);
-    console.log('addressTo',addressTo);
+    //console.log('addressFrom',addressFrom);
+    //console.log('addressTo',addressTo);
 
 
     const txOptions = {
@@ -172,12 +172,12 @@ module.exports =  {
 
     const addressTo = this.tokenContract.address;
 
-      console.log('addressFrom',addressFrom)
-        console.log('addressTo',addressTo)
+      //console.log('addressFrom',addressFrom)
+        //console.log('addressTo',addressTo)
 
       try{
         var txCount = await web3.eth.getTransactionCount(addressFrom);
-        console.log('txCount',txCount)
+        //console.log('txCount',txCount)
        } catch(error) {  //here goes if someAsyncPromise() rejected}
         console.log(error);
          return error;    //this will result in a resolved promise.
@@ -196,10 +196,10 @@ module.exports =  {
 
     // fire away!
 
-    console.log('fire away ')
+    //console.log('fire away ')
     await this.sendSignedRawTransaction(web3,txOptions,addressFrom,account, function(err, result) {
       if (err) return console.log('error', err)
-      console.log('sent', result)
+      //console.log('sent', result)
     })
 
 
@@ -240,7 +240,7 @@ module.exports =  {
 
 
 // status: before or after EticaToken.mint() call
-  publishtokenstats(status){
+/*  publishtokenstats(status){
 
         for (i = 9; i < 10; i++) {
           return tokenContract.balanceOf(this.accounts[i]).then(function(receipt){
@@ -248,7 +248,7 @@ module.exports =  {
           console.log('------- > account', i, ': ETI balance', status, 'EticaToken.mint() has been called is:', web3.utils.fromWei(receipt, "ether" ), 'ETI  <-------- ')
         })
         }
-  },
+  }, */
 
 
 

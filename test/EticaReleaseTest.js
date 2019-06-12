@@ -62,9 +62,9 @@ var PROPOSAL_DEFAULT_VOTE = 10;
 
       var tokenContract = await EticaRelease.deployed();
 
-      console.log('contract')
+      //console.log('contract')
 
-      console.log(tokenContract.address)
+      //console.log(tokenContract.address)
       var from_address = '0x2B63dB710e35b0C4261b1Aa4fAe441276bfeb971';
 
       var challenge_number = '0x513d3339b587b62e4ea2b9d2762113a245f9fdad264d37bcc6829ce66bd4d456';
@@ -82,7 +82,7 @@ var PROPOSAL_DEFAULT_VOTE = 10;
       var targetString = await tokenContract.getMiningTarget.call({from: from_address});
       var target = web3.utils.toBN(targetString);
 
-      console.log('target',target)
+      //console.log('target',target)
 
       var msg_sender = accounts[0]
   //  var challengeDigestBytes32 = solidityHelper.stringToSolidityBytes32(challenge_digest)
@@ -90,18 +90,18 @@ var PROPOSAL_DEFAULT_VOTE = 10;
     const phraseDigest = web3.utils.soliditySha3(challenge_number, from_address, solution_number )
 
   //  var challengeDigestBytes32 = solidityHelper.stringToSolidityBytes32(phraseDigest)
-    console.log('phraseDigest', phraseDigest);  // 0x0007e4c9ad0890ee34f6d98852d24ce6e9cc6ecfad8f2bd39b7c87b05e8e050b
-    console.log(solution_digest);
-    console.log(solution_number)
+    //console.log('phraseDigest', phraseDigest);  // 0x0007e4c9ad0890ee34f6d98852d24ce6e9cc6ecfad8f2bd39b7c87b05e8e050b
+    //console.log(solution_digest);
+    //console.log(solution_number)
 
 
     var checkDigest = await tokenContract.getMintDigest.call(solution_number,phraseDigest,challenge_number, {from: from_address});
 
-    console.log('checkDigest',checkDigest)
+    //console.log('checkDigest',checkDigest)
 
-    console.log('target',target)
+    //console.log('target',target)
 
-    console.log('challenge_number',challenge_number)
+    //console.log('challenge_number',challenge_number)
 
     //var checkSuccess = await tokenContract.checkMintSolution.call(solution_number,phraseDigest,challenge_number, target );
     //  console.log('checkSuccess',checkSuccess)
@@ -124,9 +124,9 @@ var PROPOSAL_DEFAULT_VOTE = 10;
 
     var tokenContract = await EticaRelease.deployed();
 
-    console.log('contract')
+    //console.log('contract')
 
-    console.log(tokenContract.address)
+    //console.log(tokenContract.address)
 
    // ganache account 10 (index 9):
     var test_account= {
@@ -154,17 +154,17 @@ var PROPOSAL_DEFAULT_VOTE = 10;
       EticaReleaseInstance = instance;
       return EticaReleaseInstance.stakescount(test_account.address);
     }).then(async function(response){
-      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-      console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-    console.log('test_acount NUMBER OF STAKES IS', response);
+      //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+      //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+      //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+      //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    //console.log('test_acount NUMBER OF STAKES IS', response);
     let stakesl = await EticaReleaseInstance.stakescount(test_account.address);
-    console.log('RESPONSE IS::::', stakesl);
-    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-    console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    //console.log('RESPONSE IS::::', stakesl);
+    //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+    //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
     })
 
 
@@ -193,29 +193,29 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
   console.log('transfering 10 ETI from miner_account to test_account');
   let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
   let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
-  console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
-  console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+  //console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+  //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
   return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toBN(10000000000000000000), {from: miner_account.address});
 
 }).then(async function(){
   // consoling result of ETI transfer from miner_account to test_account
   let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
   let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
-  console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
-  console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+  //console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
+  //console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
 }).then(async function(){
   console.log('transfering 5 ETI from miner_account to test_account2');
   let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
   let test_account2balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
-  console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
-  console.log('test_account2 ETI balance before:', web3.utils.fromWei(test_account2balancebefore, "ether" ));
+  //console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+  //console.log('test_account2 ETI balance before:', web3.utils.fromWei(test_account2balancebefore, "ether" ));
   return EticaReleaseInstance.transfer(test_account2.address,  web3.utils.toBN(5000000000000000000), {from: miner_account.address});
 
 }).then(async function(){
   let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
   let test_account2balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
-  console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
-  console.log('test_account2 ETI balance after:', web3.utils.fromWei(test_account2balanceafter, "ether" ));
+  //console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
+  //console.log('test_account2 ETI balance after:', web3.utils.fromWei(test_account2balanceafter, "ether" ));
   console.log('...................................  TESTS CAN START, ACCOUNTS HAVE BEEN GIVEN ETI FOR TESTING  ....................... ');
   console.log('---------------------------------------- END OF INITIAL ETI DISTRIBUTION with SUCCESS ----------------------------------------------');
 })
@@ -228,14 +228,14 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
     console.log('................................  CAN STAKE ETI for BOSOMS ? .......................');
     let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
     let test_accountbosomsbefore = await EticaReleaseInstance.bosomsOf(test_account.address);
-    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-    console.log('test_account Bosoms balance before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+    //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+    //console.log('test_account Bosoms balance before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
    // try staking 10 ETI:
       return EticaReleaseInstance.eticatobosoms(test_account.address,  web3.utils.toBN(10000000000000000000), {from: test_account.address}).then(async function(receipt){
     let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
     let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
-    console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-    console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
+    //console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+    //console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
     assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), "10", 'test_account should have 10 Bosoms!');
     assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "10", 'test_account should have 10 Eticas less!');
 
@@ -254,8 +254,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
       console.log('................................  OVERSTAKING IS NOT POSSIBLE ? .......................');
       let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
       let test_accountbosomsbefore = await EticaReleaseInstance.bosomsOf(test_account.address);
-      console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-      console.log('test_account Bosoms balance before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+      //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+      //console.log('test_account Bosoms balance before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
       let stakeamount = 300000;
       let overstake = web3.utils.toWei(stakeamount.toString(), 'ether');
      // try staking 300000 ETI:
@@ -264,11 +264,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
           assert(true);
           let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
           let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
-          console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-          console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
+          //console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+          //console.log('test_account Bosoms balance after:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
           assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), web3.utils.fromWei(test_accountbosomsbefore, "ether" ), 'test_account should not have more Bosoms!');
           assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "0", 'test_account should not have less Eticas!');
-          console.log('Over Staking has been tested successfully');
+          //console.log('Over Staking has been tested successfully');
           console.log('.................................  OVERSTAKING IS NOT POSSIBLE  ....................... ');
           console.log('----------------------------------- END OF TEST with SUCCESS ----------------------------');
         })
@@ -281,23 +281,23 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
         console.log('................................  CAN CREATE A PERIOD ? .......................');
         let supply_before = await EticaReleaseInstance.totalSupply();
         let contractbalancebefore = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
-        console.log('SUPPLY ETI before Period creation:', web3.utils.fromWei(supply_before, "ether" ));
-        console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
+        //console.log('SUPPLY ETI before Period creation:', web3.utils.fromWei(supply_before, "ether" ));
+        //console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
         let first_period = await EticaReleaseInstance.periods(1);
         let periodsCounter = await EticaReleaseInstance.periodsCounter();
-       console.log('(should be empty as no period exists yet) FIRST PERIOD IS:', first_period);
-       console.log('(should be 0 as no period exists yet)NUMBER OF PERIODS IS:', periodsCounter);
+       //console.log('(should be empty as no period exists yet) FIRST PERIOD IS:', first_period);
+       //console.log('(should be 0 as no period exists yet)NUMBER OF PERIODS IS:', periodsCounter);
        // try create new period:
           return EticaReleaseInstance.newPeriod().then(async function(receipt){
             let supply_after = await EticaReleaseInstance.totalSupply();
             let contractbalanceafter = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
-            console.log('SUPPLY ETI after Period creation:', web3.utils.fromWei(supply_after, "ether" ));
-            console.log('CONTRACT ETI balance after Period creation:', web3.utils.fromWei(contractbalanceafter, "ether" ));
+            //console.log('SUPPLY ETI after Period creation:', web3.utils.fromWei(supply_after, "ether" ));
+            //console.log('CONTRACT ETI balance after Period creation:', web3.utils.fromWei(contractbalanceafter, "ether" ));
             let first_period = await EticaReleaseInstance.periods(1);
             let periodsCounter = await EticaReleaseInstance.periodsCounter();
-        console.log('THE FIRST PERIOD IS:', first_period);
-        console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
-        console.log('NUMBER OF PERIODS IS:', periodsCounter);
+        //console.log('THE FIRST PERIOD IS:', first_period);
+        //console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
+        //console.log('NUMBER OF PERIODS IS:', periodsCounter);
         assert.equal(first_period.id.toNumber(), 1, 'First period should exists');
         assert.equal(periodsCounter, 1, 'First period should exists');
         console.log('................................  CAN CREATE A PERIOD  ....................... ');
@@ -311,17 +311,17 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
           EticaReleaseInstance = instance;
           return EticaReleaseInstance.stakescount(test_account.address);
         }).then(async function(response){
-          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-          console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-        console.log('test_acount NUMBER OF STAKES IS', response);
+          //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+          //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+          //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+          //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        //console.log('test_acount NUMBER OF STAKES IS', response);
         let stakesl = await EticaReleaseInstance.stakescount(test_account.address);
-        console.log('RESPONSE IS::::', stakesl);
-        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-        console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        //console.log('RESPONSE IS::::', stakesl);
+        //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
+        //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
         })
 
 
@@ -338,25 +338,25 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
           console.log('.......................... Cannot CREATE 2 PERIODS with same Interval ? ..................... ');
           let supply_before = await EticaReleaseInstance.totalSupply();
           let contractbalancebefore = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
-          console.log('SUPPLY ETI before Period creation:', web3.utils.fromWei(supply_before, "ether" ));
-          console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
+          //console.log('SUPPLY ETI before Period creation:', web3.utils.fromWei(supply_before, "ether" ));
+          //console.log('CONTRACT ETI balance before Period creation:', web3.utils.fromWei(contractbalancebefore, "ether" ));
           let first_period = await EticaReleaseInstance.periods(1);
           let periodsCounter = await EticaReleaseInstance.periodsCounter();
-         console.log('FIRST PERIOD IS:', first_period);
-         console.log('NUMBER OF PERIODS IS:', periodsCounter);
+         //console.log('FIRST PERIOD IS:', first_period);
+         //console.log('NUMBER OF PERIODS IS:', periodsCounter);
          // try create new period:
             return EticaReleaseInstance.newPeriod().then(assert.fail)
             .catch(async function(error){
               assert(true);
               let supply_after = await EticaReleaseInstance.totalSupply();
               let contractbalanceafter = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
-              console.log('SUPPLY ETI after Period creation:', web3.utils.fromWei(supply_after, "ether" ));
-              console.log('CONTRACT ETI balance after Period creation:', web3.utils.fromWei(contractbalanceafter, "ether" ));
+              //console.log('SUPPLY ETI after Period creation:', web3.utils.fromWei(supply_after, "ether" ));
+              //console.log('CONTRACT ETI balance after Period creation:', web3.utils.fromWei(contractbalanceafter, "ether" ));
               let first_period = await EticaReleaseInstance.periods(1);
               let periodsCounter = await EticaReleaseInstance.periodsCounter();
-          console.log('THE FIRST PERIOD IS:', first_period);
-          console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
-          console.log('NUMBER OF PERIODS IS:', periodsCounter);
+          //console.log('THE FIRST PERIOD IS:', first_period);
+          //console.log('INTERVAL OF THE FIRST PERIOD IS:', first_period.interval.toNumber());
+          //console.log('NUMBER OF PERIODS IS:', periodsCounter);
           assert.equal(periodsCounter, 1, 'Only First period should exist, no other period should have been created for same interval');
           console.log('........................... CREATING 2 PERIODS WITH SAME INTERVAL IS NOT POSSIBLE ....................... ');
           console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
@@ -370,9 +370,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             console.log('.......................... Cannot CLAIM STAKE TOO EARLY ? ..................... ');
             let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
             let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
-            console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-            console.log('test_account Stake before:', test_accountstakebefore);
-            console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
+            //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+            //console.log('test_account Stake before:', test_accountstakebefore);
+            //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
            // try create new period:
               return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(assert.fail)
@@ -380,8 +380,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 assert(true);
                 let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
                 let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
-                console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-                console.log('test_account Stake after:', test_accountstakeafter);
+                //console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                //console.log('test_account Stake after:', test_accountstakeafter);
                 assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "0", 'test_account should not have more Eticas!');
                 console.log('........................... Too early STAKING is not possible ....................... ');
                 console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
@@ -395,13 +395,13 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('.......................... Cannot CLAIM STAKE TOO EARLY 2 (just before stake end) ?  ..................... ');
               let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
               let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
-              console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-              console.log('test_account Stake before:', test_accountstakebefore);
-              console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
+              //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+              //console.log('test_account Stake before:', test_accountstakebefore);
+              //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
 
-              console.log('stake starting block is:', test_accountstakebefore.startBlock.toString());
-              console.log('stake ending block is:', test_accountstakebefore.endBlock.toString());
+              //console.log('stake starting block is:', test_accountstakebefore.startBlock.toString());
+              //console.log('stake ending block is:', test_accountstakebefore.endBlock.toString());
 
               console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
               let blocknb_before = await web3.eth.getBlock("latest");
@@ -419,8 +419,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                   assert(true);
                   let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
                   let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
-                  console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-                  console.log('test_account Stake after:', test_accountstakeafter);
+                  //console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                  //console.log('test_account Stake after:', test_accountstakeafter);
                   assert.equal(web3.utils.fromWei(test_accountbalanceafter, "ether" ) - web3.utils.fromWei(test_accountbalancebefore, "ether" ), "0", 'test_account should not have more Eticas!');
                   console.log('........................... Too early STAKING is not possible even just before End of Stake ....................... ');
                   console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
@@ -435,9 +435,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('.......................... Can claim STAKE after THE STAKE END ? ..................... ');
               let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
               let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
-              console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-              console.log('test_account Stake before:', test_accountstakebefore);
-              console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
+              //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+              //console.log('test_account Stake before:', test_accountstakebefore);
+              //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
               console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
               let blocknb_before = await web3.eth.getBlock("latest");
@@ -455,9 +455,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                   let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
                   let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
                   let stakenoldbalance = web3.utils.toBN(test_accountbalancebefore).add(web3.utils.toBN(test_accountstakebefore.amount)).toString();
-                  console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-                  console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
-                  console.log('test_account Stake after:', test_accountstakeafter);
+                  //console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                  //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
+                  //console.log('test_account Stake after:', test_accountstakeafter);
 
                   assert.equal( web3.utils.fromWei(test_accountbalanceafter, "ether"), web3.utils.fromWei(stakenoldbalance, "ether"), 'test_account should have increased by the stake\'s ETI amount!');
 
@@ -473,17 +473,17 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 EticaReleaseInstance = instance;
                 return EticaReleaseInstance.stakescount(test_account.address);
               }).then(async function(response){
-                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-                console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('test_acount NUMBER OF STAKES IS', response);
+                //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+                //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+                //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+                //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              //console.log('test_acount NUMBER OF STAKES IS', response);
               let stakesl = await EticaReleaseInstance.stakescount(test_account.address);
-              console.log('RESPONSE IS::::', stakesl);
-              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
-              console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              //console.log('RESPONSE IS::::', stakesl);
+              //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
+              //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES AFTER CLAIM STAKE !!!!!!!!!!!!!');
               })
 
 
@@ -503,9 +503,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
                 let first_disease = await EticaReleaseInstance.diseases(1);
                 let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
-                console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-                console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
-                console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+                //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                //console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+                //console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
                 assert.equal(diseasesCounter, "0", 'THERE SHOULD NOT BE ANY DISEASE YET');
 
 
@@ -516,9 +516,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
                     let first_disease = await EticaReleaseInstance.diseases(1);
                     let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
-                    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-                    console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
-                    console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+                    //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                    //console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+                    //console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
                     assert.equal(diseasesCounter, "0", 'THERE SHOULD NOT BE ANY DISEASE YET');
                     console.log('........................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS ENOUGH ETI ....................... ');
                     console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
@@ -533,9 +533,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 console.log('------------------------------------ Starting test ---------------------------');
                 console.log('................................  CAN CREATE A DISEASE ? .......................');
                 let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
-                console.log('miner account balance before is', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                //console.log('miner account balance before is', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
                 let diseasesCreationAmount = await EticaReleaseInstance.DISEASE_CREATION_AMOUNT();
-                console.log('DISEASES CREATION AMOUNT IS:', diseasesCreationAmount);
+                //console.log('DISEASES CREATION AMOUNT IS:', diseasesCreationAmount);
 
 
                 console.log('------------------------------------- WAITING FOR MINER_ACCOUNT TO MINE MORE ETI ---------------------------');
@@ -547,7 +547,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             await timeout(80000);
 
             let miner_balance = await EticaReleaseInstance.balanceOf(miner_account.address);
-            console.log('asserting miner_account balance(', web3.utils.fromWei(miner_balance, "ether" ),'ETI) is greater than DISEASE_CREATION_AMOUNT');
+            //console.log('asserting miner_account balance(', web3.utils.fromWei(miner_balance, "ether" ),'ETI) is greater than DISEASE_CREATION_AMOUNT');
             assert(web3.utils.fromWei(miner_balance, "ether" ) > 100, 'miner_account should have mined more than 100 ETI after 80000 ms! Please relaunch the test, you will be more lucky next time !');
 
             return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toWei('100', 'ether'), {from: miner_account.address}).then(async function(response){
@@ -555,25 +555,25 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               let miner_accountbalanceafter_transfer = await EticaReleaseInstance.balanceOf(miner_account.address);
               let test_accountbalance_before_createdisease = await EticaReleaseInstance.balanceOf(test_account.address);
               let contract_balance_before_createdisease = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
-              console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
+              //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
 
             let first_disease = await EticaReleaseInstance.diseases(1);
             let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
-           console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
-           console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
-           console.log('NUMBER OF DISEASES IS:', diseasesCounter);
-           console.log('test_account balance before Disease Creation is', web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ));
-           console.log('contract balance before Disease Creation is', web3.utils.fromWei(contract_balance_before_createdisease, "ether" ));
+           //console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+           //console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+           //console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+           //console.log('test_account balance before Disease Creation is', web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ));
+           //console.log('contract balance before Disease Creation is', web3.utils.fromWei(contract_balance_before_createdisease, "ether" ));
            // try create new disease:
               return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !", {from: test_account.address}).then(async function(receipt){
                 let first_disease = await EticaReleaseInstance.diseases(1);
                 let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
                 let test_accountbalance_after_createdisease = await EticaReleaseInstance.balanceOf(test_account.address);
                 let contract_balance_after_createdisease = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
-            console.log('THE FIRST DISEASE IS:', first_disease);
-            console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
-            console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
-            console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+            //console.log('THE FIRST DISEASE IS:', first_disease);
+            //console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
+            //console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
+            //console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
             // check diseases mapping insertion:
             assert.equal(first_disease.disease_hash, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First disease should exists with right diseasehash');
@@ -591,11 +591,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             // test_account should have paid 100 ETI to contract
                // test_account should have 100 ETI less
                  assert.equal(web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ) - web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ), 100);
-                 console.log('test_account balance after Disease Creation is', web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ));
+                 //console.log('test_account balance after Disease Creation is', web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ));
 
                // contract should have 100 ETI more
                   assert.equal(web3.utils.fromWei(contract_balance_after_createdisease, "ether" ) - web3.utils.fromWei(contract_balance_before_createdisease, "ether" ), 100);
-                  console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
+                  //console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
 
 
             console.log('................................  CAN CREATE A DISEASE  ....................... ');
@@ -613,18 +613,18 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     console.log('................................  CAN GET MORE ETI AND STAKE THEM for more BOSOMS ? .......................');
                     let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
                     let test_accountbosomsbefore = await EticaReleaseInstance.bosomsOf(test_account.address);
-                    console.log('test_account ETI balance before transfer:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-                    console.log('test_account Bosoms balance before transfer:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+                    //console.log('test_account ETI balance before transfer:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                    //console.log('test_account Bosoms balance before transfer:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
                     console.log('transfering 10 ETI from miner_account to test_account');
                     let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
-                    console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                    //console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
                     return EticaReleaseInstance.transfer(test_account.address,  web3.utils.toBN(10000000000000000000), {from: miner_account.address}).then(async function(receipt){
 
                       let test_accountbalancebefore_newstaking = await EticaReleaseInstance.balanceOf(test_account.address);
                       let test_accountbosomsbefore_newstaking = await EticaReleaseInstance.bosomsOf(test_account.address);
-                      console.log('test_account ETI balance before new staking:', web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ));
-                      console.log('test_account Bosoms balance before new staking:', web3.utils.fromWei(test_accountbosomsbefore_newstaking, "ether" ));
+                      //console.log('test_account ETI balance before new staking:', web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ));
+                      //console.log('test_account Bosoms balance before new staking:', web3.utils.fromWei(test_accountbosomsbefore_newstaking, "ether" ));
 
                       assert.equal(web3.utils.fromWei(test_accountbosomsbefore, "ether" ), web3.utils.fromWei(test_accountbosomsbefore_newstaking, "ether" ), 'test_account should have same amount of Bosoms!');
                       assert.equal(web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_accountbalancebefore, "ether" ), "10", 'test_account should have 10 Eticas more!');
@@ -633,8 +633,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                       return EticaReleaseInstance.eticatobosoms(test_account.address,  web3.utils.toBN(10000000000000000000), {from: test_account.address}).then(async function(receipt){
                     let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
                     let test_accountbosomsafter = await EticaReleaseInstance.bosomsOf(test_account.address);
-                    console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-                    console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
+                    //console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                    //console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_accountbosomsafter, "ether" ));
                     assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), "20", 'test_account should have 20 Bosoms!');
                     assert.equal(web3.utils.fromWei(test_accountbalancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "10", 'test_account should have 10 Eticas less!');
 
@@ -655,26 +655,26 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     console.log('................................  CAN CREATE A PROPOSAL ? .......................');
 
                     let idofstruct = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
-                    console.log('idofstruct id: ', idofstruct);
+                    //console.log('idofstruct id: ', idofstruct);
 
                     let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
-                    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                    //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
 
                     let test_accountbosomsbefore = await EticaReleaseInstance.bosoms(test_account.address);
-                    console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+                    //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
 
                     return EticaReleaseInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
 
                     let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
                     let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
-                    console.log('THE FIRST PROPOSAL IS:', first_proposal);
+                    //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
                     let first_proposal_ipfs = await EticaReleaseInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
-                    console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
+                    //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
                     let first_proposal_data = await EticaReleaseInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
-                    console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+                    //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
                     // check Proposal's general information:
                     assert.equal(first_proposal.disease_id, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First proposal should exist with right disease_id');
@@ -718,13 +718,13 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         console.log('................................  CANNOT CREATE TWICE A PROPOSAL WITH SAME {raw_release_hash, disease_hash} ? .......................');
 
                         let idofstruct = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
-                        console.log('id of disease: ', idofstruct);
+                        //console.log('id of disease: ', idofstruct);
 
                         let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
-                        console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                        //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
 
                         let test_accountbosomsbefore = await EticaReleaseInstance.bosoms(test_account.address);
-                        console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+                        //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
                         assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before VOTEBYHASH (because propose function should fail but not for this reason)');
 
@@ -735,13 +735,13 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00) has not changed:
                         let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
-                        console.log('THE FIRST PROPOSAL IS:', first_proposal);
+                        //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
                         let first_proposal_ipfs = await EticaReleaseInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
-                        console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
+                        //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
                         let first_proposal_data = await EticaReleaseInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
-                        console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+                        //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
                         // check Proposal's general information:
                         assert.equal(first_proposal.disease_id, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First proposal should have kept the same disease_id');
@@ -785,31 +785,31 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         console.log('................................  CAN VOTE FOR A PROPOSAL ? .......................');
 
                         let idofstruct = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
-                        console.log('idofstruct id: ', idofstruct);
+                        //console.log('idofstruct id: ', idofstruct);
 
                         let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
-                        console.log('THE FIRST PROPOSAL IS:', first_proposal);
+                        //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
                         let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-                        console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+                        //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
                         let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
-                        console.log('THE FIRST PROPOSAL VOTE BEFORE VOTEBYHASH IS:', first_proposal_vote_before);
+                        //console.log('THE FIRST PROPOSAL VOTE BEFORE VOTEBYHASH IS:', first_proposal_vote_before);
 
                         let test_account_2_balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
-                        console.log('test_account ETI balance before VOTEBYHASH IS:', web3.utils.fromWei(test_account_2_balancebefore, "ether" ));
+                        //console.log('test_account ETI balance before VOTEBYHASH IS:', web3.utils.fromWei(test_account_2_balancebefore, "ether" ));
 
                         let test_account_2_bosomsbefore = await EticaReleaseInstance.bosoms(test_account2.address);
-                        console.log('test_account Bosoms before VOTEBYHASH IS:', web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ));
+                        //console.log('test_account Bosoms before VOTEBYHASH IS:', web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ));
 
                         return EticaReleaseInstance.votebyhash(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), {from: test_account2.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-                          console.log('THE FIRST PROPOSAL DATA AFTER VOTEBYHASH IS:', first_proposal_data_after);
+                          //console.log('THE FIRST PROPOSAL DATA AFTER VOTEBYHASH IS:', first_proposal_data_after);
 
                           let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account2.address);
-                          console.log('THE FIRST PROPOSAL VOTE AFTER VOTEBYHASH IS:', first_proposal_vote_after);
+                          //console.log('THE FIRST PROPOSAL VOTE AFTER VOTEBYHASH IS:', first_proposal_vote_after);
 
 
                         // ------------ WARNING
@@ -828,7 +828,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
   async function printBalances(accounts) {
     // accounts.forEach(function(ac, i) {
        var balance_val = await (web3.eth.getBalance(accounts[0]));
-       console.log('acct 0 balance', web3.utils.fromWei(balance_val.toString() , 'ether') )
+       //console.log('acct 0 balance', web3.utils.fromWei(balance_val.toString() , 'ether') )
     // })
    }
 

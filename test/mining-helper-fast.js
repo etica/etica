@@ -69,7 +69,7 @@ module.exports =  {
   {
 
 
-    console.log('collecting data from smartcontract');
+    console.log('collecting mining data from smartcontract');
 
 
 
@@ -87,14 +87,14 @@ module.exports =  {
     var supplyString = await tokenContract.supply.call()  ;
     var supply = parseInt(supplyString)
     var tokensMintedString = await tokenContract.tokensMinted.call()  ;
-    var tokensMinted = parseInt(tokensMinted)
+    var tokensMinted = parseInt(tokensMintedString)
 
-    console.log('blockreward:', blockreward);
-    console.log('difficulty:', miningDifficulty);
-    console.log('target:', miningTarget);
-    console.log('challenge number:', challengeNumber)
-    console.log('ETI supply:', supply)
-    console.log('ETI mined:', tokensMinted)
+    //console.log('blockreward:', blockreward);
+    //console.log('difficulty:', miningDifficulty);
+    //console.log('target:', miningTarget);
+    //console.log('challenge number:', challengeNumber)
+    //console.log('ETI supply:', supply)
+    //console.log('ETI mined:', tokensMinted)
 
     contractData.miningDifficulty= miningDifficulty;
     contractData.challengeNumber= challengeNumber;
@@ -107,8 +107,8 @@ module.exports =  {
 
   async submitNewMinedBlock( addressFrom, solution_number,digest_bytes,challenge_number)
   {
-     console.log('Submitting block for reward')
-     console.log(solution_number,digest_bytes)
+     //console.log('Submitting block for reward')
+     //console.log(solution_number,digest_bytes)
 
      this.networkInterface.queueMiningSolution( addressFrom, solution_number , digest_bytes , challenge_number)
 
@@ -183,13 +183,13 @@ module.exports =  {
                  {
 
 
-                    console.log(minerEthAddress)
-                     console.log('------')
-                     console.log(solution_numbera)
-                      console.log(challenge_number)
-                        console.log(solution_numbera)
-                    console.log('------')
-                     console.log( web3.utils.bytesToHex(digestBytes32a))
+                    //console.log(minerEthAddress)
+                     //console.log('------')
+                     //console.log(solution_numbera)
+                      //console.log(challenge_number)
+                        //console.log(solution_numbera)
+                    //console.log('------')
+                     //console.log( web3.utils.bytesToHex(digestBytes32a))
                  }
                  else{
                    // console.log('miningTarget still higher Try again !')
@@ -205,11 +205,11 @@ module.exports =  {
 
                  this.networkInterface.checkMiningSolution( minerEthAddress, solution_numbera , web3.utils.bytesToHex( digestBytes32a ),challenge_number,miningTarget,
                    function(result){
-                    console.log('checked mining soln:' ,result)
+                    //console.log('checked mining soln:' ,result)
                   })
               }else {
-                console.log('submit mined solution with challenge ', challenge_number)
-                console.log('submit mined solution with solution ', solution_numbera)
+                //console.log('submit mined solution with challenge ', challenge_number)
+                //console.log('submit mined solution with solution ', solution_numbera)
                 this.submitNewMinedBlock( minerEthAddress, solution_numbera,   web3.utils.bytesToHex( digestBytes32a ) , challenge_number);
               }
              }
@@ -219,13 +219,13 @@ module.exports =  {
              {
 
 
-                console.log(minerEthAddress)
-                 console.log('------')
-                 console.log(solution_numberb)
-                  console.log(challenge_number)
-                    console.log(solution_numberb)
-                console.log('------')
-                 console.log( web3.utils.bytesToHex(digestBytes32b))
+                //console.log(minerEthAddress)
+                 //console.log('------')
+                 //console.log(solution_numberb)
+                  //console.log(challenge_number)
+                    //console.log(solution_numberb)
+                //console.log('------')
+                 //console.log( web3.utils.bytesToHex(digestBytes32b))
              }
 
 
@@ -236,16 +236,16 @@ module.exports =  {
            if(this.testMode){
              this.mining = false;
 
-             console.log('checking mined solution with challenge ', challenge_number)
-             console.log('checking mined solution with solution ', solution_numberb)
+             //console.log('checking mined solution with challenge ', challenge_number)
+             //console.log('checking mined solution with solution ', solution_numberb)
 
              this.networkInterface.checkMiningSolution( minerEthAddress, solution_numberb , web3.utils.bytesToHex( digestBytes32b ),challenge_number,miningTarget,
                function(result){
-                console.log('checked mining soln:' ,result)
+                //console.log('checked mining soln:' ,result)
               })
           }else {
-            console.log('submit mined solution with challenge ', challenge_number)
-            console.log('submit mined solution with solution ', solution_numberb)
+            //console.log('submit mined solution with challenge ', challenge_number)
+            //console.log('submit mined solution with solution ', solution_numberb)
             this.submitNewMinedBlock( minerEthAddress, solution_numberb,   web3.utils.bytesToHex( digestBytes32b ) , challenge_number);
           }
          }
@@ -256,13 +256,13 @@ module.exports =  {
          {
 
 
-            console.log(minerEthAddress)
-             console.log('------')
-             console.log(solution_numberc)
-              console.log(challenge_number)
-                console.log(solution_numberc)
-            console.log('------')
-             console.log( web3.utils.bytesToHex(digestBytes32c))
+            //console.log(minerEthAddress)
+             //console.log('------')
+             //console.log(solution_numberc)
+              //console.log(challenge_number)
+                //console.log(solution_numberc)
+            //console.log('------')
+             //console.log( web3.utils.bytesToHex(digestBytes32c))
          }
 
 
@@ -275,11 +275,11 @@ module.exports =  {
 
          this.networkInterface.checkMiningSolution( minerEthAddress, solution_numberc , web3.utils.bytesToHex( digestBytes32c ),challenge_number,miningTarget,
            function(result){
-            console.log('checked mining soln:' ,result)
+            //console.log('checked mining soln:' ,result)
           })
       }else {
-        console.log('submit mined solution with challenge ', challenge_number)
-        console.log('submit mined solution with solution ', solution_numberc)
+        //console.log('submit mined solution with challenge ', challenge_number)
+        //console.log('submit mined solution with solution ', solution_numberc)
         this.submitNewMinedBlock( minerEthAddress, solution_numberc,   web3.utils.bytesToHex( digestBytes32c ) , challenge_number);
       }
      }

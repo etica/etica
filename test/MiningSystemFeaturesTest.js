@@ -70,7 +70,7 @@ contract('EticaRelease', function(accounts){
       var targetString = await tokenContract.getMiningTarget.call({from: from_address});
       var target = web3.utils.toBN(targetString);
 
-      console.log('target',target)
+      //console.log('target',target)
 
       var msg_sender = accounts[0]
   //  var challengeDigestBytes32 = solidityHelper.stringToSolidityBytes32(challenge_digest)
@@ -78,18 +78,18 @@ contract('EticaRelease', function(accounts){
     const phraseDigest = web3.utils.soliditySha3(challenge_number, from_address, solution_number )
 
   //  var challengeDigestBytes32 = solidityHelper.stringToSolidityBytes32(phraseDigest)
-    console.log('phraseDigest', phraseDigest);  // 0x0007e4c9ad0890ee34f6d98852d24ce6e9cc6ecfad8f2bd39b7c87b05e8e050b
-    console.log(solution_digest);
-    console.log(solution_number)
+    //console.log('phraseDigest', phraseDigest);  // 0x0007e4c9ad0890ee34f6d98852d24ce6e9cc6ecfad8f2bd39b7c87b05e8e050b
+    //console.log(solution_digest);
+    //console.log(solution_number)
 
 
     var checkDigest = await tokenContract.getMintDigest.call(solution_number,phraseDigest,challenge_number, {from: from_address});
 
-    console.log('checkDigest',checkDigest)
+    //console.log('checkDigest',checkDigest)
 
-    console.log('target',target)
+    //console.log('target',target)
 
-    console.log('challenge_number',challenge_number)
+    //console.log('challenge_number',challenge_number)
 
     //var checkSuccess = await tokenContract.checkMintSolution.call(solution_number,phraseDigest,challenge_number, target );
     //  console.log('checkSuccess',checkSuccess)
@@ -112,9 +112,9 @@ contract('EticaRelease', function(accounts){
 
     var tokenContract = await EticaRelease.deployed();
 
-    console.log('contract')
+    //console.log('contract')
 
-    console.log(tokenContract.address)
+    //console.log(tokenContract.address)
 
   /*  var test_account= {
         'address': '0x087964cd8b33ea47c01fbe48b70113ce93481e01',
@@ -138,7 +138,7 @@ contract('EticaRelease', function(accounts){
   async function printBalances(accounts) {
     // accounts.forEach(function(ac, i) {
        var balance_val = await (web3.eth.getBalance(accounts[0]));
-       console.log('acct 0 balance', web3.utils.fromWei(balance_val.toString() , 'ether') )
+       //onsole.log('acct 0 balance', web3.utils.fromWei(balance_val.toString() , 'ether') )
     // })
    }
  });

@@ -653,7 +653,7 @@ return true;
 
 }
 
-// --- WARNING this function should be internal, will be called by propose proposal function
+// --- WARNING this function should be internal, will be called by propose proposal function and by constructor for first call
 // let public for testing only
 // create a period
 function newPeriod() public {
@@ -862,8 +862,10 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       bytes32 existing_proposal = proposals[_proposed_release_hash].proposed_release_hash;
       if(existing_proposal != 0x0 || proposals[_proposed_release_hash].id != 0) revert();  //prevent the same raw_release_hash from being submited twice on same proposal. Double check for better security and slightly higher gas cost even though one would be enough !
 
+     uint _current_interval = uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
+
       // Create new Period if this current interval did not have its Period created yet
-      if(IntervalsPeriods[uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL))] == 0x0){
+      if(IntervalsPeriods[_current_interval] == 0x0){
         newPeriod();
       }
 
@@ -872,7 +874,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
        proposal.id = proposalsCounter;
        proposal.disease_id = _diseasehash; // _diseasehash has already been checked to equal diseases[diseasesbyIds[_diseasehash]].disease_hash
-       proposal.period_id = IntervalsPeriods[uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL))];
+       proposal.period_id = IntervalsPeriods[_current_interval];
        proposal.proposed_release_hash = _proposed_release_hash; // Hash of "raw_release_hash + name of Disease",
        proposal.proposer = msg.sender;
        proposal.title = _title;
@@ -927,7 +929,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
    // voterIsProposer can be used for the Linking Reward attribution:
    bool voterIsProposer = false;
-
    if (msg.sender == proposal.proposer) {
    voterIsProposer = true;
    }
@@ -986,7 +987,6 @@ Proposal storage proposal = proposals[_proposed_release_hash];
 require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
  bool voterIsProposer = false;
-
  if (msg.sender == proposal.proposer) {
  voterIsProposer = true;
  }
@@ -998,7 +998,8 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
  require(proposaldata.prestatus != ProposalStatus.Pending); // can vote for proposal only if default vote has changed prestatus of Proposal. Thus can vote only if default vote occured as supposed to
 
-
+uint _old_proposal_curationweight = proposaldata.lastcuration_weight;
+uint _old_proposal_editorweight = proposaldata.lasteditor_weight;
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // may not be necessary as handled by safemath sub function
@@ -1067,8 +1068,8 @@ Period storage period = periods[proposal.period_id];
          proposaldata.lastcuration_weight = 0;
          proposaldata.lasteditor_weight = 0;
          // Proposal tied, remove proposal curation and editor sum
-         period.curation_sum = period.curation_sum - proposaldata.lastcuration_weight;
-         period.editor_sum = period.editor_sum - proposaldata.lasteditor_weight;
+         period.curation_sum = period.curation_sum - _old_proposal_curationweight;
+         period.editor_sum = period.editor_sum - _old_proposal_editorweight;
          }
          else {
              // Proposal approved, strengthen curation sum
@@ -1077,16 +1078,16 @@ Period storage period = periods[proposal.period_id];
              proposaldata.lastcuration_weight = proposaldata.forvotes * proposaldata.nbvoters;
              proposaldata.lasteditor_weight = proposaldata.forvotes * proposaldata.nbvoters;
              // Proposal approved, replace proposal curation and editor sum with forvotes
-             period.curation_sum = period.curation_sum - proposaldata.lastcuration_weight + proposaldata.lastcuration_weight;
-             period.editor_sum = period.editor_sum - proposaldata.lasteditor_weight + proposaldata.lasteditor_weight;
+             period.curation_sum = period.curation_sum - _old_proposal_curationweight + proposaldata.lastcuration_weight;
+             period.editor_sum = period.editor_sum - _old_proposal_editorweight + proposaldata.lasteditor_weight;
          }
          else{
              proposaldata.prestatus =  ProposalStatus.Rejected;
              proposaldata.lastcuration_weight = proposaldata.againstvotes * proposaldata.nbvoters;
              proposaldata.lasteditor_weight = 0;
              // Proposal rejected, replace proposal curation sum with againstvotes and remove proposal editor sum
-             period.curation_sum = period.curation_sum - proposaldata.lastcuration_weight + proposaldata.lastcuration_weight;
-             period.editor_sum = period.editor_sum - proposaldata.lasteditor_weight;
+             period.curation_sum = period.curation_sum - _old_proposal_curationweight + proposaldata.lastcuration_weight;
+             period.editor_sum = period.editor_sum - _old_proposal_editorweight;
          }
          }
 

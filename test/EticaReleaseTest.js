@@ -678,6 +678,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     // check Proposal's general information:
                     assert.equal(first_proposal.disease_id, '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa', 'First proposal should exist with right disease_id');
+                    assert(first_proposal.period_id >= 1);
                     assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
                     assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
                     assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');

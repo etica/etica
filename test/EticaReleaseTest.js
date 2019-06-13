@@ -406,11 +406,13 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
               let blocknb_before = await web3.eth.getBlock("latest");
               console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
+              console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
               console.log('------------- ADVANCING BLOCKS --------------');
-              await advanceblocks(154);
+              await advanceminutes(3);
               console.log('------------- ADVANCING BLOCKS --------------');
               let blocknb_after = await web3.eth.getBlock("latest");
               console.log('LastBlock\'s NUMBER IS NOW:', blocknb_after.number);
+              console.log('LastBlock\'s TIMESTAMP IS NOW:', blocknb_after.timestamp);
               console.log('------------- BLOCKS ADVANCED --------------');
 
              // try create new period:
@@ -442,11 +444,13 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
               let blocknb_before = await web3.eth.getBlock("latest");
               console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
+              console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
               console.log('------------- ADVANCING BLOCKS --------------');
-              await advanceblocks(30);
+              await advanceminutes(1);
               console.log('------------- ADVANCING BLOCKS --------------');
               let blocknb_after = await web3.eth.getBlock("latest");
               console.log('LastBlock\'s NUMBER IS NOW:', blocknb_after.number);
+              console.log('LastBlock\'s TIMESTAMP IS NOW:', blocknb_after.timestamp);
               console.log('------------- BLOCKS ADVANCED --------------');
 
              // try create to claim a stake after it has ended:
@@ -832,8 +836,73 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
     // })
    }
 
-   async function advanceblocks(numberlbocks) {
+   async function advanceseconds(duration) {
+
+   let numberlblocks = uint(duration / 15);
+
+   console.log('numberlblocks is', numberlblocks);
+
      for(var i=0;i<numberlbocks;i+=1){
+
+
+/*  await web3.currentProvider.send({
+     jsonrpc: '2.0',
+     method: 'evm_increaseTime',
+     params: [15], // each blocks ads 30 seconds
+     id: id,
+   }, err1 => {
+     if (err1) return
+   })*/
+
+   await web3.currentProvider.send({
+       jsonrpc: '2.0',
+       method: 'evm_mine',
+       id: id+1,
+     }, (err2, res) => {
+       return
+     })
+
+
+     }
+
+   }
+
+   async function advanceminutes(duration) {
+
+    let id = Date.now();
+     let numberlblocks = duration * 4; // 4 is because 60 / 15 == 4
+
+     console.log('numberlblocks is', numberlblocks);
+
+       for(var i=0;i<numberlblocks;i+=1){
+
+
+    await web3.currentProvider.send({
+       jsonrpc: '2.0',
+       method: 'evm_increaseTime',
+       params: [15], // each blocks ads 30 seconds
+       id: id,
+     }, err1 => {
+       if (err1) return
+     })
+
+     await web3.currentProvider.send({
+         jsonrpc: '2.0',
+         method: 'evm_mine',
+         id: i+1,
+       }, (err2, res) => {
+         return
+       })
+
+
+       }
+
+   }
+
+   async function advanceblocks(numberlbocks) {
+     let numberlblocks = uint(numberlbocks * 60 / 15);
+     console.log('numberlblocks2 is', numberlblocks);
+     for(var i=0;i<numberlblocks;i+=1){
     await web3.currentProvider.send(
       {jsonrpc: "2.0", method: "evm_mine", id: i},
     (err2, res) => {
@@ -842,4 +911,5 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 });
      }
    }
+
  });

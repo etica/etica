@@ -438,18 +438,18 @@ function () payable external {
 
 contract EticaRelease is EticaToken {
   /* --------- PROD -------------
-uint TESTING_STARTING_BLOCK_NUMBER = 7739267; // used only for testing as ganache starts at block number 0
-uint REWARD_INTERVAL = 42000; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
-uint STAKING_DURATION = 168000; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
+uint TESTING_STARTING_BLOCK_NUMBER = 52 weeks; // used only for testing as ganache starts at block number 0
+uint REWARD_INTERVAL = 7 days; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
+uint STAKING_DURATION = 28 days; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
 uint ETICA_TO_BOSOM_RATIO = 1; //
      --------- PROD ------------- */
 
 
-uint TESTING_STARTING_BLOCK_NUMBER = 7739267; // used only for testing as ganache starts at block number 0
-uint REWARD_INTERVAL = 42; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
-uint STAKING_DURATION = 168; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
+uint TESTING_STARTING_BLOCK_NUMBER = 52 weeks; // used only for testing as ganache starts at block number 0
+uint REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
+uint STAKING_DURATION = 4 minutes; // default stake duration 28 jours
 uint ETICA_TO_BOSOM_RATIO = 1; //
-uint DEFAULT_VOTING_TIME = 168; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
+uint DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -658,7 +658,7 @@ return true;
 // create a period
 function newPeriod() public {
 
-  uint _interval = uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
+  uint _interval = uint((block.timestamp + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
 
   //only allow one period for each interval
   uint rwd = IntervalsPeriods[_interval];
@@ -728,12 +728,12 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
     stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
-    uint endBlock = block.number + STAKING_DURATION;
+    uint endBlock = block.timestamp + STAKING_DURATION;
 
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.number, // StartBlock
+      block.timestamp, // StartBlock
       endBlock // EndBlock
     );
 
@@ -756,7 +756,7 @@ function stakeclmidx (uint _stakeidx) public {
   Stake storage _stake = stakes[msg.sender][_stakeidx];
 
   // The stake must be over
-  require(block.number > _stake.endBlock);
+  require(block.timestamp > _stake.endBlock);
 
   require(_stake.amount > 0);
 
@@ -862,7 +862,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       bytes32 existing_proposal = proposals[_proposed_release_hash].proposed_release_hash;
       if(existing_proposal != 0x0 || proposals[_proposed_release_hash].id != 0) revert();  //prevent the same raw_release_hash from being submited twice on same proposal. Double check for better security and slightly higher gas cost even though one would be enough !
 
-     uint _current_interval = uint((block.number + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
+     uint _current_interval = uint((block.timestamp + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
 
       // Create new Period if this current interval did not have its Period created yet
       if(IntervalsPeriods[_current_interval] == 0x0){
@@ -902,8 +902,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.againstvotes = 0;
        proposaldata.lastcuration_weight = 0;
        proposaldata.lasteditor_weight = 0;
-       proposaldata.starttime = block.number;
-       proposaldata.endtime = block.number + DEFAULT_VOTING_TIME;
+       proposaldata.starttime = block.timestamp;
+       proposaldata.endtime = block.timestamp + DEFAULT_VOTING_TIME;
 
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
@@ -935,7 +935,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     // Verify voting is still in progress
-    require( block.number < proposaldata.endtime);
+    require( block.timestamp < proposaldata.endtime);
 
 
     // default vote can't be called twice on same proposal:
@@ -961,7 +961,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
     vote.is_editor = voterIsProposer;
     vote.amount = PROPOSAL_DEFAULT_VOTE;
     vote.voter = msg.sender;
-    vote.timestamp = block.number;
+    vote.timestamp = block.timestamp;
 
 
 
@@ -1021,7 +1021,7 @@ Period storage period = periods[proposal.period_id];
  vote.is_editor = voterIsProposer;
  vote.amount = _amount;
  vote.voter = msg.sender;
- vote.timestamp = block.number;
+ vote.timestamp = block.timestamp;
 
  proposaldata.nbvoters = proposaldata.nbvoters + 1;
 

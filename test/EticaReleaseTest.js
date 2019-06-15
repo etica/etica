@@ -42,6 +42,16 @@ contract('EticaRelease', function(accounts){
     'privateKey': '3f1f4741a79d1ee425819b304bdcddd189186dd183427218299d4e4325bf0411'
 }
 
+var test_account3= {
+  'address': '0x3D39e128cbA9E431cE0eF2E783E81864fc2e0C34',
+  'privateKey': '44d964eeec131409b26385c2eef1d63f7dfd703967b7af98b567b2d46a151579'
+}
+
+var test_account4= {
+  'address': '0xD79e20A9DEfD15E8502697B55074a822Bf29192c',
+  'privateKey': '26add5648161ce7488712f7e79c80f08358eb169867140200d050d2cff70763d'
+}
+
  var miner_account= {
     'address': '0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC',
     'privateKey': '16b271fdb3eb17a065d4227a3087fa140ba0f88d0d66e7eaa778e3e5c0c6838c'
@@ -730,7 +740,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         let test_accountbosomsbefore = await EticaReleaseInstance.bosoms(test_account.address);
                         //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
-                        assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before VOTEBYHASH (because propose function should fail but not for this reason)');
+                        assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before CALLING PROPOSE FUNCTION (because propose function should fail but not for this reason)');
 
 
                         return EticaReleaseInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(assert.fail)
@@ -783,6 +793,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         });
 
 
+
+
                     // test Proposals vote
                       it("can vote for Proposal", async function () {
                         console.log('------------------------------------ Starting test ---------------------------');
@@ -815,6 +827,12 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                           let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account2.address);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER VOTEBYHASH IS:', first_proposal_vote_after);
 
+                          assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account2 should have been able to vote for 1 Bosom!');
+
+                          let test_account_2_bosomsafter = await EticaReleaseInstance.bosoms(test_account2.address);
+
+                          assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');
+
 
                         // ------------ WARNING
                         // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
@@ -827,6 +845,196 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
 
                         });
+
+
+               // test_account3 will need ETI to keep going with tests
+               it("Get more ETI and stake them for bosoms:", async function () {
+                console.log('------------------------------------- Starting task ---------------------------');
+                console.log('................................  CAN GET MORE ETI AND STAKE THEM for more BOSOMS ? .......................');
+                let test_account_3_balancebefore = await EticaReleaseInstance.balanceOf(test_account3.address);
+                let test_account_3_bosomsbefore = await EticaReleaseInstance.bosomsOf(test_account3.address);
+                //console.log('test_account ETI balance before transfer:', web3.utils.fromWei(test_account_3_balancebefore, "ether" ));
+                //console.log('test_account Bosoms balance before transfer:', web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ));
+
+                console.log('transfering 5 ETI from miner_account to test_account3');
+                let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 5, 'miner_account should have enough ETI before CALLING TRANSFER FUNCTION but unfortunatly it has not mined enough ETI, please try to relanch tests you will be more lucky next time!');
+                return EticaReleaseInstance.transfer(test_account3.address,  web3.utils.toBN(5000000000000000000), {from: miner_account.address}).then(async function(receipt){
+
+                  let test_account_3_balancebefore_newstaking = await EticaReleaseInstance.balanceOf(test_account3.address);
+                  let test_account_3_bosomsbefore_newstaking = await EticaReleaseInstance.bosomsOf(test_account3.address);
+                  //console.log('test_account ETI balance before new staking:', web3.utils.fromWei(test_account_3_balancebefore_newstaking, "ether" ));
+                  //console.log('test_account Bosoms balance before new staking:', web3.utils.fromWei(test_account_3_bosomsbefore_newstaking, "ether" ));
+
+                  assert.equal(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ), web3.utils.fromWei(test_account_3_bosomsbefore_newstaking, "ether" ), 'test_account3 should have same amount of Bosoms!');
+                  assert.equal(web3.utils.fromWei(test_account_3_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_3_balancebefore, "ether" ), "5", 'test_account3 should have 5 Eticas more!');
+
+                // try staking 5 ETI:
+                  return EticaReleaseInstance.eticatobosoms(test_account3.address,  web3.utils.toBN(5000000000000000000), {from: test_account3.address}).then(async function(receipt){
+                let test_account_3_balanceafter = await EticaReleaseInstance.balanceOf(test_account3.address);
+                let test_account_3_bosomsafter = await EticaReleaseInstance.bosomsOf(test_account3.address);
+                //console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                //console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_account_3_bosomsafter, "ether" ));
+                assert.equal(web3.utils.fromWei(test_account_3_bosomsafter, "ether" ), "5", 'test_account3 should have 5 Bosoms!');
+                assert.equal(web3.utils.fromWei(test_account_3_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_3_balanceafter, "ether" ), "5", 'test_account should have 5 Eticas less!');
+
+                console.log('.....................   CAN GET MORE ETI AND STAKE THEM for more BOSOMS  ....................... ');
+                console.log('---------------------------------- END OF TASK with SUCCESS ----------------------------');
+                
+                })
+                })
+
+              });
+
+                             // test_account4 will need ETI to keep going with tests
+                             it("Get more ETI and stake them for bosoms:", async function () {
+                              console.log('------------------------------------- Starting task ---------------------------');
+                              console.log('................................  CAN GET MORE ETI AND STAKE THEM for more BOSOMS ? .......................');
+                              let test_account_4_balancebefore = await EticaReleaseInstance.balanceOf(test_account4.address);
+                              let test_account_4_bosomsbefore = await EticaReleaseInstance.bosomsOf(test_account4.address);
+                              //console.log('test_account ETI balance before transfer:', web3.utils.fromWei(test_account_4_balancebefore, "ether" ));
+                              //console.log('test_account Bosoms balance before transfer:', web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ));
+              
+                              console.log('transfering 5 ETI from miner_account to test_account4');
+                              let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                              console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                              assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 5, 'miner_account should have enough ETI before CALLING TRANSFER FUNCTION but unfortunatly it has not mined enough ETI, please try to relanch tests you will be more lucky next time!');
+                              return EticaReleaseInstance.transfer(test_account4.address,  web3.utils.toBN(5000000000000000000), {from: miner_account.address}).then(async function(receipt){
+              
+                                let test_account_4_balancebefore_newstaking = await EticaReleaseInstance.balanceOf(test_account4.address);
+                                let test_account_4_bosomsbefore_newstaking = await EticaReleaseInstance.bosomsOf(test_account4.address);
+                                //console.log('test_account ETI balance before new staking:', web3.utils.fromWei(test_account_4_balancebefore_newstaking, "ether" ));
+                                //console.log('test_account Bosoms balance before new staking:', web3.utils.fromWei(test_account_4_bosomsbefore_newstaking, "ether" ));
+              
+                                assert.equal(web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ), web3.utils.fromWei(test_account_4_bosomsbefore_newstaking, "ether" ), 'test_account4 should have same amount of Bosoms!');
+                                assert.equal(web3.utils.fromWei(test_account_4_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_4_balancebefore, "ether" ), "5", 'test_account4 should have 5 Eticas more!');
+              
+                              // try staking 5 ETI:
+                                return EticaReleaseInstance.eticatobosoms(test_account4.address,  web3.utils.toBN(5000000000000000000), {from: test_account4.address}).then(async function(receipt){
+                              let test_account_4_balanceafter = await EticaReleaseInstance.balanceOf(test_account4.address);
+                              let test_account_4_bosomsafter = await EticaReleaseInstance.bosomsOf(test_account4.address);
+                              //console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                              //console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_account_4_bosomsafter, "ether" ));
+                              assert.equal(web3.utils.fromWei(test_account_4_bosomsafter, "ether" ), "5", 'test_account4 should have 5 Bosoms!');
+                              assert.equal(web3.utils.fromWei(test_account_4_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_4_balanceafter, "ether" ), "5", 'test_account should have 5 Eticas less!');
+              
+                              console.log('.....................   CAN GET MORE ETI AND STAKE THEM for more BOSOMS  ....................... ');
+                              console.log('---------------------------------- END OF TASK with SUCCESS ----------------------------');
+                              
+                              })
+                              })
+              
+                            });
+
+
+
+
+
+// test Proposals vote again just before testing cannot vote after endvote. This test is used as a way to make sure we are only testing endvote on next test
+it("can still vote for Proposal", async function () {
+  console.log('------------------------------------ Starting test ---------------------------');
+  console.log('................................  CAN STILL VOTE FOR A PROPOSAL ? .......................');
+
+  let idofstruct = await EticaReleaseInstance.diseasesbyIds('0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+  //console.log('idofstruct id: ', idofstruct);
+
+  let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+  let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+  //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+  let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+  //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+
+  let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
+  //console.log('THE FIRST PROPOSAL VOTE BEFORE VOTEBYHASH IS:', first_proposal_vote_before);
+
+  let test_account_4_balancebefore = await EticaReleaseInstance.balanceOf(test_account4.address);
+  //console.log('test_account ETI balance before VOTEBYHASH IS:', web3.utils.fromWei(test_account_4_balancebefore, "ether" ));
+
+  let test_account_4_bosomsbefore = await EticaReleaseInstance.bosoms(test_account4.address);
+  //console.log('test_account Bosoms before VOTEBYHASH IS:', web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ));
+
+  let lstblock = await web3.eth.getBlock("latest");
+  console.log('last block s timestamp is', lstblock.timestamp);
+  let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+  console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
+
+  // vote should pass as endvote has not been reached yet
+  assert(lstblock.timestamp < first_proposal_data_after.endtime, 'Block timestamp should be lower than first proposal endvote before testing CAN STILL VOTE');
+
+  return EticaReleaseInstance.votebyhash(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), {from: test_account4.address}).then(async function(response){
+
+    let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+    //console.log('THE FIRST PROPOSAL DATA AFTER VOTEBYHASH IS:', first_proposal_data_after);
+
+    let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account4.address);
+    //console.log('THE FIRST PROPOSAL VOTE AFTER VOTEBYHASH IS:', first_proposal_vote_after);
+
+    assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account4 should have been able to vote for 1 Bosom!');
+
+    let test_account_4_bosomsafter = await EticaReleaseInstance.bosoms(test_account4.address);
+
+    assert.equal(web3.utils.fromWei(test_account_4_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_4_bosomsafter.toString(), "ether" ), "1", 'test_account4 should have 1 Bosom less!');
+
+
+  console.log('................................  CAN STILL VOTE FOR A PROPOSAL  ....................... ');
+  console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+  });
+
+
+
+  });
+
+
+
+          // test too late voting should fail
+          it("cannot vote too late :", async function () {
+            console.log('------------------------------- Starting test ---------------------------');
+            console.log('.......................... Cannot VOTE TOO LATE ? ..................... ');
+            await advanceminutes(5);
+            let test_account_3_balancebefore = await EticaReleaseInstance.balanceOf(test_account3.address);
+            let test_account_3_stakebefore = await EticaReleaseInstance.stakes(test_account3.address, 1);
+            //console.log('test_account3 ETI balance before:', web3.utils.fromWei(test_account_3_balancebefore, "ether" ));
+            //console.log('test_account3 Stake before:', test_account_3_stakebefore);
+            //console.log('test_account3 Stake amount before:', web3.utils.fromWei(test_account_3_stakebefore.amount, "ether" ));
+
+            let test_account_3_bosomsbefore = await EticaReleaseInstance.bosoms(test_account3.address);
+            //console.log('test_account3 Bosoms before:', web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ));
+
+            let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                        //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+            assert(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ) >= 1, 'test_account3 should have enough Bosoms before CALLING VOTEBYHASH FUNCTION (because votebyhash function should fail but not for this reason)');
+
+            let lstblock = await web3.eth.getBlock("latest");
+            //console.log('last block s timestamp is', lstblock.timestamp);
+            let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+            //console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
+
+            // vote should fail as endvote has already been reached
+            assert(lstblock.timestamp > first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal endvote before testing CANNOT VOTE TOO LATE');
+
+           // try to VOTE for proposal, should be too late:
+           return EticaReleaseInstance.votebyhash(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), {from: test_account3.address}).then(assert.fail)
+              .catch(async function(error){
+                assert(true);
+                let test_account_3_balanceafter = await EticaReleaseInstance.balanceOf(test_account3.address);
+                let test_account_3_stakeafter = await EticaReleaseInstance.stakes(test_account3.address,1);
+                let test_account_3_bosomsafter = await EticaReleaseInstance.bosoms(test_account3.address);
+                let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account3.address);
+                //console.log('test_account3 ETI balance after:', web3.utils.fromWei(test_account_3_balanceafter, "ether" ));
+                //console.log('test_account3 Stake after:', test_account_3_stakeafter);
+                //console.log('test_account3 Vote is:', first_proposal_vote_after);
+                assert.equal(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_3_bosomsafter, "ether" ), "0", 'test_account should not have less Bosoms!');
+                assert.equal(first_proposal_vote_after.amount, "0", 'test_account should not have been able to vote too late!');
+
+                console.log('........................... Too late VOTING is not possible ....................... ');
+                console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+              });
+
+          });
 
 
   async function printBalances(accounts) {

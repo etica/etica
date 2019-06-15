@@ -991,7 +991,7 @@ require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_h
 
 ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
  // Verify voting is still in progress
- //require( block.number < proposaldata.endtime);
+ require( block.timestamp < proposaldata.endtime);
 
  require(proposaldata.prestatus != ProposalStatus.Pending); // can vote for proposal only if default vote has changed prestatus of Proposal. Thus can vote only if default vote occured as supposed to
 

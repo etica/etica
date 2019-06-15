@@ -116,7 +116,7 @@ contract EticaToken is ERC20Interface{
     uint public epochCount;//number of 'blocks' mined
 
 
-    uint public _BLOCKS_PER_READJUSTMENT = 1024;
+    uint public _BLOCKS_PER_READJUSTMENT = 2016;
 
 
     //a little number
@@ -195,7 +195,7 @@ contract EticaToken is ERC20Interface{
 
       miningTarget = _MAXIMUM_TARGET;
 
-      latestDifficultyPeriodStarted = block.number;
+      latestDifficultyPeriodStarted = block.timestamp;
 
       _startNewMiningEpoch();
 
@@ -334,22 +334,19 @@ contract EticaToken is ERC20Interface{
      //https://en.bitcoin.it/wiki/Difficulty#What_is_the_formula_for_difficulty.3F
      //as of 2017 the bitcoin difficulty was up to 17 zeroes, it was only 8 in the early days
 
-     //readjust the target by 5 percent
+     //readjust the target by up to 50 percent
      function _reAdjustDifficulty() internal {
 
+          // should get as close as possible to (2016 * 10 minutes) seconds => 1 209 600 seconds
+         uint ethTimeSinceLastDifficultyPeriod = block.timestamp - latestDifficultyPeriodStarted;      
 
-         uint ethBlocksSinceLastDifficultyPeriod = block.number - latestDifficultyPeriodStarted;
-         //assume 360 ethereum blocks per hour
+         //we want miners to spend 10 minutes to mine each 'block'
+         uint targetTimePerDiffPeriod = _BLOCKS_PER_READJUSTMENT * 10 minutes; //Target is 1 209 600 seconds. (2016 * 10 minutes) seconds to mine _BLOCKS_PER_READJUSTMENT blocks of ETI.
 
-         //we want miners to spend 10 minutes to mine each 'block', about 60 ethereum blocks = one Mining system epoch
-         uint epochsMined = _BLOCKS_PER_READJUSTMENT; //256
-
-         uint targetEthBlocksPerDiffPeriod = epochsMined * 60; //should be 60 times slower than ethereum
-
-         //if there were less eth blocks passed in time than expected
-         if( ethBlocksSinceLastDifficultyPeriod < targetEthBlocksPerDiffPeriod )
+         //if there were less eth seconds-timestamp than expected
+         if( ethTimeSinceLastDifficultyPeriod < targetTimePerDiffPeriod )
          {
-           uint excess_block_pct = (targetEthBlocksPerDiffPeriod.mul(100)).div( ethBlocksSinceLastDifficultyPeriod );
+           uint excess_block_pct = (targetTimePerDiffPeriod.mul(100)).div( ethTimeSinceLastDifficultyPeriod );
 
            uint excess_block_pct_extra = excess_block_pct.sub(100).limitLessThan(1000);
            // If there were 5% more blocks mined than expected then this is 5.  If there were 100% more blocks mined than expected then this is 100.
@@ -357,7 +354,7 @@ contract EticaToken is ERC20Interface{
            //make it harder
            miningTarget = miningTarget.sub(miningTarget.div(2000).mul(excess_block_pct_extra));   //by up to 50 %
          }else{
-           uint shortage_block_pct = (ethBlocksSinceLastDifficultyPeriod.mul(100)).div( targetEthBlocksPerDiffPeriod );
+           uint shortage_block_pct = (ethTimeSinceLastDifficultyPeriod.mul(100)).div( targetTimePerDiffPeriod );
 
            uint shortage_block_pct_extra = shortage_block_pct.sub(100).limitLessThan(1000); //always between 0 and 1000
 
@@ -367,7 +364,7 @@ contract EticaToken is ERC20Interface{
 
 
 
-         latestDifficultyPeriodStarted = block.number;
+         latestDifficultyPeriodStarted = block.timestamp;
 
          if(miningTarget < _MINIMUM_TARGET) //very difficult
          {
@@ -438,18 +435,18 @@ function () payable external {
 
 contract EticaRelease is EticaToken {
   /* --------- PROD -------------
-uint TESTING_STARTING_BLOCK_NUMBER = 52 weeks; // used only for testing as ganache starts at block number 0
-uint REWARD_INTERVAL = 7 days; // periods duration (in number of blocks) 42000 blocks = 7 jours (6000 blocks per day)
-uint STAKING_DURATION = 28 days; // default stake duration (in number of blocks) 168000 blocks = 28 jours (6000 blocks per day)
+uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
+uint STAKING_DURATION = 28 days; // default stake duration 28 jours
 uint ETICA_TO_BOSOM_RATIO = 1; //
+uint DEFAULT_VOTING_TIME = 28 days; // default stake duration 28 days
      --------- PROD ------------- */
 
-
-uint TESTING_STARTING_BLOCK_NUMBER = 52 weeks; // used only for testing as ganache starts at block number 0
+/* --------- TESTING VALUES -------------*/
 uint REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint STAKING_DURATION = 4 minutes; // default stake duration 28 jours
 uint ETICA_TO_BOSOM_RATIO = 1; //
 uint DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
+/* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -658,7 +655,7 @@ return true;
 // create a period
 function newPeriod() public {
 
-  uint _interval = uint((block.timestamp + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
+  uint _interval = uint((block.timestamp).div(REWARD_INTERVAL));
 
   //only allow one period for each interval
   uint rwd = IntervalsPeriods[_interval];
@@ -862,7 +859,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       bytes32 existing_proposal = proposals[_proposed_release_hash].proposed_release_hash;
       if(existing_proposal != 0x0 || proposals[_proposed_release_hash].id != 0) revert();  //prevent the same raw_release_hash from being submited twice on same proposal. Double check for better security and slightly higher gas cost even though one would be enough !
 
-     uint _current_interval = uint((block.timestamp + TESTING_STARTING_BLOCK_NUMBER).div(REWARD_INTERVAL));
+     uint _current_interval = uint((block.timestamp).div(REWARD_INTERVAL));
 
       // Create new Period if this current interval did not have its Period created yet
       if(IntervalsPeriods[_current_interval] == 0x0){

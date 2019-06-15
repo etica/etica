@@ -80,8 +80,17 @@ module.exports =  {
     var miningDifficultyString = await tokenContract.getMiningDifficulty.call()  ;
     var miningDifficulty = parseInt(miningDifficultyString)
 
+    var epochCountString = await tokenContract.epochCount.call()  ;
+    var epochCount = parseInt(epochCountString)
+
+    var block_per_readjustmentString = await tokenContract._BLOCKS_PER_READJUSTMENT()  ;
+    var block_per_readjustment = parseInt(block_per_readjustmentString)
+
     var miningTargetString = await tokenContract.getMiningTarget.call()  ;
-    var miningTarget = web3.utils.toBN(miningTargetString)
+    var miningTarget = web3.utils.toBN(miningTargetString).toString();
+
+    var latestDifficultyPeriodStartedString = await tokenContract.latestDifficultyPeriodStarted()  ;
+    var latestDifficultyPeriodStarted = web3.utils.toBN(latestDifficultyPeriodStartedString).toString();
 
     var challengeNumber = await tokenContract.getChallengeNumber.call() ;
     var supplyString = await tokenContract.supply.call()  ;
@@ -89,9 +98,17 @@ module.exports =  {
     var tokensMintedString = await tokenContract.tokensMinted.call()  ;
     var tokensMinted = parseInt(tokensMintedString)
 
-    //console.log('blockreward:', blockreward);
-    //console.log('difficulty:', miningDifficulty);
-    //console.log('target:', miningTarget);
+    let blocknb_before = await web3.eth.getBlock("latest");
+    console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
+    console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
+    console.log('LastBlock\'s latestDifficultyPeriodStarted IS:', latestDifficultyPeriodStarted);
+    console.log('blockreward:', blockreward);
+    console.log('epochCount:', epochCount);
+    console.log('difficulty:', miningDifficulty);
+    console.log('target:', miningTarget);
+    console.log('block_per_readjustment:', block_per_readjustment);
+
+
     //console.log('challenge number:', challengeNumber)
     //console.log('ETI supply:', supply)
     //console.log('ETI mined:', tokensMinted)

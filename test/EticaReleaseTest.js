@@ -410,8 +410,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
 
-              //console.log('stake starting block is:', test_accountstakebefore.startBlock.toString());
-              //console.log('stake ending block is:', test_accountstakebefore.endBlock.toString());
+              //console.log('stake starting block is:', test_accountstakebefore.startTime.toString());
+              //console.log('stake ending block is:', test_accountstakebefore.endTime.toString());
 
               console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
               let blocknb_before = await web3.eth.getBlock("latest");

@@ -446,6 +446,9 @@ uint REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint STAKING_DURATION = 4 minutes; // default stake duration 28 jours
 uint ETICA_TO_BOSOM_RATIO = 1; //
 uint DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
+
+uint PERIOD_CURATION_REWARD = 6000 * 10**uint(decimals); // 6 000 ETI per period
+uint PERIOD_EDITOR_REWARD = 32000 * 10**uint(decimals); // 32 000 ETI per period
 /* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -464,8 +467,8 @@ struct Period{
 
   struct Stake{
       uint amount;
-      uint startBlock;
-      uint endBlock;
+      uint startTime;
+      uint endTime;
   }
 
   // -----------  PROPOSALS  ------------  //
@@ -725,13 +728,13 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
     stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
-    uint endBlock = block.timestamp + STAKING_DURATION;
+    uint endTime = block.timestamp + STAKING_DURATION;
 
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // StartBlock
-      endBlock // EndBlock
+      block.timestamp, // startTime
+      endTime // endTime
     );
 
     emit NewStake(_staker, _amount);
@@ -753,7 +756,7 @@ function stakeclmidx (uint _stakeidx) public {
   Stake storage _stake = stakes[msg.sender][_stakeidx];
 
   // The stake must be over
-  require(block.timestamp > _stake.endBlock);
+  require(block.timestamp > _stake.endTime);
 
   require(_stake.amount > 0);
 
@@ -780,8 +783,8 @@ function _deletestake(address _staker,uint _index) internal {
   // remove last stake
   stakes[_staker][stakesCounters[_staker]] = Stake(
     0x0, // amount
-    0x0, // StartBlock
-    0x0 // EndBlock
+    0x0, // startTime
+    0x0 // endTime
     );
 
   // updates stakesCounter of _staker
@@ -1087,6 +1090,159 @@ Period storage period = periods[proposal.period_id];
              period.editor_sum = period.editor_sum - _old_proposal_editorweight;
          }
          }
+
+  }
+
+
+  function clmpropbyhash(bytes32 _proposed_release_hash) public {
+
+   //check if the proposal exists and that we get the right proposal:
+   Proposal storage proposal = proposals[_proposed_release_hash];
+   require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
+
+
+   // verify voting still in progress
+   ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
+   // Verify voting period is over
+   require( block.timestamp > proposaldata.endtime);
+
+   
+    // we check that the vote exists
+    Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
+    require(vote.proposal_hash ==  _proposed_release_hash);
+
+
+
+   //disminish blockedetica by vote amount
+
+
+    // get Period of Proposal:
+    Period storage period = periods[proposal.period_id];
+
+   uint _current_interval = uint((block.timestamp).div(REWARD_INTERVAL));
+
+   // Check if Period is ready for claims or if needs to wait more
+   uint _min_intervals = uint((DEFAULT_VOTING_TIME).div(REWARD_INTERVAL) + 1); // Minimum intervals before claimable
+   require((_current_interval + _min_intervals) >= period.interval); // Period not ready for claims yet. Need to wait more !
+
+  // if first this is the first claim for this proposal, status equals pending
+  if (proposaldata.status == ProposalStatus.Pending) {
+
+  // SET proposal new status
+  if (proposaldata.prestatus == ProposalStatus.Accepted || proposaldata.prestatus == ProposalStatus.Singlevoter) {
+            proposaldata.status = ProposalStatus.Accepted;
+  }
+  else {
+    proposaldata.status = ProposalStatus.Rejected;
+  }
+
+  proposaldata.finalized_time = block.timestamp;
+
+  // NEW STATUS AFTER FIRST VOTE DONE
+
+  }
+
+
+  // only slash and reward if prop is not tie:
+  if (!proposaldata.istie) {
+
+
+   // voter has voted wrongly and needs to be slashed
+   
+   // convert boolean to enum format for making comparasion with proposaldata.status possible:
+   ProposalStatus voterChoice = ProposalStatus.Rejected;
+   if(vote.approve){
+     voterChoice = ProposalStatus.Accepted;
+   }
+
+   if(voterChoice != proposaldata.status) {
+     // slash loosers
+     uint _slashRemaining = vote.amount;
+     uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio);
+
+     // get the stakes
+
+         for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
+      // keep the ID if the article is still for sale
+      if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
+ 
+        stakes[msg.sender][_stakeidx].endTime += _extraTimeInt;
+        stakes[msg.sender][_stakeidx].startTime = block.timestamp;
+        _slashRemaining -= stakes[msg.sender][_stakeidx].amount;
+        
+       if(_slashRemaining == 0){
+         break;
+       }
+
+
+      }
+      else {
+        // The slash amount does not fill a full stake, so the stake needs to be split
+        uint newAmount = stakes[msg.sender][_stakeidx].amount - _slashRemaining;
+        uint oldTimestamp = stakes[msg.sender][_stakeidx].startTime;
+        uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
+
+
+        stakes[msg.sender][_stakeidx].amount = _slashRemaining;
+        stakes[msg.sender][_stakeidx].endTime = _extraTimeInt;
+
+        if(newAmount > 0){
+          // create a new stake with the rest of what remained from original stake that was split in 2
+
+
+        }
+
+        break;
+
+
+
+
+      }
+
+
+
+
+
+    }
+
+    // the slash is over
+     
+
+   }
+   else {
+
+   uint _reward_amount = 0;
+
+   // check beforte diving by 0
+   require(period.curation_sum > 0); // period curation sum pb !
+   _reward_amount += (vote.amount * proposaldata.nbvoters * PERIOD_CURATION_REWARD) / (period.curation_sum);
+
+       // if voter is editor and proposal accepted:
+    if (vote.is_editor && proposaldata.prestatus == ProposalStatus.Accepted){
+          // check before dividing by 0
+          require( period.curation_sum > 0); // Period editor sum pb !
+          _reward_amount += (proposaldata.lasteditor_weight * PERIOD_EDITOR_REWARD) / (period.editor_sum);
+    }
+
+    require(_reward_amount <= PERIOD_CURATION_REWARD + PERIOD_EDITOR_REWARD); // "System logic error. Too much ETICA calculated for reward."
+
+    // SEND ETICA AS REWARD
+    transferFrom(address(this), msg.sender, _reward_amount);
+
+
+   }
+
+
+  }   // end bracket if proposaldata.istie not true
+
+
+
+
+
+
+
+
+
 
   }
 

@@ -607,6 +607,7 @@ event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
 event NewProposal(bytes32 proposed_release_hash, bytes32 diseasehash, string title, string description);
+event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 
 
 
@@ -1109,7 +1110,7 @@ Period storage period = periods[proposal.period_id];
    
     // we check that the vote exists
     Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
-    require(vote.proposal_hash ==  _proposed_release_hash);
+    require(vote.proposal_hash == _proposed_release_hash);
 
 
 
@@ -1123,9 +1124,9 @@ Period storage period = periods[proposal.period_id];
 
    // Check if Period is ready for claims or if needs to wait more
    uint _min_intervals = uint((DEFAULT_VOTING_TIME).div(REWARD_INTERVAL) + 1); // Minimum intervals before claimable
-   require((_current_interval + _min_intervals) >= period.interval); // Period not ready for claims yet. Need to wait more !
+   require(_current_interval >= period.interval + _min_intervals); // Period not ready for claims yet. Need to wait more !
 
-  // if first this is the first claim for this proposal, status equals pending
+  // if status equals pending this is the first claim for this proposal
   if (proposaldata.status == ProposalStatus.Pending) {
 
   // SET proposal new status
@@ -1227,7 +1228,12 @@ Period storage period = periods[proposal.period_id];
     require(_reward_amount <= PERIOD_CURATION_REWARD + PERIOD_EDITOR_REWARD); // "System logic error. Too much ETICA calculated for reward."
 
     // SEND ETICA AS REWARD
-    transferFrom(address(this), msg.sender, _reward_amount);
+    balances[address(this)] = balances[address(this)].sub(_reward_amount);
+    balances[msg.sender] = balances[msg.sender].add(_reward_amount);
+
+    emit Transfer(address(this), msg.sender, _reward_amount);
+    emit VoteClaimed(msg.sender, _reward_amount, _proposed_release_hash);
+    //transferFrom(address(this), msg.sender, _reward_amount);
 
 
    }

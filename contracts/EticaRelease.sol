@@ -743,6 +743,25 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     return true;
 }
 
+
+
+function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
+
+    require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
+    stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
+
+    // store this stake in _staker's stakes with the index stakesCounters[_staker]
+    stakes[_staker][stakesCounters[_staker]] = Stake(
+      _amount, // stake amount
+      _startTime, // startTime
+      _endTime // endTime
+    );
+
+    emit NewStake(_staker, _amount);
+
+    return true;
+}
+
 // ----  Get bosoms and add Stake ------  //
 
 
@@ -1159,17 +1178,17 @@ Period storage period = periods[proposal.period_id];
    if(voterChoice != proposaldata.status) {
      // slash loosers
      uint _slashRemaining = vote.amount;
-     uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio);
+     uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio / 100);
 
      // get the stakes
 
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
-      // keep the ID if the article is still for sale
+      //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
  
-        stakes[msg.sender][_stakeidx].endTime += _extraTimeInt;
+        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime + _extraTimeInt;
         stakes[msg.sender][_stakeidx].startTime = block.timestamp;
-        _slashRemaining -= stakes[msg.sender][_stakeidx].amount;
+        _slashRemaining = _slashRemaining - stakes[msg.sender][_stakeidx].amount;
         
        if(_slashRemaining == 0){
          break;
@@ -1183,14 +1202,13 @@ Period storage period = periods[proposal.period_id];
         uint oldTimestamp = stakes[msg.sender][_stakeidx].startTime;
         uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
 
-
-        stakes[msg.sender][_stakeidx].amount = _slashRemaining;
-        stakes[msg.sender][_stakeidx].endTime = _extraTimeInt;
+        // slash amount split in _slashRemaining and newAmount
+        stakes[msg.sender][_stakeidx].amount = _slashRemaining; // only slash the part of the stake that amounts to _slashRemaining
+        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime + _extraTimeInt; // slash the stake
 
         if(newAmount > 0){
           // create a new stake with the rest of what remained from original stake that was split in 2
-
-
+          splitStake(msg.sender, newAmount, oldTimestamp, oldCompletionTime);
         }
 
         break;

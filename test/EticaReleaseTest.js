@@ -1213,6 +1213,12 @@ it("can vote against Proposal", async function () {
                                 let test_account_5_bosomsbefore = await EticaReleaseInstance.bosoms(test_account5.address);
                                 //console.log('test_account Bosoms before VOTEBYHASH IS:', web3.utils.fromWei(test_account_5_bosomsbefore, "ether" ));
 
+                                let test_account5stakebefore = await EticaReleaseInstance.stakes(test_account5.address,1);
+                                console.log('test_account5 first stake BEFORE CLMPROPBYHASH WAS:', test_account5stakebefore);
+                                 console.log('stake amount is', test_account5stakebefore.amount.toString());
+                                 console.log('stake startTime is', test_account5stakebefore.startTime.toString());
+                                 console.log('stake endTime is', test_account5stakebefore.endTime.toString());
+
                                 await advanceminutes(6);
         
                                 return EticaReleaseInstance.clmpropbyhash(first_proposal.proposed_release_hash, {from: test_account5.address}).then(async function(response){
@@ -1229,6 +1235,12 @@ it("can vote against Proposal", async function () {
                                   console.log('test_account ETI balance before VOTEBYHASH WAS:', web3.utils.fromWei(test_account_5_balancebefore, "ether" ));
 
                                  // assert(web3.utils.fromWei(test_account_5_balanceafter.toString() - test_account_5_balancebefore.toString(), "ether" ) > 0, 'test_account5 should have more ETI!');
+
+                                 let test_account5stakeafter = await EticaReleaseInstance.stakes(test_account5.address,1);
+                                 console.log('test_account5 stake AFTER CLMPROPBYHASH IS:', test_account5stakeafter);
+                                 console.log('stake amount is', test_account5stakeafter.amount.toString());
+                                 console.log('stake startTime is', test_account5stakebefore.startTime.toString());
+                                 console.log('stake endTime is', test_account5stakeafter.endTime.toString());
         
         
                                 // ------------ WARNING

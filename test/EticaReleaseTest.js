@@ -446,45 +446,46 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             });
 
 
-          // test Stake claiming too soon should fail
-            it("can claim stake after stake end", async function () {
-              console.log('------------------------------- Starting test ---------------------------');
-              console.log('.......................... Can claim STAKE after THE STAKE END ? ..................... ');
-              let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
-              let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
-              //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-              //console.log('test_account Stake before:', test_accountstakebefore);
-              //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
-              console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
-              let blocknb_before = await web3.eth.getBlock("latest");
-              console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
-              console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
-              console.log('------------- ADVANCING BLOCKS --------------');
-              await advanceminutes(1);
-              console.log('------------- ADVANCING BLOCKS --------------');
-              let blocknb_after = await web3.eth.getBlock("latest");
-              console.log('LastBlock\'s NUMBER IS NOW:', blocknb_after.number);
-              console.log('LastBlock\'s TIMESTAMP IS NOW:', blocknb_after.timestamp);
-              console.log('------------- BLOCKS ADVANCED --------------');
-
-             // try create to claim a stake after it has ended:
-                return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(async function(resp){
-                  assert(true);
-                  let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
-                  let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
-                  let stakenoldbalance = web3.utils.toBN(test_accountbalancebefore).add(web3.utils.toBN(test_accountstakebefore.amount)).toString();
-                  //console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-                  //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
-                  //console.log('test_account Stake after:', test_accountstakeafter);
-
-                  assert.equal( web3.utils.fromWei(test_accountbalanceafter, "ether"), web3.utils.fromWei(stakenoldbalance, "ether"), 'test_account should have increased by the stake\'s ETI amount!');
-
-                  console.log('........................... Can claim STAKE after THE STAKE END ....................... ');
-                  console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
-                });
-
-            });
+                      // test Stake claiming should work if stake end has been reached and user has not made any vote or action that could have blocked eticas:
+                      it("can claim stake after stake end ", async function () {
+                        console.log('------------------------------- Starting test ---------------------------');
+                        console.log('.......................... Can claim STAKE after THE STAKE END ? (when user has not made any vote or action that could have blocked eticas) ..................... ');
+                        let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+                        let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
+                        //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                        //console.log('test_account Stake before:', test_accountstakebefore);
+                        //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
+          
+                        console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
+                        let blocknb_before = await web3.eth.getBlock("latest");
+                        console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
+                        console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
+                        console.log('------------- ADVANCING BLOCKS --------------');
+                        await advanceminutes(1);
+                        console.log('------------- ADVANCING BLOCKS --------------');
+                        let blocknb_after = await web3.eth.getBlock("latest");
+                        console.log('LastBlock\'s NUMBER IS NOW:', blocknb_after.number);
+                        console.log('LastBlock\'s TIMESTAMP IS NOW:', blocknb_after.timestamp);
+                        console.log('------------- BLOCKS ADVANCED --------------');
+          
+                       // try create to claim a stake after it has ended:
+                          return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(async function(resp){
+                            assert(true);
+                            let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+                            let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
+                            let stakenoldbalance = web3.utils.toBN(test_accountbalancebefore).add(web3.utils.toBN(test_accountstakebefore.amount)).toString();
+                            //console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                            //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
+                            //console.log('test_account Stake after:', test_accountstakeafter);
+          
+                            assert.equal( web3.utils.fromWei(test_accountbalanceafter, "ether"), web3.utils.fromWei(stakenoldbalance, "ether"), 'test_account should have increased by the stake\'s ETI amount!');
+          
+                            console.log('........................... Can claim STAKE after THE STAKE END (when user has not made any vote or action that could have blocked eticas) ....................... ');
+                            console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+                          });
+          
+                      });
 
 
             it("can get stakes length", async function () {
@@ -1136,6 +1137,53 @@ it("can vote against Proposal", async function () {
           });
 
 
+
+
+          // test Stake claiming too soon should fail
+          it("cannot claim stake after stake end (when user has not called redeem function yet)", async function () {
+            console.log('------------------------------- Starting test ---------------------------');
+            console.log('.......................... Cannot claim STAKE after THE STAKE END ? (when user has not called redeem function yet) ..................... ');
+            let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+            let test_accountstakebefore = await EticaReleaseInstance.stakes(test_account.address, 1);
+            //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+            //console.log('test_account Stake before:', test_accountstakebefore);
+            //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
+
+            console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
+            let blocknb_before = await web3.eth.getBlock("latest");
+            console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
+            console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
+            console.log('------------- ADVANCING BLOCKS --------------');
+            await advanceminutes(1);
+            console.log('------------- ADVANCING BLOCKS --------------');
+            let blocknb_after = await web3.eth.getBlock("latest");
+            console.log('LastBlock\'s NUMBER IS NOW:', blocknb_after.number);
+            console.log('LastBlock\'s TIMESTAMP IS NOW:', blocknb_after.timestamp);
+            console.log('------------- BLOCKS ADVANCED --------------');
+
+           // try create to claim a stake after it has ended:
+              return EticaReleaseInstance.stakeclmidx(1, {from: test_account.address}).then(assert.fail)
+              .catch(async function(error){
+                assert(true);
+                let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+                let test_accountstakeafter = await EticaReleaseInstance.stakes(test_account.address,1);
+                let stakenoldbalance = web3.utils.toBN(test_accountbalancebefore).add(web3.utils.toBN(test_accountstakebefore.amount)).toString();
+                //console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+                //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
+                //console.log('test_account Stake after:', test_accountstakeafter);
+
+                assert.equal(web3.utils.fromWei(test_accountbalanceafter, "ether" ) - web3.utils.fromWei(test_accountbalancebefore, "ether" ), "0", 'test_account should not have more Eticas!');
+
+                console.log('........................... Cannot claim STAKE after THE STAKE END (when user has not called redeem function yet) ....................... ');
+                console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+              });
+
+          });
+
+
+
+
+
                               // test Proposals vote claims
                               it("can claim a right vote for a Proposal", async function () {
                                 console.log('------------------------------------ Starting test ---------------------------');
@@ -1254,6 +1302,47 @@ it("can vote against Proposal", async function () {
         
         
                                 });
+
+
+            // test Stake claiming too soon should fail
+            it("can claim stake after stake end. (when user called redeem function (clmpropbyhash))", async function () {
+              console.log('------------------------------- Starting test ---------------------------');
+              console.log('.......................... Can claim STAKE after THE STAKE END  ? (when user called redeem function (clmpropbyhash)) ..................... ');
+              let test_account2balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
+              let test_account2stakebefore = await EticaReleaseInstance.stakes(test_account2.address, 1);
+              //console.log('test_account2 ETI balance before:', web3.utils.fromWei(test_account2balancebefore, "ether" ));
+              //console.log('test_account2 Stake before:', test_account2stakebefore);
+              //console.log('test_account2 Stake amount before:', web3.utils.fromWei(test_account2stakebefore.amount, "ether" ));
+
+              console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
+              let blocknb_before = await web3.eth.getBlock("latest");
+              console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
+              console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
+              console.log('------------- ADVANCING BLOCKS --------------');
+              await advanceminutes(1);
+              console.log('------------- ADVANCING BLOCKS --------------');
+              let blocknb_after = await web3.eth.getBlock("latest");
+              console.log('LastBlock\'s NUMBER IS NOW:', blocknb_after.number);
+              console.log('LastBlock\'s TIMESTAMP IS NOW:', blocknb_after.timestamp);
+              console.log('------------- BLOCKS ADVANCED --------------');
+
+             // try create to claim a stake after it has ended:
+                return EticaReleaseInstance.stakeclmidx(1, {from: test_account2.address}).then(async function(resp){
+                  assert(true);
+                  let test_account2balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
+                  let test_account2stakeafter = await EticaReleaseInstance.stakes(test_account2.address,1);
+                  let stakenoldbalance = web3.utils.toBN(test_account2balancebefore).add(web3.utils.toBN(test_account2stakebefore.amount)).toString();
+                  //console.log('------test_account2 ETI balance after:', web3.utils.fromWei(test_account2balanceafter, "ether" ));
+                  //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
+                  //console.log('test_account2 Stake after:', test_account2stakeafter);
+
+                  assert.equal( web3.utils.fromWei(test_account2balanceafter, "ether"), web3.utils.fromWei(stakenoldbalance, "ether"), 'test_account2 should have increased by the stake\'s ETI amount!');
+
+                  console.log('........................... Can claim STAKE after THE STAKE END (when user called redeem function (clmpropbyhash)) ....................... ');
+                  console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+                });
+
+            });
 
 
   async function printBalances(accounts) {

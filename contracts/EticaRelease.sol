@@ -593,6 +593,7 @@ mapping(bytes32 => mapping(address => Vote)) public votes;
 mapping(address => uint) public bosoms;
 mapping(address => mapping(uint => Stake)) public stakes;
 mapping(address => uint) public stakesCounters; // keeps track of how many stakes for each user
+mapping(address => uint) public stakesAmount; // keeps track of total amount of stakes for each user
 // stakes ----> slashing function will need to loop trough stakes. Can create issues for claiming votes:
 // will create a function to gather stakes when user has to much stakes.
 // The function will take a completion_time as parameter and will loop trough 50 indexes and will put all stakes with
@@ -729,6 +730,10 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
     stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
+
+    // increase variable that keeps track of total value of user's stakes
+    stakesAmount[_staker] = stakesAmount[_staker].add(_amount);
+
     uint endTime = block.timestamp + STAKING_DURATION;
 
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
@@ -778,7 +783,8 @@ function stakeclmidx (uint _stakeidx) public {
   // The stake must be over
   require(block.timestamp > _stake.endTime);
 
-  require(_stake.amount > 0);
+  // the amount to be unstake must be less or equal to the amount of ETI currently marked as blocked in blockedeticas as they need to go through the clmpropbyhash before being unstaked !
+  require(_stake.amount <= stakesAmount[msg.sender] - blockedeticas[msg.sender]);
 
   // transfer back ETI from contract to staker:
   balances[address(this)] = balances[address(this)].sub(_stake.amount);
@@ -797,6 +803,9 @@ function _deletestake(address _staker,uint _index) internal {
   // we check that the stake exists
   require(_index > 0 && _index <= stakesCounters[_staker]);
 
+  // decrease variable that keeps track of total value of user's stakes
+  stakesAmount[_staker] = stakesAmount[_staker].sub(stakes[_staker][_index].amount);
+
   // replace value of stake to be deleted by value of last stake
   stakes[_staker][_index] = stakes[_staker][stakesCounters[_staker]];
 
@@ -809,6 +818,7 @@ function _deletestake(address _staker,uint _index) internal {
 
   // updates stakesCounter of _staker
   stakesCounters[_staker] = stakesCounters[_staker] - 1;
+
 }
 
 // ----  Redeem a Stake ------  //
@@ -1133,7 +1143,9 @@ Period storage period = periods[proposal.period_id];
 
 
 
-   //disminish blockedetica by vote amount
+  
+    // De-Block Eticas from eticablkdtbl to enable user to unstake these Eticas
+    blockedeticas[msg.sender] = blockedeticas[msg.sender].sub(vote.amount);
 
 
     // get Period of Proposal:

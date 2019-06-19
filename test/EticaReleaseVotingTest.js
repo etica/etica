@@ -122,6 +122,11 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" ),'1000');
+
+  // 3 next tests should fail:
+  await fail_transferfromto(test_account, test_account2, '10000000');
+  await fail_transferfromto(test_account, test_account2, '0');
+  await fail_transferfromto(test_account, test_account2, '-100');
   
 
   console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
@@ -172,6 +177,19 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
      });
 
    }
+
+   // transfer that should fail:
+   async function fail_transferfromto(senderaccount, receiveraccount, amount) {
+
+    console.log('should fail transfering', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
+
+    return EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}).then(assert.fail)
+    .catch(async function(error){
+      assert(true);
+      console.log('as expected failed transfer', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
+   })
+
+  }
 
    async function advanceseconds(duration) {
 

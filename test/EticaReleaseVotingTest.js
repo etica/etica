@@ -68,8 +68,8 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
   EticaReleaseVotingTestInstance = instance;
   return EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
   }).then(function(receipt){
-  console.log('asserting miner_account has at least 10 000 ETI', web3.utils.fromWei(receipt, "ether" ), 'ETI');
-  assert(web3.utils.fromWei(receipt, "ether" ) > 10000, 'miner_account should have at least 10 000 ETI before starting the tests !');
+  console.log('asserting miner_account has at least 100 000 ETI', web3.utils.fromWei(receipt, "ether" ), 'ETI');
+  assert(web3.utils.fromWei(receipt, "ether" ) >= 100000, 'miner_account should have at least 100 000 ETI before starting the tests !');
   }).then(async function(){
   await transferto(test_account3);
   await transferto(test_account4);
@@ -107,12 +107,12 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
     let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
     let miner_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
     console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
-    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-    return EticaReleaseVotingTestInstance.transfer(testaccount.address,  web3.utils.toWei('1000', 'ether'), {from: miner_account.address}).then(async function() {
+    console.log('test_account', testaccount.address,'ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+    return EticaReleaseVotingTestInstance.transfer(testaccount.address,  web3.utils.toWei('10000', 'ether'), {from: miner_account.address}).then(async function() {
       let test_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
       let miner_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
       console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
-      console.log('test_account', test_accountbalanceafter,'ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+      console.log('test_account', testaccount.address,'ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
      });
 
    }

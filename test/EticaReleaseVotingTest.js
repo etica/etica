@@ -58,74 +58,32 @@ var test_account8= {
 var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
 
-  it("start mining", async function () {
-
-    var tokenContract = await EticaReleaseVotingTest.deployed();
-
-        networkInterfaceHelper.init(web3,tokenContract,miner_account,accounts);
-        miningHelper.init(web3,tokenContract,miner_account,networkInterfaceHelper);
-
-  });
-
-
-  it("can get stakes length", async function () {
-    return EticaReleaseVotingTest.deployed().then(function(instance){
-      EticaReleaseVotingTestInstance = instance;
-      return EticaReleaseVotingTestInstance.stakescount(test_account.address);
-    }).then(async function(response){
-      //console.log('!!!!!!!!!! test_acount NUMBER OF STAKES !!!!!!!!!!!!!');
-    //console.log('test_acount NUMBER OF STAKES IS', response);
-    let stakesl = await EticaReleaseVotingTestInstance.stakescount(test_account.address);
-    //console.log('stakescount RESPONSE IS::::', stakesl);
-    })
-  });
-
-
   it("can make initial distribution of ETI :", async function () {
     console.log('------------------------------------- Starting INITIAL ETI DISTRIBUTION ---------------------------');
     console.log('........................................  CAN MAKE INITIAL ETI DISTRIBUTION ? .......................');
-    function timeout(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
 
-// wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
-//await timeout(150000);
-return EticaReleaseVotingTest.deployed().then(function(instance){
+  // wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
+  //await timeout(150000);
+  return EticaReleaseVotingTest.deployed().then(function(instance){
   EticaReleaseVotingTestInstance = instance;
   return EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
-}).then(function(receipt){
-console.log('asserting miner_account balance', web3.utils.fromWei(receipt, "ether" ), 'ETI');
-assert(web3.utils.fromWei(receipt, "ether" ) > 70, 'miner_account should have at least 70 mined ETI after 150000 ms! Please relaunch the test, you will be more lucky next time !');
-}).then(async function(){
-  console.log('transfering 10 ETI from miner_account to test_account');
-  let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
-  let miner_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
-  console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
-  console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-  return EticaReleaseVotingTestInstance.transfer(test_account.address,  web3.utils.toBN(10000000000000000000), {from: miner_account.address});
+  }).then(function(receipt){
+  console.log('asserting miner_account has at least 10 000 ETI', web3.utils.fromWei(receipt, "ether" ), 'ETI');
+  assert(web3.utils.fromWei(receipt, "ether" ) > 10000, 'miner_account should have at least 10 000 ETI before starting the tests !');
+  }).then(async function(){
+  await transferto(test_account3);
+  await transferto(test_account4);
+  await transferto(test_account5);
+  await transferto(test_account6);
+  await transferto(test_account);
+  await transferto(test_account2);
+  await transferto(test_account7);
+  await transferto(test_account8);
 
-}).then(async function(){
-  // consoling result of ETI transfer from miner_account to test_account
-  let test_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
-  let miner_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
-  console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
-  console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
-}).then(async function(){
-  console.log('transfering 10 ETI from miner_account to test_account2');
-  let miner_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
-  let test_account2balancebefore = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-  console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
-  console.log('test_account2 ETI balance before:', web3.utils.fromWei(test_account2balancebefore, "ether" ));
-  return EticaReleaseVotingTestInstance.transfer(test_account2.address,  web3.utils.toBN(10000000000000000000), {from: miner_account.address});
+  console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
+  console.log('...................................  CAN MAKE INITIAL ETI DISTRIBUTION ? .......................');
 
-}).then(async function(){
-  let miner_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
-  let test_account2balanceafter = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-  console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
-  console.log('test_account2 ETI balance after:', web3.utils.fromWei(test_account2balanceafter, "ether" ));
-  console.log('...................................  TESTS CAN START, ACCOUNTS HAVE BEEN GIVEN ETI FOR TESTING  ....................... ');
-  console.log('---------------------------------------- END OF INITIAL ETI DISTRIBUTION with SUCCESS ----------------------------------------------');
-})
+  })
 
   });
 
@@ -135,6 +93,28 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 70, 'miner_account should have at
        var balance_val = await (web3.eth.getBalance(accounts[0]));
        //console.log('acct 0 balance', web3.utils.fromWei(balance_val.toString() , 'ether') )
     // })
+   }
+
+   async function printEtiBalance(testaccount) {
+       var balance_val = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
+       console.log('ETI the balance of ', testaccount.address, 'is',  web3.utils.fromWei(balance_val.toString() , 'ether') );
+       return balance_val;
+   }
+
+   async function transferto(testaccount) {
+
+    console.log('transfering 10000 ETI from miner_account to test_account', testaccount.address);
+    let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
+    let miner_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
+    console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+    console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+    return EticaReleaseVotingTestInstance.transfer(testaccount.address,  web3.utils.toWei('1000', 'ether'), {from: miner_account.address}).then(async function() {
+      let test_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
+      let miner_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
+      console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
+      console.log('test_account', test_accountbalanceafter,'ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+     });
+
    }
 
    async function advanceseconds(duration) {
@@ -212,5 +192,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 70, 'miner_account should have at
 });
      }
    }
+
+
+
 
  });

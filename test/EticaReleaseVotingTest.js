@@ -3,6 +3,7 @@ var EticaReleaseVotingTest = artifacts.require("./EticaReleaseVotingTest.sol");
 var solidityHelper =  require('./solidity-helper');
 var miningHelper =  require('./mining-helper-fast');
 var networkInterfaceHelper =  require('./network-interface-helper');
+const truffleAssert = require('truffle-assertions');
 
 // test suite
 contract('EticaReleaseVotingTest', function(accounts){
@@ -183,11 +184,7 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
     console.log('should fail transfering', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
 
-    return EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}).then(assert.fail)
-    .catch(async function(error){
-      assert(true);
-      console.log('as expected failed transfer', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
-   })
+    await truffleAssert.fails(EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}));
 
   }
 

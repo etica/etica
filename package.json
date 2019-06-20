@@ -14,6 +14,7 @@
   "dependencies": {
     "bn.js": "^4.11.8",
     "ethereumjs-tx": "^1.3.7",
-    "leftpad": "0.0.1"
+    "leftpad": "0.0.1",
+    "truffle-assertions": "^0.9.1"
   }
 }

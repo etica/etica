@@ -181,10 +181,10 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
    // transfer that should fail:
    async function fail_transferfromto(senderaccount, receiveraccount, amount) {
-
+     
     console.log('should fail transfering', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
-
     await truffleAssert.fails(EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}));
+    console.log('as expected failed to transfer', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
 
   }
 

@@ -152,6 +152,9 @@ await eticatobosom(test_account7, '0.1805');
 await should_fail_eticatobosom(test_account7,'0');
 await should_fail_eticatobosom(test_account7,'-1000');
 await should_fail_eticatobosom(test_account7,'10000'); // too much ETI (more than availble in nuser account)
+
+let random = randomipfs();
+console.log('random ipfs is :::', random);
   
 
   console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
@@ -307,6 +310,18 @@ await should_fail_eticatobosom(test_account7,'10000'); // too much ETI (more tha
 });
      }
    }
+
+
+   function randomipfs() {
+    var result           = 'Qm';
+    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for ( var i = 0; i < 44; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+ }
+
 
 
 

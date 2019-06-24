@@ -125,9 +125,33 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" ),'1000');
 
   // 3 next tests should fail:
-  await fail_transferfromto(test_account, test_account2, '10000000');
-  await fail_transferfromto(test_account, test_account2, '0');
-  await fail_transferfromto(test_account, test_account2, '-100');
+  await should_fail_transferfromto(test_account, test_account2, '10000000');
+  await should_fail_transferfromto(test_account, test_account2, '0');
+  await should_fail_transferfromto(test_account, test_account2, '-100');
+
+
+  // begin the stake
+await eticatobosom(test_account, '200');
+await eticatobosom(test_account2, '2000');
+await eticatobosom(test_account3, '2000');
+await eticatobosom(test_account4, '2000');
+await eticatobosom(test_account5, '2000');
+await eticatobosom(test_account6, '2000');
+await eticatobosom(test_account7, '2000');
+
+// check significant figures:
+await eticatobosom(test_account, '0.123');
+await eticatobosom(test_account2, '0.981516165156161651');
+await eticatobosom(test_account3, '0.300');
+await eticatobosom(test_account4, '0.9151651651665');
+await eticatobosom(test_account5, '0.565156161');
+await eticatobosom(test_account6, '0.321');
+await eticatobosom(test_account7, '0.1805');
+
+// Next 3 stakes should fail
+await should_fail_eticatobosom(test_account7,'0');
+await should_fail_eticatobosom(test_account7,'-1000');
+await should_fail_eticatobosom(test_account7,'10000'); // too much ETI (more than availble in nuser account)
   
 
   console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
@@ -179,8 +203,28 @@ var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
    }
 
+   async function eticatobosom(useraccount, amount){
+
+    console.log('---> Staking Eticas for Bosoms. Stake amount is', amount, 'ETI. User is ', useraccount.address);
+    return EticaReleaseVotingTestInstance.eticatobosoms(useraccount.address,  web3.utils.toWei(amount, 'ether'), {from: useraccount.address}).then(async function(receipt){
+    console.log('---> The stake of Eticas for Bosoms worth', amount, 'ETI', 'was successfull');
+
+      }).catch(async function(error){
+        console.log('An error has occured !', error);
+      })
+   }
+
+
+   async function should_fail_eticatobosom(useraccount, amount){
+
+    console.log('---> Staking Eticas for Bosoms. Stake amount is', amount, 'ETI. User is ', useraccount.address);
+    await truffleAssert.fails(EticaReleaseVotingTestInstance.eticatobosoms(useraccount.address,  web3.utils.toWei(amount, 'ether'), {from: useraccount.address}));
+    console.log('---> As expected failed to make the stake worth', amount, 'ETI from user: ', useraccount.address);
+
+   }
+
    // transfer that should fail:
-   async function fail_transferfromto(senderaccount, receiveraccount, amount) {
+   async function should_fail_transferfromto(senderaccount, receiveraccount, amount) {
      
     console.log('should fail transfering', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
     await truffleAssert.fails(EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}));

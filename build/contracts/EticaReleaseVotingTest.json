@@ -13894,8 +13894,8 @@
           }
         ],
         "contractDependencies": [
-          3433,
-          4184
+          4184,
+          3433
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -57074,8 +57074,8 @@
           }
         ],
         "contractDependencies": [
-          3433,
-          4184
+          4184,
+          3433
         ],
         "contractKind": "contract",
         "documentation": null,
@@ -87865,12 +87865,12 @@
     "5786": {
       "events": {},
       "links": {},
-      "address": "0xB20dA891C54B117c06d299d947b593f32D8D203e",
-      "transactionHash": "0x3c0ac017de4c52b33004c3c6abf26c5cabe8edf75ea844720b8fded89c774e31"
+      "address": "0xE97Dd9711cE7C11f1Ce609BD78E309Fd824889Bb",
+      "transactionHash": "0x841450492fdc85f38fc5f2c0c9a37d8d72abafefc13869aeeae5b0d3d9d8cb66"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-06-20T09:02:17.094Z",
+  "updatedAt": "2019-06-24T08:48:14.294Z",
   "devdoc": {
     "methods": {}
   },

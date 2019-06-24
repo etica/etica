@@ -24982,12 +24982,12 @@
     "5786": {
       "events": {},
       "links": {},
-      "address": "0x358d4648B58BA75B879F5E32c641Ef1f6402e901",
-      "transactionHash": "0x6d6b818c1a548f432fc9b17e9c5ee47fb1da61ceac4380b2b42574d7b629e946"
+      "address": "0x24477aAEf568Bc78D9E6523c1e4242C29df820b5",
+      "transactionHash": "0x78fa1e27538f7bc61da5bbc185aef50ee379caa915a587c8a47bf092a32e95e7"
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-06-20T09:02:16.801Z",
+  "updatedAt": "2019-06-24T08:48:14.033Z",
   "devdoc": {
     "methods": {}
   },

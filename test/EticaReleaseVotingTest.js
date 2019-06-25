@@ -58,6 +58,8 @@ var test_account8= {
 
 var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
+var EXPECTED_FIRST_PROPOSAL_HASH = '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa';
+
 
   it("can make initial distribution of ETI :", async function () {
     console.log('------------------------------------- Starting INITIAL ETI DISTRIBUTION ---------------------------');
@@ -151,10 +153,34 @@ await eticatobosom(test_account7, '0.1805');
 // Next 3 stakes should fail
 await should_fail_eticatobosom(test_account7,'0');
 await should_fail_eticatobosom(test_account7,'-1000');
-await should_fail_eticatobosom(test_account7,'10000'); // too much ETI (more than availble in nuser account)
+await should_fail_eticatobosom(test_account7,'10000'); // too much ETI (more than availble in user account)
 
-let random = randomipfs();
-console.log('random ipfs is :::', random);
+let IPFS1 = randomipfs();
+let IPFS2 = randomipfs();
+let IPFS3 = randomipfs();
+let IPFS4 = randomipfs();
+let IPFS5 = randomipfs();
+let IPFS6 = randomipfs();
+let IPFS7 = randomipfs();
+let IPFS8 = randomipfs();
+
+await createdisease();
+let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+let disease_name = 'Malaria';
+//let diseasehash = web3.utils.sha256(web3.eth.abi.encodeParameter('string', disease_name));
+console.log('m hash1 is', web3.utils.keccak256(web3.utils.fromAscii("Malaria")));
+console.log('m hash3 is', web3.utils.sha3(web3.utils.fromAscii("Malaria")));
+
+// Use keccak256 Hashing function (alias)
+console.log('m hash2 is', web3.utils.keccak256('Malaria'))
+let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
+console.log('indexfromhash is', indexfromhash);
+console.log('disease_name is', disease_name);
+//console.log('diseasehash is', diseasehash);
+console.log('hashfromname is ', hashfromname);
+
+assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
+assert.equal(hashfromname, EXPECTED_FIRST_PROPOSAL_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
   
 
   console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
@@ -320,6 +346,107 @@ console.log('random ipfs is :::', random);
        result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
+ }
+
+
+ async function createproposal(){
+
+  let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
+  //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+
+  let test_accountbosomsbefore = await EticaReleaseVotingTestInstance.bosoms(test_account.address);
+  //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+
+  return EticaReleaseVotingTestInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
+
+    let first_proposal = await EticaReleaseVotingTestInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+    let proposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
+    //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+    let first_proposal_ipfs = await EticaReleaseVotingTestInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+    //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
+
+    let first_proposal_data = await EticaReleaseVotingTestInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+    //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+
+    // check Proposal's general information:
+    assert.equal(first_proposal.disease_id, EXPECTED_FIRST_PROPOSAL_HASH, 'First proposal should exist with right disease_id');
+    assert(first_proposal.period_id >= 1);
+    assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
+    assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
+    assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
+
+    // check Proposal's IPFS:
+    assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
+    assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right old_release_hash');
+    assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right grandparent_hash');
+
+    // check Proposal's DATA:
+    assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
+    assert.equal(first_proposal_data.istie, false, 'First proposal should exist with right istie');
+    assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
+    assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should exist with right nbvoters');
+    assert.equal(first_proposal_data.slashingratio.toNumber(), '100', 'First proposal should exist with right slashingratio');
+    assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right forvotes');
+    assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
+    assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lastcuration_weight');
+    assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lasteditor_weight');
+
+    // ------------ WARNING
+    // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+    // ------------ WARNING
+
+    console.log('................................  CAN CREATE A PROPOSAL  ....................... ');
+    console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+    });
+ }
+
+
+ async function createdisease(){
+
+  let test_accountbalance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
+  let contract_balance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
+  //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
+
+let first_disease = await EticaReleaseVotingTestInstance.diseases(1);
+let diseasesCounter = await EticaReleaseVotingTestInstance.diseasesCounter();
+   
+  return EticaReleaseVotingTestInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !", {from: test_account.address}).then(async function(receipt){
+    let first_disease = await EticaReleaseVotingTestInstance.diseases(1);
+    let diseasesCounter = await EticaReleaseVotingTestInstance.diseasesCounter();
+    let test_accountbalance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
+    let contract_balance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
+console.log('THE FIRST DISEASE IS:', first_disease);
+console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
+console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
+console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+
+// check diseases mapping insertion:
+assert.equal(first_disease.disease_hash, EXPECTED_FIRST_PROPOSAL_HASH, 'First disease should exists with right diseasehash');
+assert.equal(first_disease.name, 'Malaria', 'First disease should exists with right name');
+assert.equal(first_disease.description, 'Malaria is a disease that kills millions of people each year !', 'First disease should exists with right description');
+assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this point');
+
+// check diseasesbyIds and diseasesbyNames mappings insertion:
+let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
+
+assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
+assert.equal(hashfromname, EXPECTED_FIRST_PROPOSAL_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+
+// test_account should have paid 100 ETI to contract
+   // test_account should have 100 ETI less
+     assert.equal(web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ) - web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ), 100);
+     console.log('test_account balance after Disease Creation is', web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ));
+
+   // contract should have 100 ETI more
+      assert.equal(web3.utils.fromWei(contract_balance_after_createdisease, "ether" ) - web3.utils.fromWei(contract_balance_before_createdisease, "ether" ), 100);
+      console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
+
+
+console.log('................................  CAN CREATE A DISEASE  ....................... ');
+console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+})
  }
 
 

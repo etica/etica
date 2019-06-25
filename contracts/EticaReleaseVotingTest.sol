@@ -852,7 +852,7 @@ function createdisease(string memory _name, string memory _description) public {
   // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
-  bytes32 _diseasehash = sha256(abi.encodePacked(_name));
+  bytes32 _diseasehash = keccak256(abi.encode(_name));
 
   diseasesCounter = diseasesCounter + 1; // notice that first disease will have the index of 1 thus not 0 !
 
@@ -885,7 +885,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
      if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
 
-     bytes32 _proposed_release_hash = sha256(abi.encodePacked(raw_release_hash, _diseasehash));
+     bytes32 _proposed_release_hash = keccak256(abi.encode(raw_release_hash, _diseasehash));
 
      proposalsCounter = proposalsCounter + 1; // notice that first proposal will have the index of 1 thus not 0 !
 

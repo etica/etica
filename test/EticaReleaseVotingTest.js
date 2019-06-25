@@ -58,8 +58,9 @@ var test_account8= {
 
 var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
-var EXPECTED_FIRST_PROPOSAL_HASH = '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa';
+var EXPECTED_FIRST_DISEASE_HASH = '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e'; // FORMER 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa
 
+var EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH = '0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb'; // FORMER 0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00
 
   it("can make initial distribution of ETI :", async function () {
     console.log('------------------------------------- Starting INITIAL ETI DISTRIBUTION ---------------------------');
@@ -165,7 +166,7 @@ let IPFS7 = randomipfs();
 let IPFS8 = randomipfs();
 
 await createdisease();
-let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let disease_name = 'Malaria';
 //let diseasehash = web3.utils.sha256(web3.eth.abi.encodeParameter('string', disease_name));
 console.log('m hash1 is', web3.utils.keccak256(web3.utils.fromAscii("Malaria")));
@@ -180,7 +181,7 @@ console.log('disease_name is', disease_name);
 console.log('hashfromname is ', hashfromname);
 
 assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
-assert.equal(hashfromname, EXPECTED_FIRST_PROPOSAL_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
   
 
   console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
@@ -357,20 +358,20 @@ assert.equal(hashfromname, EXPECTED_FIRST_PROPOSAL_HASH, 'Malaria should have an
   let test_accountbosomsbefore = await EticaReleaseVotingTestInstance.bosoms(test_account.address);
   //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
-  return EticaReleaseVotingTestInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
+  return EticaReleaseVotingTestInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
 
-    let first_proposal = await EticaReleaseVotingTestInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+    let first_proposal = await EticaReleaseVotingTestInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
     let proposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
     //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-    let first_proposal_ipfs = await EticaReleaseVotingTestInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+    let first_proposal_ipfs = await EticaReleaseVotingTestInstance.propsipfs(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
     //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
-    let first_proposal_data = await EticaReleaseVotingTestInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+    let first_proposal_data = await EticaReleaseVotingTestInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
     //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
     // check Proposal's general information:
-    assert.equal(first_proposal.disease_id, EXPECTED_FIRST_PROPOSAL_HASH, 'First proposal should exist with right disease_id');
+    assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
     assert(first_proposal.period_id >= 1);
     assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
     assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
@@ -422,17 +423,17 @@ console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
 console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
 // check diseases mapping insertion:
-assert.equal(first_disease.disease_hash, EXPECTED_FIRST_PROPOSAL_HASH, 'First disease should exists with right diseasehash');
+assert.equal(first_disease.disease_hash, EXPECTED_FIRST_DISEASE_HASH, 'First disease should exists with right diseasehash');
 assert.equal(first_disease.name, 'Malaria', 'First disease should exists with right name');
 assert.equal(first_disease.description, 'Malaria is a disease that kills millions of people each year !', 'First disease should exists with right description');
 assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this point');
 
 // check diseasesbyIds and diseasesbyNames mappings insertion:
-let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
 
 assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
-assert.equal(hashfromname, EXPECTED_FIRST_PROPOSAL_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
 
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less

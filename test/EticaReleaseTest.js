@@ -64,8 +64,9 @@ var test_account5= {
 
 var PROPOSAL_DEFAULT_VOTE = 10;
 
-var EXPECTED_FIRST_PROPOSAL_HASH = '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa';
+var EXPECTED_FIRST_DISEASE_HASH = '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e'; // FORMER 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa
 
+var EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH = '0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb'; // FORMER 0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00
 
 
     it("can be minted", async function () {
@@ -598,17 +599,17 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             //console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
             // check diseases mapping insertion:
-            assert.equal(first_disease.disease_hash, EXPECTED_FIRST_PROPOSAL_HASH, 'First disease should exists with right diseasehash');
+            assert.equal(first_disease.disease_hash, EXPECTED_FIRST_DISEASE_HASH, 'First disease should exists with right diseasehash');
             assert.equal(first_disease.name, 'Malaria', 'First disease should exists with right name');
             assert.equal(first_disease.description, 'Malaria is a disease that kills millions of people each year !', 'First disease should exists with right description');
             assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this point');
 
             // check diseasesbyIds and diseasesbyNames mappings insertion:
-            let indexfromhash = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+            let indexfromhash = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
             let hashfromname = await EticaReleaseInstance.getdiseasehashbyName('Malaria');
 
             assert.equal(indexfromhash, '1', 'first proposal disease hash should have an entry in diseasesbyIds with value of 1');
-            assert.equal(hashfromname, EXPECTED_FIRST_PROPOSAL_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+            assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
 
             // test_account should have paid 100 ETI to contract
                // test_account should have 100 ETI less
@@ -676,7 +677,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     console.log('------------------------------------ Starting test ---------------------------');
                     console.log('................................  CAN CREATE A PROPOSAL ? .......................');
 
-                    let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+                    let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
                     //console.log('idofstruct id: ', idofstruct);
 
                     let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
@@ -686,20 +687,20 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
 
-                    return EticaReleaseInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
+                    return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
 
-                    let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                    let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                     //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-                    let first_proposal_ipfs = await EticaReleaseInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                    let first_proposal_ipfs = await EticaReleaseInstance.propsipfs(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
-                    let first_proposal_data = await EticaReleaseInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                    let first_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
                     // check Proposal's general information:
-                    assert.equal(first_proposal.disease_id, EXPECTED_FIRST_PROPOSAL_HASH, 'First proposal should exist with right disease_id');
+                    assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
                     assert(first_proposal.period_id >= 1);
                     assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
                     assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
@@ -739,7 +740,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         console.log('------------------------------------ Starting test ---------------------------');
                         console.log('................................  CANNOT CREATE TWICE A PROPOSAL WITH SAME {raw_release_hash, disease_hash} ? .......................');
 
-                        let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+                        let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
                         //console.log('id of disease: ', idofstruct);
 
                         let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
@@ -751,22 +752,22 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before CALLING PROPOSE FUNCTION (because propose function should fail but not for this reason)');
 
 
-                        return EticaReleaseInstance.propose("0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa", "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(assert.fail)
+                        return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(assert.fail)
                         .catch(async function(error){
 
-                        // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00) has not changed:
-                        let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH) has not changed
+                        let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-                        let first_proposal_ipfs = await EticaReleaseInstance.propsipfs('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        let first_proposal_ipfs = await EticaReleaseInstance.propsipfs(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
-                        let first_proposal_data = await EticaReleaseInstance.propsdatas('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        let first_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
                         // check Proposal's general information:
-                        assert.equal(first_proposal.disease_id, EXPECTED_FIRST_PROPOSAL_HASH, 'First proposal should have kept the same disease_id');
+                        assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should have kept the same disease_id');
                         assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should have kept the same name');
                         assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should have kept the same description');
                         assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
@@ -786,7 +787,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should have kept the same againstvotes');
                         assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lastcuration_weight');
                         assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lasteditor_weight');
-                        // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00) has not changed: done
+                        // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH) has not changed
 
                         // ------------ WARNING
                         // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
@@ -808,10 +809,10 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         console.log('------------------------------------ Starting test ---------------------------');
                         console.log('................................  CAN VOTE FOR A PROPOSAL ? .......................');
 
-                        let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+                        let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
                         //console.log('idofstruct id: ', idofstruct);
 
-                        let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                        let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
@@ -982,10 +983,10 @@ it("can still vote for Proposal", async function () {
   console.log('------------------------------------ Starting test ---------------------------');
   console.log('................................  CAN STILL VOTE FOR A PROPOSAL ? .......................');
 
-  let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+  let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
   //console.log('idofstruct id: ', idofstruct);
 
-  let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+  let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
   let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
   //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
@@ -1038,10 +1039,10 @@ it("can vote against Proposal", async function () {
   console.log('------------------------------------ Starting test ---------------------------');
   console.log('................................  CAN VOTE AGAINST A PROPOSAL ? .......................');
 
-  let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_PROPOSAL_HASH);
+  let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
   //console.log('idofstruct id: ', idofstruct);
 
-  let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+  let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
   let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
   //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
@@ -1104,7 +1105,7 @@ it("can vote against Proposal", async function () {
             let test_account_3_bosomsbefore = await EticaReleaseInstance.bosoms(test_account3.address);
             //console.log('test_account3 Bosoms before:', web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ));
 
-            let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+            let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
@@ -1193,7 +1194,7 @@ it("can vote against Proposal", async function () {
         
                                 
         
-                                let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                                let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                                 let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                                 //console.log('THE FIRST PROPOSAL IS:', first_proposal);
         
@@ -1247,7 +1248,7 @@ it("can vote against Proposal", async function () {
         
                                 
         
-                                let first_proposal = await EticaReleaseInstance.proposals('0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00');
+                                let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                                 let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                                 //console.log('THE FIRST PROPOSAL IS:', first_proposal);
         

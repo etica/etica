@@ -4,6 +4,7 @@ var solidityHelper =  require('./solidity-helper');
 var miningHelper =  require('./mining-helper-fast');
 var networkInterfaceHelper =  require('./network-interface-helper');
 const truffleAssert = require('truffle-assertions');
+var abi = require('ethereumjs-abi');
 
 // test suite
 contract('EticaReleaseVotingTest', function(accounts){
@@ -58,7 +59,12 @@ var test_account8= {
 
 var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
-var EXPECTED_FIRST_DISEASE_HASH = '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e'; // FORMER 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa
+var FIRST_DISEASE_NAME = "Malaria";
+
+var encoded = abi.rawEncode([ "string" ], [ FIRST_DISEASE_NAME ]);
+
+var EXPECTED_FIRST_DISEASE_HASH = web3.utils.keccak256(encoded); // should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
+//console.log('EXPECTED_FIRST_DISEASE_HASH is ', EXPECTED_FIRST_DISEASE_HASH);
 
 var EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH = '0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb'; // FORMER 0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00
 
@@ -165,19 +171,15 @@ let IPFS6 = randomipfs();
 let IPFS7 = randomipfs();
 let IPFS8 = randomipfs();
 
-await createdisease();
+await createdisease("Malaria", "Malaria is a disease that kills millions of people each year !");
 let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
-let disease_name = 'Malaria';
-//let diseasehash = web3.utils.sha256(web3.eth.abi.encodeParameter('string', disease_name));
-console.log('m hash1 is', web3.utils.keccak256(web3.utils.fromAscii("Malaria")));
-console.log('m hash3 is', web3.utils.sha3(web3.utils.fromAscii("Malaria")));
-
-// Use keccak256 Hashing function (alias)
-console.log('m hash2 is', web3.utils.keccak256('Malaria'))
 let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
+let disease_name = 'Malaria';
+
+var encoded = abi.rawEncode([ "string" ], [ "Malaria" ]);
+let diseasehash_one = web3.utils.keccak256(encoded);
+
 console.log('indexfromhash is', indexfromhash);
-console.log('disease_name is', disease_name);
-//console.log('diseasehash is', diseasehash);
 console.log('hashfromname is ', hashfromname);
 
 assert.equal(indexfromhash, '1', 'EXPECTED_FIRST_DISEASE_HASH hash should have an entry in diseasesbyIds with value of 1');
@@ -403,37 +405,40 @@ assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an 
  }
 
 
- async function createdisease(){
+ async function createdisease(_diseasename, _diseasedescription){
+
+  console.log('................................  START CREATION OF NEW DISEASE', _diseasename,' ....................... ');
+
+  // calculate expected hash of disease:
+  let encoded = abi.rawEncode([ "string" ], [ _diseasename ]);
+  let _expectedhash = web3.utils.keccak256(encoded);
 
   let test_accountbalance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
   let contract_balance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
   //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
-
-let first_disease = await EticaReleaseVotingTestInstance.diseases(1);
-let diseasesCounter = await EticaReleaseVotingTestInstance.diseasesCounter();
    
-  return EticaReleaseVotingTestInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !", {from: test_account.address}).then(async function(receipt){
-    let first_disease = await EticaReleaseVotingTestInstance.diseases(1);
+  return EticaReleaseVotingTestInstance.createdisease(_diseasename, _diseasedescription, {from: test_account.address}).then(async function(receipt){
+   // check diseasesbyIds and diseasesbyNames mappings insertion:
+let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName(_diseasename);
+let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(_expectedhash);
+
+assert.equal(indexfromhash, '1', '_expectedhash should have an entry in diseasesbyIds with value of 1');
+assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in diseasesbyNames with value of _expectedhash');
+   
+   
+    let new_disease = await EticaReleaseVotingTestInstance.diseases(indexfromhash);
     let diseasesCounter = await EticaReleaseVotingTestInstance.diseasesCounter();
     let test_accountbalance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
     let contract_balance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
-console.log('THE FIRST DISEASE IS:', first_disease);
-console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
-console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
+console.log('THE NEW DISEASE IS:', new_disease);
+console.log('NAME OF THE NEW DISEASE IS:', new_disease.name);
+console.log('DESCRIPTION OF THE NEW DISEASE IS:', new_disease.description);
 console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
 // check diseases mapping insertion:
-assert.equal(first_disease.disease_hash, EXPECTED_FIRST_DISEASE_HASH, 'First disease should exists with right diseasehash');
-assert.equal(first_disease.name, 'Malaria', 'First disease should exists with right name');
-assert.equal(first_disease.description, 'Malaria is a disease that kills millions of people each year !', 'First disease should exists with right description');
-assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this point');
-
-// check diseasesbyIds and diseasesbyNames mappings insertion:
-let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
-let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
-
-assert.equal(indexfromhash, '1', 'EXPECTED_FIRST_DISEASE_HASH hash should have an entry in diseasesbyIds with value of 1');
-assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of EXPECTED_FIRST_DISEASE_HASH');
+assert.equal(new_disease.disease_hash, _expectedhash, 'First disease should exists with right diseasehash');
+assert.equal(new_disease.name, _diseasename, 'First disease should exists with right name');
+assert.equal(new_disease.description, _diseasedescription, 'First disease should exists with right description');
 
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less
@@ -444,9 +449,7 @@ assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an 
       assert.equal(web3.utils.fromWei(contract_balance_after_createdisease, "ether" ) - web3.utils.fromWei(contract_balance_before_createdisease, "ether" ), 100);
       console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
 
-
-console.log('................................  CAN CREATE A DISEASE  ....................... ');
-console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+console.log('................................  CREATED NEW DISEASE', _diseasename,' WITH SUCCESS ....................... ');
 })
  }
 

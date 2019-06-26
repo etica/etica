@@ -68,8 +68,8 @@ var EXPECTED_FIRST_DISEASE_HASH = web3.utils.keccak256(encoded); // should be '0
 
 var EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH = '0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb'; // FORMER 0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00
 
-  it("can make initial distribution of ETI :", async function () {
-    console.log('------------------------------------- Starting INITIAL ETI DISTRIBUTION ---------------------------');
+  it("testing ETICA PROTOCOL:", async function () {
+    console.log('------------------------------------- Starting TESTS OF ETICA PROTOCOL ---------------------------');
 
   // wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
   //await timeout(150000);
@@ -174,19 +174,25 @@ let IPFS8 = randomipfs();
 await createdisease("Malaria", "Malaria is a disease that kills millions of people each year !");
 let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
-let disease_name = 'Malaria';
 
-var encoded = abi.rawEncode([ "string" ], [ "Malaria" ]);
-let diseasehash_one = web3.utils.keccak256(encoded);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseVotingTestInstance.blockedeticas(test_account.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseVotingTestInstance.blockedeticas(test_account2.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseVotingTestInstance.blockedeticas(test_account3.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseVotingTestInstance.blockedeticas(test_account4.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseVotingTestInstance.blockedeticas(test_account5.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseVotingTestInstance.blockedeticas(test_account6.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseVotingTestInstance.blockedeticas(test_account7.address);
 
-console.log('indexfromhash is', indexfromhash);
-console.log('hashfromname is ', hashfromname);
-
-assert.equal(indexfromhash, '1', 'EXPECTED_FIRST_DISEASE_HASH hash should have an entry in diseasesbyIds with value of 1');
-assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of EXPECTED_FIRST_DISEASE_HASH');
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT is ", OLD_BLOCKED_ETI_TEST_ACCOUNT);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_2 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_2);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_3 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_3);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_4 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_4);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_5 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_5);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_6 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_6);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7);
   
 
-  console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
+  console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
 
   })
 

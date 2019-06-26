@@ -1,8 +1,4 @@
 pragma solidity ^0.5.2;
-// ----------------------------------------------------------------------------
-//this ICO smart contract has been compiled and tested with the Solidity Version 0.5.2
-//There are some minor changes comparing to ICO contract compiled with versions < 0.5.0
-// ----------------------------------------------------------------------------
 
 
 // ----------------------------------------------------------------------------

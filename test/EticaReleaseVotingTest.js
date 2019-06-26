@@ -180,8 +180,8 @@ console.log('disease_name is', disease_name);
 //console.log('diseasehash is', diseasehash);
 console.log('hashfromname is ', hashfromname);
 
-assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
-assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+assert.equal(indexfromhash, '1', 'EXPECTED_FIRST_DISEASE_HASH hash should have an entry in diseasesbyIds with value of 1');
+assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of EXPECTED_FIRST_DISEASE_HASH');
   
 
   console.log('------------------------------------- INITIAL ETI DISTRIBUTION DONE ---------------------------');
@@ -432,8 +432,8 @@ assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this poin
 let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
 
-assert.equal(indexfromhash, '1', '0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa hash should have an entry in diseasesbyIds with value of 1');
-assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+assert.equal(indexfromhash, '1', 'EXPECTED_FIRST_DISEASE_HASH hash should have an entry in diseasesbyIds with value of 1');
+assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of EXPECTED_FIRST_DISEASE_HASH');
 
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less

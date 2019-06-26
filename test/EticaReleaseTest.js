@@ -609,7 +609,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             let hashfromname = await EticaReleaseInstance.getdiseasehashbyName('Malaria');
 
             assert.equal(indexfromhash, '1', 'first proposal disease hash should have an entry in diseasesbyIds with value of 1');
-            assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of 0xfca403d66ff4c1d6ea8f67e3a96689222557de5048b2ff6d9020d5a433f412aa');
+            assert.equal(hashfromname, EXPECTED_FIRST_DISEASE_HASH, 'Malaria should have an entry in diseasesbyNames with value of EXPECTED_FIRST_DISEASE_HASH');
 
             // test_account should have paid 100 ETI to contract
                // test_account should have 100 ETI less

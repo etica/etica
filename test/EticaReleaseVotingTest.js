@@ -71,8 +71,6 @@ var encoded = abi.rawEncode([ "string" ], [ FIRST_DISEASE_NAME ]);
 var EXPECTED_FIRST_DISEASE_HASH = get_expected_keccak256_hash(FIRST_DISEASE_NAME); // should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
 //console.log('EXPECTED_FIRST_DISEASE_HASH is ', EXPECTED_FIRST_DISEASE_HASH);
 
-var EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH = '0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb'; // FORMER 0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00
-
 var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in the protocol
 
   it("testing ETICA PROTOCOL:", async function () {
@@ -199,8 +197,13 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_5 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_5
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_6 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_6);
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7);
 
-
-await createproposal(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 3", IPFS3, "", "");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 4 Malaria", "Description 4", IPFS4, "", "");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 5 Malaria", "Description 5", IPFS5, "", "");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 6 Malaria", "Description 6", IPFS6, IPFS7, "");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria", "Description 7", IPFS7, "", IPFS8);
   
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -372,35 +375,46 @@ await createproposal(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Mala
  function get_expected_keccak256_hash(_data) {
   var encoded = abi.rawEncode([ "string" ], [ _data ]);
   var result_hash = web3.utils.keccak256(encoded);
-  console.log('get_expected_hash() result is ', result_hash);
+  //console.log('get_expected_hash() result is ', result_hash);
 
   return web3.utils.keccak256(encoded); // example: should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
 
  }
 
+  // get expected hash as it will be calculated by solidity in contract code:
+  // example: should return 0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb for couple {QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t, 0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e}
+  function get_expected_keccak256_hash_two(_data1, _data2) {
+    var encoded = abi.rawEncode([ "string", "bytes32" ], [ _data1, _data2 ]);
+    var result_hash = web3.utils.keccak256(encoded);
+    //console.log('get_expected_hash_two() result is ', result_hash);
+  
+    return web3.utils.keccak256(encoded); // example: should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
+  
+   }
 
- async function createproposal(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash){
+
+ async function createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash){
 
   console.log('................................  START CREATION OF NEW PROPOSAL', _title,' ....................... ');
 
   let oldproposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
 
-  let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
-  //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+  let _from_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(_from_account.address);
+  //console.log('_from_account ETI balance before:', web3.utils.fromWei(_from_accountbalancebefore, "ether" ));
 
-  let test_accountbosomsbefore = await EticaReleaseVotingTestInstance.bosoms(test_account.address);
-  //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
+  let _from_accountbosomsbefore = await EticaReleaseVotingTestInstance.bosoms(_from_account.address);
+  //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
 
-  return EticaReleaseVotingTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: test_account.address}).then(async function(response){
+  return EticaReleaseVotingTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: _from_account.address}).then(async function(response){
 
-    let first_proposal = await EticaReleaseVotingTestInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+    let first_proposal = await EticaReleaseVotingTestInstance.proposals(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
     let proposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
     //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-    let first_proposal_ipfs = await EticaReleaseVotingTestInstance.propsipfs(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+    let first_proposal_ipfs = await EticaReleaseVotingTestInstance.propsipfs(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
     //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
-    let first_proposal_data = await EticaReleaseVotingTestInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+    let first_proposal_data = await EticaReleaseVotingTestInstance.propsdatas(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
     //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
     // check Proposal's general information:

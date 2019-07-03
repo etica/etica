@@ -6,6 +6,10 @@ var networkInterfaceHelper =  require('./network-interface-helper');
 const truffleAssert = require('truffle-assertions');
 var abi = require('ethereumjs-abi');
 
+console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------');
+console.log('---------------> DECENTRALISED RESEARCH INDUSTRY <------------------');
+console.log('');
+
 // test suite
 contract('EticaReleaseVotingTest', function(accounts){
   var EticaReleaseVotingTestInstance;
@@ -60,13 +64,16 @@ var test_account8= {
 var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
 var FIRST_DISEASE_NAME = "Malaria";
+var FIRST_DISEASE_DESC = "Malaria is a disease that kills millions of people each year !";
 
 var encoded = abi.rawEncode([ "string" ], [ FIRST_DISEASE_NAME ]);
 
-var EXPECTED_FIRST_DISEASE_HASH = web3.utils.keccak256(encoded); // should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
+var EXPECTED_FIRST_DISEASE_HASH = get_expected_keccak256_hash(FIRST_DISEASE_NAME); // should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
 //console.log('EXPECTED_FIRST_DISEASE_HASH is ', EXPECTED_FIRST_DISEASE_HASH);
 
 var EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH = '0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb'; // FORMER 0x5f17034b05363de3cfffa94d9ae9c07534861c3cc1216e58a5c0f057607dbc00
+
+var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in the protocol
 
   it("testing ETICA PROTOCOL:", async function () {
     console.log('------------------------------------- Starting TESTS OF ETICA PROTOCOL ---------------------------');
@@ -171,10 +178,11 @@ let IPFS6 = randomipfs();
 let IPFS7 = randomipfs();
 let IPFS8 = randomipfs();
 
-await createdisease("Malaria", "Malaria is a disease that kills millions of people each year !");
+await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
 let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
-let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName('Malaria');
+let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
 
+// Retrieve BLOCKEDETICAS:
 let OLD_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseVotingTestInstance.blockedeticas(test_account.address);
 let OLD_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseVotingTestInstance.blockedeticas(test_account2.address);
 let OLD_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseVotingTestInstance.blockedeticas(test_account3.address);
@@ -190,6 +198,9 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_4 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_4
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_5 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_5);
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_6 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_6);
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7);
+
+
+await createproposal(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6");
   
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -357,8 +368,20 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7
     return result;
  }
 
+ // get expected hash as it will be calculated by solidity in contract code:
+ function get_expected_keccak256_hash(_data) {
+  var encoded = abi.rawEncode([ "string" ], [ _data ]);
+  var result_hash = web3.utils.keccak256(encoded);
+  console.log('get_expected_hash() result is ', result_hash);
 
- async function createproposal(){
+  return web3.utils.keccak256(encoded); // example: should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
+
+ }
+
+
+ async function createproposal(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash){
+
+  let oldproposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
 
   let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
   //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
@@ -366,7 +389,7 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7
   let test_accountbosomsbefore = await EticaReleaseVotingTestInstance.bosoms(test_account.address);
   //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
-  return EticaReleaseVotingTestInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
+  return EticaReleaseVotingTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: test_account.address}).then(async function(response){
 
     let first_proposal = await EticaReleaseVotingTestInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
     let proposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
@@ -381,14 +404,14 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7
     // check Proposal's general information:
     assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
     assert(first_proposal.period_id >= 1);
-    assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
-    assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
-    assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
+    assert.equal(first_proposal.title, _title, 'First proposal should exist with right name');
+    assert.equal(first_proposal.description, _description, 'First proposal should exist with right description');
+    assert.equal(proposalsCounter, web3.utils.toBN(oldproposalsCounter).add(web3.utils.toBN('1')).toString(), 'There should be exactly 1 more proposal at this point');
 
     // check Proposal's IPFS:
-    assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
-    assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right old_release_hash');
-    assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right grandparent_hash');
+    assert.equal(first_proposal_ipfs.raw_release_hash, _raw_release_hash, 'First proposal should exist with right raw_release_hash');
+    assert.equal(first_proposal_ipfs.old_release_hash, _old_release_hash, 'First proposal should exist with right old_release_hash');
+    assert.equal(first_proposal_ipfs.grandparent_hash, _grandparent_hash, 'First proposal should exist with right grandparent_hash');
 
     // check Proposal's DATA:
     assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
@@ -416,8 +439,7 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7
   console.log('................................  START CREATION OF NEW DISEASE', _diseasename,' ....................... ');
 
   // calculate expected hash of disease:
-  let encoded = abi.rawEncode([ "string" ], [ _diseasename ]);
-  let _expectedhash = web3.utils.keccak256(encoded);
+  let _expectedhash = get_expected_keccak256_hash(_diseasename);
 
   let test_accountbalance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
   let contract_balance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
@@ -428,7 +450,7 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7
 let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName(_diseasename);
 let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(_expectedhash);
 
-assert.equal(indexfromhash, '1', '_expectedhash should have an entry in diseasesbyIds with value of 1');
+assert.equal(indexfromhash, TOTAL_DISEASES + 1, '_expectedhash should have an entry in diseasesbyIds with value of total number of diseases created in the protocol');
 assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in diseasesbyNames with value of _expectedhash');
    
    
@@ -454,6 +476,8 @@ assert.equal(new_disease.description, _diseasedescription, 'First disease should
    // contract should have 100 ETI more
       assert.equal(web3.utils.fromWei(contract_balance_after_createdisease, "ether" ) - web3.utils.fromWei(contract_balance_before_createdisease, "ether" ), 100);
       console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
+
+      TOTAL_DISEASES = TOTAL_DISEASES + 1;
 
 console.log('................................  CREATED NEW DISEASE', _diseasename,' WITH SUCCESS ....................... ');
 })

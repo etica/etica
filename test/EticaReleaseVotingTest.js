@@ -381,6 +381,8 @@ await createproposal(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Mala
 
  async function createproposal(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash){
 
+  console.log('................................  START CREATION OF NEW PROPOSAL', _title,' ....................... ');
+
   let oldproposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
 
   let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
@@ -428,8 +430,7 @@ await createproposal(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Mala
     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
     // ------------ WARNING
 
-    console.log('................................  CAN CREATE A PROPOSAL  ....................... ');
-    console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+    console.log('................................  CREATED NEW  PROPOSAL', _title,' WITH SUCCESS ....................... ');
     });
  }
 
@@ -458,10 +459,10 @@ assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in disea
     let diseasesCounter = await EticaReleaseVotingTestInstance.diseasesCounter();
     let test_accountbalance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
     let contract_balance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
-console.log('THE NEW DISEASE IS:', new_disease);
-console.log('NAME OF THE NEW DISEASE IS:', new_disease.name);
-console.log('DESCRIPTION OF THE NEW DISEASE IS:', new_disease.description);
-console.log('NUMBER OF DISEASES IS:', diseasesCounter);
+//console.log('THE NEW DISEASE IS:', new_disease);
+//console.log('NAME OF THE NEW DISEASE IS:', new_disease.name);
+//console.log('DESCRIPTION OF THE NEW DISEASE IS:', new_disease.description);
+//console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
 // check diseases mapping insertion:
 assert.equal(new_disease.disease_hash, _expectedhash, 'First disease should exists with right diseasehash');
@@ -471,11 +472,11 @@ assert.equal(new_disease.description, _diseasedescription, 'First disease should
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less
      assert.equal(web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ) - web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ), 100);
-     console.log('test_account balance after Disease Creation is', web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ));
+     //console.log('test_account balance after Disease Creation is', web3.utils.fromWei(test_accountbalance_after_createdisease, "ether" ));
 
    // contract should have 100 ETI more
       assert.equal(web3.utils.fromWei(contract_balance_after_createdisease, "ether" ) - web3.utils.fromWei(contract_balance_before_createdisease, "ether" ), 100);
-      console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
+      //console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
 
       TOTAL_DISEASES = TOTAL_DISEASES + 1;
 

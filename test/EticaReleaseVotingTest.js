@@ -207,6 +207,46 @@ await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria
 
 // should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
 await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Malaria", "Description 8", IPFS1, "", "");
+
+let IPFS1_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS6_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS7_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7, EXPECTED_FIRST_DISEASE_HASH);
+
+await votebyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
+await votebyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
+await votebyhash(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
+await votebyhash(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
+await votebyhash(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
+await votebyhash(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
+
+await votebyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5');
+await votebyhash(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
+await votebyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
+await votebyhash(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
+await votebyhash(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
+await votebyhash(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
+
+await votebyhash(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
+await votebyhash(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');
+await votebyhash(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
+await votebyhash(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '500');
+await votebyhash(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
+await votebyhash(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
+
+await votebyhash(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
+await votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
+await votebyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
+await votebyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
+await votebyhash(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
+await votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
+
+// should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
+await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
+await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
   
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -295,6 +335,15 @@ await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Ma
       console.log('as expected failed to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
   
     }
+
+         // propose should fail:
+         async function should_fail_votebyhash(_from_account, _proposed_release_hash, _choice, _amount) {
+     
+          console.log('should fail this votebyhash');
+          await truffleAssert.fails(EticaReleaseVotingTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
+          console.log('as expected failed to make this votebyhash');
+      
+        }
 
    async function advanceseconds(duration) {
 
@@ -395,8 +444,8 @@ await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Ma
 
   // get expected hash as it will be calculated by solidity in contract code:
   // example: should return 0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb for couple {QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t, 0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e}
-  function get_expected_keccak256_hash_two(_data1, _data2) {
-    var encoded = abi.rawEncode([ "string", "bytes32" ], [ _data1, _data2 ]);
+  function get_expected_keccak256_hash_two(_rawrelease, _diseasehash) {
+    var encoded = abi.rawEncode([ "string", "bytes32" ], [ _rawrelease, _diseasehash ]);
     var result_hash = web3.utils.keccak256(encoded);
     //console.log('get_expected_hash_two() result is ', result_hash);
   
@@ -508,6 +557,14 @@ assert.equal(new_disease.description, _diseasedescription, 'First disease should
 
 console.log('................................  CREATED NEW DISEASE', _diseasename,' WITH SUCCESS ....................... ');
 })
+ }
+
+
+ async function votebyhash(_from_account, _proposed_release_hash, _choice, _amount){
+  return EticaReleaseVotingTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
+
+  console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  });
  }
 
 

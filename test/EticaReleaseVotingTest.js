@@ -204,6 +204,9 @@ await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 4 Malaria
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 5 Malaria", "Description 5", IPFS5, "", "");
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 6 Malaria", "Description 6", IPFS6, IPFS7, "");
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria", "Description 7", IPFS7, "", IPFS8);
+
+// should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
+await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Malaria", "Description 8", IPFS1, "", "");
   
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -283,6 +286,15 @@ await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria
     console.log('as expected failed to transfer', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
 
   }
+
+     // propose should fail:
+     async function should_fail_propose(_from_account, _diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash) {
+     
+      console.log('should fail to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
+      await truffleAssert.fails(EticaReleaseVotingTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: _from_account.address}));
+      console.log('as expected failed to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
+  
+    }
 
    async function advanceseconds(duration) {
 

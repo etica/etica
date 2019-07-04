@@ -289,13 +289,48 @@ assert.equal(web3.utils.fromWei(_proposal4.againstvotes.toString()), '0', 'Propo
 
 console.log('----------------->   PROPOSALS FORVOTES AND AGAINTSVOTES CHECKED  <-----------------');
 
-assert.equal(_proposal1.prestatus, '1', 'Proposal1 prestatus should be Pending');
-assert.equal(_proposal2.prestatus, '0', 'Proposal2 prestatus should be Pending');
-assert.equal(_proposal3.prestatus, '0', 'Proposal3 prestatus should be Pending');
-assert.equal(_proposal4.prestatus, '1', 'Proposal4 prestatus should be Pending');
-assert.equal(_proposal5.prestatus, '3', 'Proposal5 prestatus should be Pending');
-assert.equal(_proposal6.prestatus, '3', 'Proposal6 prestatus should be Pending');
-assert.equal(_proposal7.prestatus, '3', 'Proposal7 prestatus should be Pending');
+assert.equal(_proposal1.prestatus, '1', 'Proposal1 prestatus should be Accepted');
+assert.equal(_proposal2.prestatus, '0', 'Proposal2 prestatus should be Rejected');
+assert.equal(_proposal3.prestatus, '0', 'Proposal3 prestatus should be Rejected');
+assert.equal(_proposal4.prestatus, '1', 'Proposal4 prestatus should be Accepted');
+assert.equal(_proposal5.prestatus, '3', 'Proposal5 prestatus should be SingleVoter');
+assert.equal(_proposal6.prestatus, '3', 'Proposal6 prestatus should be SingleVoter');
+assert.equal(_proposal7.prestatus, '3', 'Proposal7 prestatus should be SingleVoter');
+
+console.log('----------------->   PROPOSALS PRESTATUS CHECKED  <-----------------');
+
+assert.equal(_proposal1.status, '2', 'Proposal1 status should be Pending');
+assert.equal(_proposal2.status, '2', 'Proposal2 status should be Pending');
+assert.equal(_proposal3.status, '2', 'Proposal3 status should be Pending');
+assert.equal(_proposal4.status, '2', 'Proposal4 status should be Pending');
+assert.equal(_proposal5.status, '2', 'Proposal5 status should be Pending');
+assert.equal(_proposal6.status, '2', 'Proposal6 status should be Pending');
+assert.equal(_proposal7.status, '2', 'Proposal7 status should be Pending');
+
+console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
+
+// assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have a lasteditor_weight of ');
+
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
 

@@ -329,6 +329,16 @@ assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', '
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
+assert.equal(_proposal1.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
+assert.equal(_proposal2.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal3.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
+assert.equal(_proposal4.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+
+console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
+
 // assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have a lasteditor_weight of ');
 
 

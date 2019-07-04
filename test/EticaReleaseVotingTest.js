@@ -198,12 +198,12 @@ console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_6 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_6
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7);
 
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "");
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "");
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 3", IPFS3, "", "");
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 4 Malaria", "Description 4", IPFS4, "", "");
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 5 Malaria", "Description 5", IPFS5, "", "");
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 6 Malaria", "Description 6", IPFS6, IPFS7, "");
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria", "Description 7", IPFS7, "", IPFS8);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "");
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 3", IPFS3, "", "");
+await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 4 Malaria", "Description 4", IPFS4, "", "");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 5 Malaria", "Description 5", IPFS5, "", "");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 6 Malaria", "Description 6", IPFS6, IPFS7, "");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria", "Description 7", IPFS7, "", IPFS8);
 
 // should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
 await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Malaria", "Description 8", IPFS1, "", "");
@@ -223,7 +223,7 @@ await votebyhash(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
 await votebyhash(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
 await votebyhash(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
 
-await votebyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5');
+//await should_fail_votebyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
 await votebyhash(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
 await votebyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
 await votebyhash(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
@@ -231,23 +231,71 @@ await votebyhash(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
 await votebyhash(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
 
 await votebyhash(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
-await votebyhash(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');
+//await should_fail_votebyhash(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
 await votebyhash(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
-await votebyhash(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '500');
+await votebyhash(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
 await votebyhash(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
 await votebyhash(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
 
 await votebyhash(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
 await votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
-await votebyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
+//await should_fail_votebyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
 await votebyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
 await votebyhash(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
 await votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
 
-// should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
+// should fail to vote with incorrect amount for a proposal:
 await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
 await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
-  
+
+
+// CHECK GLOBAL VARIBALES
+
+let _proposal1 = await EticaReleaseVotingTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+
+let _proposal2 = await EticaReleaseVotingTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+
+let _proposal3 = await EticaReleaseVotingTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+
+let _proposal4 = await EticaReleaseVotingTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+
+let _proposal5 = await EticaReleaseVotingTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
+
+let _proposal6 = await EticaReleaseVotingTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
+
+let _proposal7 = await EticaReleaseVotingTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
+
+console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
+
+
+assert.equal(web3.utils.fromWei(_proposal1.forvotes.toString()), '660', 'Proposal1 should have 660 forvotes');
+assert.equal(web3.utils.fromWei(_proposal1.againstvotes.toString()), '480', 'Proposal1 should have 480 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal2.forvotes.toString()), '545', 'Proposal2 should have 545 forvotes');
+assert.equal(web3.utils.fromWei(_proposal2.againstvotes.toString()), '1400', 'Proposal1 should have 1400 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal3.forvotes.toString()), '600', 'Proposal3 should have 600 forvotes');
+assert.equal(web3.utils.fromWei(_proposal3.againstvotes.toString()), '600', 'Proposal3 should have 500 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal4.forvotes.toString()), '170', 'Proposal4 should have 170 forvotes');
+assert.equal(web3.utils.fromWei(_proposal4.againstvotes.toString()), '0', 'Proposal4 should have 0 against votes');
+
+console.log('----------------->   PROPOSALS FORVOTES AND AGAINTSVOTES CHECKED  <-----------------');
+
+assert.equal(_proposal1.prestatus, '1', 'Proposal1 prestatus should be Pending');
+assert.equal(_proposal2.prestatus, '0', 'Proposal2 prestatus should be Pending');
+assert.equal(_proposal3.prestatus, '0', 'Proposal3 prestatus should be Pending');
+assert.equal(_proposal4.prestatus, '1', 'Proposal4 prestatus should be Pending');
+assert.equal(_proposal5.prestatus, '3', 'Proposal5 prestatus should be Pending');
+assert.equal(_proposal6.prestatus, '3', 'Proposal6 prestatus should be Pending');
+assert.equal(_proposal7.prestatus, '3', 'Proposal7 prestatus should be Pending');
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
 

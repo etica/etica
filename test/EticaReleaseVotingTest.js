@@ -374,6 +374,25 @@ assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ), 455);
 assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 1000);
 
 
+// Retrieve General Information of Proposals:
+let _general_proposal1 = await EticaReleaseVotingTestInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
+let _general_proposal2 = await EticaReleaseVotingTestInstance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
+let _general_proposal3 = await EticaReleaseVotingTestInstance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
+let _general_proposal4 = await EticaReleaseVotingTestInstance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
+let _general_proposal5 = await EticaReleaseVotingTestInstance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
+let _general_proposal6 = await EticaReleaseVotingTestInstance.proposals(IPFS6_WITH_FIRTDISEASEHASH);
+let _general_proposal7 = await EticaReleaseVotingTestInstance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
+
+// assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
+assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString());
+
+
+// assert Period's curation_sum and editor_sum values are OK
+let _period1  = await EticaReleaseVotingTestInstance.periods(_general_proposal1.period_id);
+assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
+assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+
+
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
 
   })

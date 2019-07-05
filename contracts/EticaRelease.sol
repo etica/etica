@@ -438,13 +438,13 @@ uint DEFAULT_VOTING_TIME = 28 days; // default stake duration 28 days
      --------- PROD ------------- */
 
 /* --------- TESTING VALUES -------------*/
-uint REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
-uint STAKING_DURATION = 4 minutes; // default stake duration 28 jours
-uint ETICA_TO_BOSOM_RATIO = 1; //
-uint DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
+uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
+uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
+uint public ETICA_TO_BOSOM_RATIO = 1; //
+uint public DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
 
-uint PERIOD_CURATION_REWARD = 6000 * 10**uint(decimals); // 6 000 ETI per period
-uint PERIOD_EDITOR_REWARD = 32000 * 10**uint(decimals); // 32 000 ETI per period
+uint public PERIOD_CURATION_REWARD = 6000 * 10**uint(decimals); // 6 000 ETI per period
+uint public PERIOD_EDITOR_REWARD = 32000 * 10**uint(decimals); // 32 000 ETI per period
 /* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation

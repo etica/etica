@@ -86,7 +86,8 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
   assert(web3.utils.fromWei(receipt, "ether" ) >= 100000, 'miner_account should have at least 100 000 ETI before starting the tests !');
   }).then(async function(){
 
-
+    var DEFAULT_VOTING_TIME = await EticaReleaseVotingTestInstance.DEFAULT_VOTING_TIME(); 
+    console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
 
   // TRANSFERS FROM MINER ACCOUNT:
   await transferto(test_account);
@@ -384,6 +385,9 @@ let _general_proposal6 = await EticaReleaseVotingTestInstance.proposals(IPFS6_WI
 let _general_proposal7 = await EticaReleaseVotingTestInstance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
 
 // assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
+console.log('_general_proposal1.period_id is', _general_proposal1.period_id.toString());
+console.log('_general_proposal7.period_id is', _general_proposal7.period_id.toString());
+
 assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString());
 
 
@@ -391,6 +395,15 @@ assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.t
 let _period1  = await EticaReleaseVotingTestInstance.periods(_general_proposal1.period_id);
 assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
 assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+
+// Should fail to clmpropbyhash too early: 
+await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+
+// advance time so that clmpropbyhash becomes possible: 
+await advanceminutes(DEFAULT_VOTING_TIME);
+
+// should pass
+await clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -487,6 +500,14 @@ assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of
           await truffleAssert.fails(EticaReleaseVotingTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
           console.log('as expected failed to make this votebyhash');
       
+        }
+
+        async function should_fail_clmpropbyhash(_from_account, _proposalhash) {
+
+          console.log('should fail to clmpropbyhash');
+        await truffleAssert.fails(EticaReleaseVotingTestInstance.clmpropbyhash(_proposalhash, {from: _from_account.address}));
+        console.log('as expected failed to clmpropbyhash');
+
         }
 
    async function advanceseconds(duration) {
@@ -708,6 +729,13 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
   return EticaReleaseVotingTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
 
   console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  });
+ }
+
+ async function clmpropbyhash(_from_account, _proposed_release_hash){
+  return EticaReleaseVotingTestInstance.clmpropbyhash(_proposed_release_hash, {from: _from_account.address}).then(async function(response){
+
+  console.log('................................  CLAIMED PROPOSAL ', _proposed_release_hash,' WITH SUCCESS ....................... ');
   });
  }
 

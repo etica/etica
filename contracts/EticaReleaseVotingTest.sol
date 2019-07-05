@@ -3,6 +3,8 @@ pragma solidity ^0.5.2;
 // ONLY FOR TESTING !!!
 // EticaReleaseVotingTest: Same as EticaRelease contract but with initial ETI balance for miner_account to make tests easier
 // You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
+// wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
+
 
 
 // ----------------------------------------------------------------------------
@@ -160,6 +162,7 @@ contract EticaToken is ERC20Interface{
       supply = 100 * (10**18); // initial supply equals 100 ETI
       balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
       balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC].add(100000 * (10**18)); // 100 000 ETI to miner_account replace address with your miner_account address
+
 
       // PHASE 1 (before 21 Million ETI has been reached) -->
       // 10 500 000 ETI to be issued as periodrewardtemp for ETICA reward system
@@ -442,13 +445,13 @@ uint DEFAULT_VOTING_TIME = 28 days; // default stake duration 28 days
      --------- PROD ------------- */
 
 /* --------- TESTING VALUES -------------*/
-uint REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
-uint STAKING_DURATION = 4 minutes; // default stake duration 28 jours
-uint ETICA_TO_BOSOM_RATIO = 1; //
-uint DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
+uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
+uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
+uint public ETICA_TO_BOSOM_RATIO = 1; //
+uint public DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
 
-uint PERIOD_CURATION_REWARD = 6000 * 10**uint(decimals); // 6 000 ETI per period
-uint PERIOD_EDITOR_REWARD = 32000 * 10**uint(decimals); // 32 000 ETI per period
+uint public PERIOD_CURATION_REWARD = 6000 * 10**uint(decimals); // 6 000 ETI per period
+uint public PERIOD_EDITOR_REWARD = 32000 * 10**uint(decimals); // 32 000 ETI per period
 /* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation

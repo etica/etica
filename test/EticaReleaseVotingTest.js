@@ -476,8 +476,11 @@ console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
 let _expected_reward_acc5_prop_5 = await get_expected_reward(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
 console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
 
-console.log('_retrieved_acc5_balance', web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ));
 
+let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
+console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc5, '188.6335518176311'); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
 
 /*assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ), 5670);
 assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" ), 5670);

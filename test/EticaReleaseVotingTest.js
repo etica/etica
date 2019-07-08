@@ -10,6 +10,10 @@ console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------')
 console.log('---------------> DECENTRALISED RESEARCH INDUSTRY <------------------');
 console.log('');
 
+var PERIOD_CURATION_REWARD = 0; // initialize global variable PERIOD_CURATION_REWARD
+var PERIOD_EDITOR_REWARD = 0; // initialize global variable PERIOD_EDITOR_REWARD
+var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
+
 // test suite
 contract('EticaReleaseVotingTest', function(accounts){
   var EticaReleaseVotingTestInstance;
@@ -86,8 +90,14 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
   assert(web3.utils.fromWei(receipt, "ether" ) >= 100000, 'miner_account should have at least 100 000 ETI before starting the tests !');
   }).then(async function(){
 
-    var DEFAULT_VOTING_TIME = await EticaReleaseVotingTestInstance.DEFAULT_VOTING_TIME(); 
+    DEFAULT_VOTING_TIME = await EticaReleaseVotingTestInstance.DEFAULT_VOTING_TIME(); 
     console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
+
+    PERIOD_CURATION_REWARD = await EticaReleaseVotingTestInstance.PERIOD_CURATION_REWARD();
+    console.log('PERIOD_CURATION_REWARD IS ', PERIOD_CURATION_REWARD);
+
+    PERIOD_EDITOR_REWARD = await EticaReleaseVotingTestInstance.PERIOD_EDITOR_REWARD();
+    console.log('PERIOD_EDITOR_REWARD IS ', PERIOD_EDITOR_REWARD);
 
   // TRANSFERS FROM MINER ACCOUNT:
   await transferto(test_account);
@@ -402,8 +412,77 @@ await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 // advance time so that clmpropbyhash becomes possible: 
 await advanceminutes(DEFAULT_VOTING_TIME);
 
+// Should fail to votebyhash too late:
+await should_fail_votebyhash(test_account2, IPFS5_WITH_FIRTDISEASEHASH, true, '20');
+
+
+OLD_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
+OLD_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
+OLD_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
+OLD_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
+OLD_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
+OLD_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
+OLD_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
+OLD_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+
 // should pass
-await clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS4_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH);
+
+await clmpropbyhash(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
+
+
+
+MID_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
+MID_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
+MID_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
+MID_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
+MID_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
+MID_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
+MID_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
+MID_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+
+
+let _expected_reward_acc1_prop_1 = await get_expected_reward(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1);
+
+let _expected_reward_acc2_prop_1 = await get_expected_reward(test_account2, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc2_prop1 is', _expected_reward_acc2_prop_1);
+
+let _expected_reward_acc3_prop_1 = await get_expected_reward(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc3_prop1 is', _expected_reward_acc3_prop_1);
+
+let _expected_reward_acc4_prop_1 = await get_expected_reward(test_account4, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc4_prop1 is', _expected_reward_acc4_prop_1);
+
+let _expected_reward_acc5_prop_1 = await get_expected_reward(test_account5, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc5_prop1 is', _expected_reward_acc5_prop_1);
+
+let _expected_reward_acc6_prop_1 = await get_expected_reward(test_account6, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc6_prop1 is', _expected_reward_acc6_prop_1);
+
+let _expected_reward_acc7_prop_1 = await get_expected_reward(test_account7, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc7_prop1 is', _expected_reward_acc7_prop_1);
+
+let _expected_reward_acc8_prop_1 = await get_expected_reward(test_account8, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc8_prop1 is', _expected_reward_acc8_prop_1);
+
+
+
+let _expected_reward_acc5_prop_4 = await get_expected_reward(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
+
+let _expected_reward_acc5_prop_5 = await get_expected_reward(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
+
+console.log('_retrieved_acc5_balance', web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ));
+
+
+/*assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ), 5670);
+assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" ), 5670);
+assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" ), 5670);*/
+
 
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -616,6 +695,42 @@ await clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
   
     return web3.utils.keccak256(encoded); // example: should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
   
+   }
+
+   async function get_expected_reward(_from_account, _rawrelease){
+
+    // curation reward:
+    let _vote = await EticaReleaseVotingTestInstance.votes(_rawrelease, _from_account.address);
+    console.log('_vote is', _vote);
+    
+    let _proposal = await EticaReleaseVotingTestInstance.proposals(_rawrelease);
+    let _proposaldatas = await EticaReleaseVotingTestInstance.propsdatas(_rawrelease);
+    console.log('proposal is', _proposal);
+    let _period = await EticaReleaseVotingTestInstance.periods(_proposal.period_id);
+    console.log('period is', _period);
+    let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
+    let _expected_curation_reward_ratio = _expected_curation_reward_num / _period.curation_sum;
+    let _expected_curation_reward = _expected_curation_reward_ratio * PERIOD_CURATION_REWARD;
+
+    let _expected_editor_reward = 0; // initialtiaze var
+
+    if(_vote.is_editor){
+    let _expected_editor_reward_ratio = web3.utils.fromWei(_proposaldatas.lasteditor_weight, "ether" ) / _period.editor_sum;
+    console.log('_expected_editor_reward_ratio is', _expected_editor_reward_ratio);
+    _expected_editor_reward = _expected_editor_reward_ratio * PERIOD_EDITOR_REWARD;
+    }
+    
+    
+
+    let _expected_reward = _expected_curation_reward + _expected_editor_reward;
+
+    console.log('_expected_curation_reward_ratio is', _expected_curation_reward_ratio);
+    console.log('_expected_curation_reward is', _expected_curation_reward);
+    console.log('_expected_editor_reward is', _expected_editor_reward);
+    console.log('_expected reward is', _expected_reward);
+    
+    return _expected_reward;
+
    }
 
 

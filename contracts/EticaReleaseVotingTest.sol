@@ -1252,9 +1252,9 @@ Period storage period = periods[proposal.period_id];
    _reward_amount += (vote.amount * proposaldata.nbvoters * PERIOD_CURATION_REWARD) / (period.curation_sum);
 
        // if voter is editor and proposal accepted:
-    if (vote.is_editor && proposaldata.prestatus == ProposalStatus.Accepted){
+    if (vote.is_editor && proposaldata.status == ProposalStatus.Accepted){
           // check before dividing by 0
-          require( period.curation_sum > 0); // Period editor sum pb !
+          require( period.editor_sum > 0); // Period editor sum pb !
           _reward_amount += (proposaldata.lasteditor_weight * PERIOD_EDITOR_REWARD) / (period.editor_sum);
     }
 

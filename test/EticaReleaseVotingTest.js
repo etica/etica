@@ -569,9 +569,39 @@ console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_acc1);
 assert.equal( _effective_reward_acc1, _expected_total_reward_acc1); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
 
 
-
+// ACCOUNT 2:
 let _expected_reward_acc2_prop_1 = await get_expected_reward(test_account2, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc2_prop1 is', _expected_reward_acc2_prop_1);
+
+let _expected_reward_acc2_prop_2 = await get_expected_reward(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_3 = await get_expected_reward(test_account2, IPFS3_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_4 = await get_expected_reward(test_account2, IPFS4_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_5 = await get_expected_reward(test_account2, IPFS5_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_6 = await get_expected_reward(test_account2, IPFS6_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_7 = await get_expected_reward(test_account2, IPFS7_WITH_FIRTDISEASEHASH);
+
+
+let _expected_total_reward_acc2 =  _expected_reward_acc2_prop_1 + _expected_reward_acc2_prop_2 + _expected_reward_acc2_prop_3 + _expected_reward_acc2_prop_4 + _expected_reward_acc2_prop_5 + _expected_reward_acc2_prop_6 + _expected_reward_acc2_prop_7;
+// console.log('_expected_total_reward_acc2 is', _expected_total_reward_acc2);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_acc2 = _expected_total_reward_acc2.toString();
+_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 2);
+
+
+let _effective_reward_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
+//console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_acc2);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_acc2 = _effective_reward_acc2.toString();
+_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 2);
+
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc2, _expected_total_reward_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+
+
 
 let _expected_reward_acc3_prop_1 = await get_expected_reward(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
 console.log('_expected_reward_acc3_prop1 is', _expected_reward_acc3_prop_1);
@@ -830,6 +860,20 @@ assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fr
     let _proposal = await EticaReleaseVotingTestInstance.proposals(_rawrelease);
     let _proposaldatas = await EticaReleaseVotingTestInstance.propsdatas(_rawrelease);
     //console.log('proposal is', _proposal);
+    
+    // only slash and reward if prop is not tie:
+    if (!_proposaldatas.istie) {
+
+      // Reminder: ProposalStatus = { Rejected, Accepted, Pending, Singlevoter };
+      let voterChoice = 0; // ProposalStatus.Rjected
+
+      if(_vote.approve){
+        voterChoice = 1; // ProposalStatus.Accepted;
+      }
+
+      // reward only if vote right
+      if(voterChoice == _proposaldatas.status) {  
+
     let _period = await EticaReleaseVotingTestInstance.periods(_proposal.period_id);
     //console.log('period is', _period);
     let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
@@ -838,7 +882,8 @@ assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fr
 
     let _expected_editor_reward = 0; // initialtiaze var
 
-    if(_vote.is_editor){
+
+    if(_vote.is_editor && _proposaldatas.status == 1){
     let _expected_editor_reward_ratio = web3.utils.fromWei(_proposaldatas.lasteditor_weight, "ether" ) / _period.editor_sum;
     //console.log('_expected_editor_reward_ratio is', _expected_editor_reward_ratio);
     _expected_editor_reward = _expected_editor_reward_ratio * PERIOD_EDITOR_REWARD;
@@ -854,6 +899,18 @@ assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fr
     //console.log('_expected reward is', _expected_reward);
     
     return _expected_reward;
+
+  } else {
+    //no reward
+    return 0;
+  }
+  
+
+} else{
+  //no reward
+  return 0;
+}
+
 
    }
 

@@ -480,11 +480,107 @@ console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
 let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
-assert.equal( _effective_reward_acc5, '188.6335518176311'); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+assert.equal( _effective_reward_acc5, 188.6335518176311); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+
+let _effective_reward_acc6 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" );
+console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_acc6);
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc6, 89.55223880597077); // 89.552238805970149253731343283582‬ == _expected_reward_acc6_prop_4
+
+let _effective_reward_acc7 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" );
+console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc7, 153.51812366737795); // 153,51812366737739872068230277186‬ == _expected_reward_acc7_prop_4
+
 
 /*assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ), 5670);
 assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" ), 5670);
 assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" ), 5670);*/
+
+console.log('MID BALANCES CHECKED');
+await clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS1_WITH_FIRTDISEASEHASH);
+
+// next line should fail:
+await should_fail_clmpropbyhash(test_account, IPFS2_WITH_FIRTDISEASEHASH);
+
+await clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS2_WITH_FIRTDISEASEHASH);
+
+
+
+await clmpropbyhash(test_account2, IPFS3_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS3_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS3_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS3_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS3_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS3_WITH_FIRTDISEASEHASH);
+
+
+
+await clmpropbyhash(test_account2, IPFS4_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH);
+let contract_balance_before_createdisease2 = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
+console.log('conract balance 2 is', web3.utils.fromWei(contract_balance_before_createdisease2, "ether" ));
+await clmpropbyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH);
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account6, IPFS4_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH);
+
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account2, IPFS5_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account3, IPFS5_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account4, IPFS5_WITH_FIRTDISEASEHASH);
+// next must fail because already called before when calculating middle balances:
+await should_fail_clmpropbyhash(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
+// next 2 should fail:
+await should_fail_clmpropbyhash(test_account6, IPFS5_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS5_WITH_FIRTDISEASEHASH);
+
+
+
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account2, IPFS6_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account3, IPFS6_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account4, IPFS6_WITH_FIRTDISEASEHASH);
+
+await clmpropbyhash(test_account5, IPFS6_WITH_FIRTDISEASEHASH);
+// next 2 should fail:
+await should_fail_clmpropbyhash(test_account6, IPFS6_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS6_WITH_FIRTDISEASEHASH);
+
+
+
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account2, IPFS7_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account3, IPFS7_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account4, IPFS7_WITH_FIRTDISEASEHASH);
+// should pass:
+await clmpropbyhash(test_account5, IPFS7_WITH_FIRTDISEASEHASH);
+// next 2 should fail:
+await should_fail_clmpropbyhash(test_account6, IPFS7_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS7_WITH_FIRTDISEASEHASH);
+
+let IPFS_IDONTEXIST_DISEASEHASH = randomipfs();
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account5, IPFS7_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
+
 
 
 

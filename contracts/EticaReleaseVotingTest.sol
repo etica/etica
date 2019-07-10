@@ -159,8 +159,8 @@ contract EticaToken is ERC20Interface{
 
 
     constructor() public{
-      supply = 100 * (10**18); // initial supply equals 100 ETI
-      balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
+      supply = 1100000 * (10**18); // initial supply equals 1 100 000 ETI
+      balances[address(this)] = balances[address(this)].add(1000000 * (10**18)); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
       balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC].add(100000 * (10**18)); // 100 000 ETI to miner_account replace address with your miner_account address
 
 
@@ -554,6 +554,7 @@ struct Period{
     uint amount;
     address voter; // address of the voter
     uint timestamp; // epoch time of the vote
+    bool is_claimed; // keeps tarck of whether or not vote has been claimed to avoid double claim on same vote
   }
     // -----------  VOTES  ----------------  //
 
@@ -1143,6 +1144,10 @@ Period storage period = periods[proposal.period_id];
     // we check that the vote exists
     Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
     require(vote.proposal_hash == _proposed_release_hash);
+    
+    // make impossible to claim same vote twice
+    require(!vote.is_claimed);
+    vote.is_claimed = true;
 
 
 
@@ -1273,14 +1278,6 @@ Period storage period = periods[proposal.period_id];
 
 
   }   // end bracket if proposaldata.istie not true
-
-
-
-
-
-
-
-
 
 
   }

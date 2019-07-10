@@ -547,6 +547,7 @@ struct Period{
     uint amount;
     address voter; // address of the voter
     uint timestamp; // epoch time of the vote
+    bool is_claimed; // keeps tarck of whether or not vote has been claimed to avoid double claim on same vote
   }
     // -----------  VOTES  ----------------  //
 
@@ -1136,6 +1137,10 @@ Period storage period = periods[proposal.period_id];
     // we check that the vote exists
     Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
     require(vote.proposal_hash == _proposed_release_hash);
+    
+    // make impossible to claim same vote twice
+    require(!vote.is_claimed);
+    vote.is_claimed = true;
 
 
 
@@ -1266,14 +1271,6 @@ Period storage period = periods[proposal.period_id];
 
 
   }   // end bracket if proposaldata.istie not true
-
-
-
-
-
-
-
-
 
 
   }

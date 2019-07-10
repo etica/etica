@@ -444,39 +444,6 @@ MID_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_acco
 MID_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
 
 
-let _expected_reward_acc1_prop_1 = await get_expected_reward(test_account, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1);
-
-let _expected_reward_acc2_prop_1 = await get_expected_reward(test_account2, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc2_prop1 is', _expected_reward_acc2_prop_1);
-
-let _expected_reward_acc3_prop_1 = await get_expected_reward(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc3_prop1 is', _expected_reward_acc3_prop_1);
-
-let _expected_reward_acc4_prop_1 = await get_expected_reward(test_account4, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc4_prop1 is', _expected_reward_acc4_prop_1);
-
-let _expected_reward_acc5_prop_1 = await get_expected_reward(test_account5, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc5_prop1 is', _expected_reward_acc5_prop_1);
-
-let _expected_reward_acc6_prop_1 = await get_expected_reward(test_account6, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc6_prop1 is', _expected_reward_acc6_prop_1);
-
-let _expected_reward_acc7_prop_1 = await get_expected_reward(test_account7, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc7_prop1 is', _expected_reward_acc7_prop_1);
-
-let _expected_reward_acc8_prop_1 = await get_expected_reward(test_account8, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc8_prop1 is', _expected_reward_acc8_prop_1);
-
-
-
-let _expected_reward_acc5_prop_4 = await get_expected_reward(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
-
-let _expected_reward_acc5_prop_5 = await get_expected_reward(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
-
-
 let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
@@ -492,12 +459,10 @@ console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc7, 153.51812366737795); // 153,51812366737739872068230277186‬ == _expected_reward_acc7_prop_4
 
-
-/*assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ), 5670);
-assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" ), 5670);
-assert.equal(web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" ), 5670);*/
-
 console.log('MID BALANCES CHECKED');
+
+
+
 await clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 await clmpropbyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH);
 await clmpropbyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
@@ -581,6 +546,66 @@ await should_fail_clmpropbyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH);
 await should_fail_clmpropbyhash(test_account5, IPFS7_WITH_FIRTDISEASEHASH);
 await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
 
+
+NEW_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
+NEW_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
+NEW_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
+NEW_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
+NEW_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
+NEW_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
+NEW_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
+NEW_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+
+
+// ACCOUNT 1:
+let _expected_reward_acc1_prop_1 = await get_expected_reward(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_acc1 =  _expected_reward_acc1_prop_1;
+console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1);
+console.log('_expected_total_reward_acc1 is', _expected_total_reward_acc1);
+
+let _effective_reward_acc1 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" );
+console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_acc1);
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc1, _expected_total_reward_acc1); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+
+
+
+let _expected_reward_acc2_prop_1 = await get_expected_reward(test_account2, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc2_prop1 is', _expected_reward_acc2_prop_1);
+
+let _expected_reward_acc3_prop_1 = await get_expected_reward(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc3_prop1 is', _expected_reward_acc3_prop_1);
+
+let _expected_reward_acc4_prop_1 = await get_expected_reward(test_account4, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc4_prop1 is', _expected_reward_acc4_prop_1);
+
+let _expected_reward_acc5_prop_1 = await get_expected_reward(test_account5, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc5_prop1 is', _expected_reward_acc5_prop_1);
+
+let _expected_reward_acc6_prop_1 = await get_expected_reward(test_account6, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc6_prop1 is', _expected_reward_acc6_prop_1);
+
+let _expected_reward_acc7_prop_1 = await get_expected_reward(test_account7, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc7_prop1 is', _expected_reward_acc7_prop_1);
+
+let _expected_reward_acc8_prop_1 = await get_expected_reward(test_account8, IPFS1_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc8_prop1 is', _expected_reward_acc8_prop_1);
+
+
+let _expected_reward_acc5_prop_4 = await get_expected_reward(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
+
+let _expected_reward_acc5_prop_5 = await get_expected_reward(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
+console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
+
+/*
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" ),'6000');
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" ),'1000');
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" ),'1000');
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" ),'1000');
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ),'1000');
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ),'1000');
+assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ),'1000');*/
 
 
 
@@ -800,13 +825,13 @@ await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
 
     // curation reward:
     let _vote = await EticaReleaseVotingTestInstance.votes(_rawrelease, _from_account.address);
-    console.log('_vote is', _vote);
+    //console.log('_vote is', _vote);
     
     let _proposal = await EticaReleaseVotingTestInstance.proposals(_rawrelease);
     let _proposaldatas = await EticaReleaseVotingTestInstance.propsdatas(_rawrelease);
-    console.log('proposal is', _proposal);
+    //console.log('proposal is', _proposal);
     let _period = await EticaReleaseVotingTestInstance.periods(_proposal.period_id);
-    console.log('period is', _period);
+    //console.log('period is', _period);
     let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
     let _expected_curation_reward_ratio = _expected_curation_reward_num / _period.curation_sum;
     let _expected_curation_reward = _expected_curation_reward_ratio * PERIOD_CURATION_REWARD;
@@ -815,7 +840,7 @@ await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
 
     if(_vote.is_editor){
     let _expected_editor_reward_ratio = web3.utils.fromWei(_proposaldatas.lasteditor_weight, "ether" ) / _period.editor_sum;
-    console.log('_expected_editor_reward_ratio is', _expected_editor_reward_ratio);
+    //console.log('_expected_editor_reward_ratio is', _expected_editor_reward_ratio);
     _expected_editor_reward = _expected_editor_reward_ratio * PERIOD_EDITOR_REWARD;
     }
     
@@ -823,10 +848,10 @@ await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
 
     let _expected_reward = _expected_curation_reward + _expected_editor_reward;
 
-    console.log('_expected_curation_reward_ratio is', _expected_curation_reward_ratio);
-    console.log('_expected_curation_reward is', _expected_curation_reward);
-    console.log('_expected_editor_reward is', _expected_editor_reward);
-    console.log('_expected reward is', _expected_reward);
+    //console.log('_expected_curation_reward_ratio is', _expected_curation_reward_ratio);
+    //console.log('_expected_curation_reward is', _expected_curation_reward);
+    //console.log('_expected_editor_reward is', _expected_editor_reward);
+    //console.log('_expected reward is', _expected_reward);
     
     return _expected_reward;
 

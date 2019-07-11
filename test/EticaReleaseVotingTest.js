@@ -876,6 +876,30 @@ console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <------------
 console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 // RECHECKING PROPOSALDATA DONE
 
+// TESTS GET ETICA BACK:
+// Every account has made to stakes:
+await stakeclmidx(test_account, 1);
+await stakeclmidx(test_account, 1);
+
+await stakeclmidx(test_account2, 1);
+await stakeclmidx(test_account2, 1);
+
+await stakeclmidx(test_account3, 1);
+await stakeclmidx(test_account3, 1);
+
+await stakeclmidx(test_account4, 1);
+await stakeclmidx(test_account4, 1);
+
+await stakeclmidx(test_account5, 1);
+await stakeclmidx(test_account5, 1);
+
+await stakeclmidx(test_account6, 1);
+await stakeclmidx(test_account6, 1);
+
+await stakeclmidx(test_account7, 1);
+await stakeclmidx(test_account7, 1);
+
+
 
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -1276,7 +1300,24 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
  }
 
 
+ async function stakeclmidx(_from_account, _index){
+  let _from_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(_from_account.address);
+  let _from_accountstakebefore = await EticaReleaseVotingTestInstance.stakes(_from_account.address, 1);
+  return EticaReleaseVotingTestInstance.stakeclmidx(_index, {from: _from_account.address}).then(async function(resp){
+    assert(true);
+    let _from_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(_from_account.address);
+    let _from_accountstakeafter = await EticaReleaseVotingTestInstance.stakes(_from_account.address,1);
+    let stakenoldbalance = web3.utils.toBN(_from_accountbalancebefore).add(web3.utils.toBN(_from_accountstakebefore.amount)).toString();
+    //console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
+    //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));
+    //console.log('test_account Stake after:', test_accountstakeafter);
 
+    assert.equal( web3.utils.fromWei(_from_accountbalanceafter, "ether"), web3.utils.fromWei(stakenoldbalance, "ether"), '_from_account should have increased by the stake\'s ETI amount!');
 
+    console.log('........................... Claimed the STAKE with success ! ....................... ');
+
+  });
+
+ }
 
  });

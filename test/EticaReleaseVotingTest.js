@@ -268,7 +268,7 @@ await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '5
 await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
 
 
-// CHECK GLOBAL VARIBALES
+// CHECK PROPOSALSDATA
 
 let _proposal1 = await EticaReleaseVotingTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
@@ -783,14 +783,98 @@ assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 188.63355
 // --------------- ACCOUNT 7 -------------------  //
 
 
-/*
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" ),'6000');
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" ),'1000');
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" ),'1000');
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" ),'1000');
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ),'1000');
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ),'1000');
-assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ),'1000');*/
+// RECHECKING PROPOSAL DATA AFTER CLAIMING
+console.log('RECHECKING OF PROPOSALS DATA STARTED');
+_proposal1 = await EticaReleaseVotingTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+
+_proposal2 = await EticaReleaseVotingTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+
+_proposal3 = await EticaReleaseVotingTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+
+_proposal4 = await EticaReleaseVotingTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+
+_proposal5 = await EticaReleaseVotingTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
+
+_proposal6 = await EticaReleaseVotingTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
+
+_proposal7 = await EticaReleaseVotingTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
+
+console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
+
+
+assert.equal(web3.utils.fromWei(_proposal1.forvotes.toString()), '660', 'Proposal1 should have 660 forvotes');
+assert.equal(web3.utils.fromWei(_proposal1.againstvotes.toString()), '480', 'Proposal1 should have 480 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal2.forvotes.toString()), '545', 'Proposal2 should have 545 forvotes');
+assert.equal(web3.utils.fromWei(_proposal2.againstvotes.toString()), '1400', 'Proposal1 should have 1400 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal3.forvotes.toString()), '600', 'Proposal3 should have 600 forvotes');
+assert.equal(web3.utils.fromWei(_proposal3.againstvotes.toString()), '600', 'Proposal3 should have 500 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal4.forvotes.toString()), '170', 'Proposal4 should have 170 forvotes');
+assert.equal(web3.utils.fromWei(_proposal4.againstvotes.toString()), '0', 'Proposal4 should have 0 against votes');
+
+console.log('----------------->   PROPOSALS FORVOTES AND AGAINTSVOTES CHECKED  <-----------------');
+
+assert.equal(_proposal1.prestatus, '1', 'Proposal1 prestatus should be Accepted');
+assert.equal(_proposal2.prestatus, '0', 'Proposal2 prestatus should be Rejected');
+assert.equal(_proposal3.prestatus, '0', 'Proposal3 prestatus should be Rejected');
+assert.equal(_proposal4.prestatus, '1', 'Proposal4 prestatus should be Accepted');
+assert.equal(_proposal5.prestatus, '3', 'Proposal5 prestatus should be SingleVoter');
+assert.equal(_proposal6.prestatus, '3', 'Proposal6 prestatus should be SingleVoter');
+assert.equal(_proposal7.prestatus, '3', 'Proposal7 prestatus should be SingleVoter');
+
+console.log('----------------->   PROPOSALS PRESTATUS CHECKED  <-----------------');
+
+assert.equal(_proposal1.status, '1', 'Proposal1 status should be Pending');
+assert.equal(_proposal2.status, '0', 'Proposal2 status should be Pending');
+assert.equal(_proposal3.status, '0', 'Proposal3 status should be Pending');
+assert.equal(_proposal4.status, '1', 'Proposal4 status should be Pending');
+assert.equal(_proposal5.status, '1', 'Proposal5 status should be Pending');
+assert.equal(_proposal6.status, '1', 'Proposal6 status should be Pending');
+assert.equal(_proposal7.status, '1', 'Proposal7 status should be Pending');
+
+console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
+
+assert.equal(_proposal1.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
+assert.equal(_proposal2.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal3.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
+assert.equal(_proposal4.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+
+console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
+
+console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
+// RECHECKING PROPOSALDATA DONE
 
 
 

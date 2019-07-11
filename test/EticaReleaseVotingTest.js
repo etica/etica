@@ -626,7 +626,7 @@ let _expected_total_reward_acc3 =  _expected_reward_acc3_prop_1 + _expected_rewa
 // console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc3 = _expected_total_reward_acc3.toString();
-_expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc2.length - 2);
+_expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc3.length - 2);
 
 
 let _effective_reward_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
@@ -638,11 +638,43 @@ _effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_a
 // acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc3, _expected_total_reward_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
 
-// --------------- ACCOUNT 2 -------------------  //
+// --------------- ACCOUNT 3 -------------------  //
 
+// --------------- ACCOUNT 4 -------------------  //
 
 let _expected_reward_acc4_prop_1 = await get_expected_reward(test_account4, IPFS1_WITH_FIRTDISEASEHASH);
-console.log('_expected_reward_acc4_prop1 is', _expected_reward_acc4_prop_1);
+
+let _expected_reward_acc4_prop_2 = await get_expected_reward(test_account4, IPFS2_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_3 = await get_expected_reward(test_account4, IPFS3_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_4 = await get_expected_reward(test_account4, IPFS4_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_5 = await get_expected_reward(test_account4, IPFS5_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_6 = await get_expected_reward(test_account4, IPFS6_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_7 = await get_expected_reward(test_account4, IPFS7_WITH_FIRTDISEASEHASH);
+
+
+let _expected_total_reward_acc4 =  _expected_reward_acc4_prop_1 + _expected_reward_acc4_prop_2 + _expected_reward_acc4_prop_3 + _expected_reward_acc4_prop_4 + _expected_reward_acc4_prop_5 + _expected_reward_acc4_prop_6 + _expected_reward_acc4_prop_7;
+// console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_acc4 = _expected_total_reward_acc4.toString();
+_expected_total_reward_acc4 = _expected_total_reward_acc4.substring(0, _expected_total_reward_acc4.length - 3);
+
+
+let _effective_reward_acc4 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" );
+//console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_acc4);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_acc4 = _effective_reward_acc4.toString();
+_effective_reward_acc4 = _effective_reward_acc4.substring(0, _effective_reward_acc4.length - 2);
+
+// acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc4, _expected_total_reward_acc4); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+
+// --------------- ACCOUNT 4 -------------------  //
+
 
 let _expected_reward_acc5_prop_1 = await get_expected_reward(test_account5, IPFS1_WITH_FIRTDISEASEHASH);
 console.log('_expected_reward_acc5_prop1 is', _expected_reward_acc5_prop_1);
@@ -814,7 +846,8 @@ assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fr
     let id = Date.now();
      let numberlblocks = duration * 4; // 4 is because 60 / 15 == 4
 
-     console.log('numberlblocks is', numberlblocks);
+     // console.log('numberlblocks is', numberlblocks);
+     console.log('---------------  SLEEPING FOR ABOUT ', duration.toString(), ' SECONDS (press ctrl + c if it takes too long)  ------------');
 
        for(var i=0;i<numberlblocks;i+=1){
 

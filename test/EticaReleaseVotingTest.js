@@ -747,6 +747,41 @@ assert.equal( _effective_reward_acc6, _expected_total_reward_acc6); // 188.63355
 // --------------- ACCOUNT 6 -------------------  //
 
 
+// --------------- ACCOUNT 7 -------------------  //
+
+let _expected_reward_acc7_prop_1 = await get_expected_reward(test_account7, IPFS1_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_2 = await get_expected_reward(test_account7, IPFS2_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_3 = await get_expected_reward(test_account7, IPFS3_WITH_FIRTDISEASEHASH);
+
+//let _expected_reward_acc7_prop_4 = await get_expected_reward(test_account7, IPFS4_WITH_FIRTDISEASEHASH); Already done
+
+let _expected_reward_acc7_prop_5 = await get_expected_reward(test_account7, IPFS5_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_6 = await get_expected_reward(test_account7, IPFS6_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_7 = await get_expected_reward(test_account7, IPFS7_WITH_FIRTDISEASEHASH);
+
+
+let _expected_total_reward_acc7 =  _expected_reward_acc7_prop_1 + _expected_reward_acc7_prop_2 + _expected_reward_acc7_prop_3 + _expected_reward_acc7_prop_5 + _expected_reward_acc7_prop_6 + _expected_reward_acc7_prop_7;
+// console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
+_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 1);
+
+
+_effective_reward_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );
+//console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_acc7 = _effective_reward_acc7.toString();
+_effective_reward_acc7 = _effective_reward_acc7.substring(0, _effective_reward_acc7.length - 2);
+
+// acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+
+// --------------- ACCOUNT 7 -------------------  //
+
 
 /*
 assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" ),'6000');

@@ -3,8 +3,7 @@ pragma solidity ^0.5.2;
 // ONLY FOR TESTING !!!
 // EticaReleaseVotingTest: Same as EticaRelease contract but with initial ETI balance for miner_account to make tests easier
 // You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
-// wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
-
+// Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
 
 
 // ----------------------------------------------------------------------------
@@ -95,6 +94,9 @@ contract EticaToken is ERC20Interface{
     // fixed inflation rate after etica supply has reached 21 Million
     uint public inflationrate;
     uint public  periodrewardtemp; // Amount of ETI issued per period during phase1
+
+    uint public PERIOD_CURATION_REWARD_RATIO = 20; // 20% of period reward will be used as curation reward
+    uint public PERIOD_EDITOR_REWARD_RATIO = 80; // 80% of period reward will be used as editor reward
 
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
@@ -436,7 +438,7 @@ function () payable external {
 
 
 
-contract EticaReleaseVotingTest is EticaToken {
+contract EticaRelease is EticaToken {
   /* --------- PROD -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
@@ -463,9 +465,11 @@ uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means
 struct Period{
     uint id;
     uint interval;
-    uint curation_sum;
-    uint editor_sum;
+    uint curation_sum; // used for proposals weight system
+    uint editor_sum; // used for proposals weight system
     uint total_voters; // TOTAL nb of voters in this period
+    uint reward_for_curation; // total ETI used as Period reward for Curation
+    uint reward_for_editor; // total ETI used as Period reward for Editor
 }
 
   struct Stake{
@@ -648,6 +652,11 @@ else {
   _periodsupply = periodrewardtemp;
 }
 
+// update Period Reward:
+period.reward_for_curation = uint(_periodsupply * (PERIOD_CURATION_REWARD_RATIO / 100));
+period.reward_for_editor = uint(_periodsupply * (PERIOD_EDITOR_REWARD_RATIO / 100));
+
+
 supply = supply + _periodsupply;
 balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
@@ -679,7 +688,9 @@ function newPeriod() public {
     _interval,
     0x0, //_curation_sum
     0x0, //_editor_sum
-    0x0 //_total_voters; // TOTAL nb of voters in this period
+    0x0, //_total_voters; // TOTAL nb of voters in this period
+    0x0, //_reward_for_curation
+    0x0 //_reward_for_editor
   );
 
   // an interval cannot have 2 Periods
@@ -1254,16 +1265,16 @@ Period storage period = periods[proposal.period_id];
 
    // check beforte diving by 0
    require(period.curation_sum > 0); // period curation sum pb !
-   _reward_amount += (vote.amount * proposaldata.nbvoters * PERIOD_CURATION_REWARD) / (period.curation_sum);
+   _reward_amount += (vote.amount * proposaldata.nbvoters * period.reward_for_curation) / (period.curation_sum);
 
        // if voter is editor and proposal accepted:
     if (vote.is_editor && proposaldata.status == ProposalStatus.Accepted){
           // check before dividing by 0
           require( period.editor_sum > 0); // Period editor sum pb !
-          _reward_amount += (proposaldata.lasteditor_weight * PERIOD_EDITOR_REWARD) / (period.editor_sum);
+          _reward_amount += (proposaldata.lasteditor_weight * period.reward_for_editor) / (period.editor_sum);
     }
 
-    require(_reward_amount <= PERIOD_CURATION_REWARD + PERIOD_EDITOR_REWARD); // "System logic error. Too much ETICA calculated for reward."
+    require(_reward_amount <= period.reward_for_curation + period.reward_for_editor); // "System logic error. Too much ETICA calculated for reward."
 
     // SEND ETICA AS REWARD
     balances[address(this)] = balances[address(this)].sub(_reward_amount);

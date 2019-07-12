@@ -438,7 +438,7 @@ function () payable external {
 
 
 
-contract EticaRelease is EticaToken {
+contract EticaReleaseVotingTest is EticaToken {
   /* --------- PROD -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
@@ -611,7 +611,7 @@ mapping(address => uint) public stakesAmount; // keeps track of total amount of 
 mapping(address => uint) public blockedeticas;
 
 event CreatedPeriod(uint period_id, uint interval);
-event IssuedPeriod(uint period_id, uint periodreward);
+event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, uint periodrwdeditor);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
@@ -653,8 +653,8 @@ else {
 }
 
 // update Period Reward:
-period.reward_for_curation = uint(_periodsupply * (PERIOD_CURATION_REWARD_RATIO / 100));
-period.reward_for_editor = uint(_periodsupply * (PERIOD_EDITOR_REWARD_RATIO / 100));
+period.reward_for_curation = uint((_periodsupply * PERIOD_CURATION_REWARD_RATIO) / 100);
+period.reward_for_editor = uint((_periodsupply * PERIOD_EDITOR_REWARD_RATIO) / 100);
 
 
 supply = supply + _periodsupply;
@@ -662,7 +662,7 @@ balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
 PeriodsIssuedCounter = PeriodsIssuedCounter + 1;
 
-emit IssuedPeriod(periodsCounter, _periodsupply);
+emit IssuedPeriod(periodsCounter, _periodsupply, period.reward_for_curation, period.reward_for_editor);
 
 return true;
 

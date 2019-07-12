@@ -403,6 +403,9 @@ assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.t
 
 // assert Period's curation_sum and editor_sum values are OK
 let _period1  = await EticaReleaseVotingTestInstance.periods(_general_proposal1.period_id);
+console.log('_period1 is:', _period1);
+console.log('_period1.reward_curation is:', _period1.reward_for_curation);
+console.log('_period1.reward_editor is:', _period1.reward_for_editor);
 assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
 assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
 
@@ -444,20 +447,64 @@ MID_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_acco
 MID_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
 
 
+// ------------  ACCOUNT 5----------- //
+let _expected_reward_acc5_prop_4 = await get_expected_reward(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
+let _expected_reward_acc5_prop_5 = await get_expected_reward(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_acc5 =  _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5;
+console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
+console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
+console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
+_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
+
 let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_acc5 = _effective_reward_acc5.toString();
+_effective_reward_acc5 = _effective_reward_acc5.substring(0, _effective_reward_acc5.length - 2);
+
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
-assert.equal( _effective_reward_acc5, 188.6335518176311); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+assert.equal( _effective_reward_acc5, _expected_total_reward_acc5); // 122.67718490502358 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+
+// ------------  ACCOUNT 5---------- //
+
+// ------------  ACCOUNT 6----------- //
+let _expected_reward_acc6_prop_4 = await get_expected_reward(test_account6, IPFS4_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_acc6 =  _expected_reward_acc6_prop_4;
+console.log('_expected_reward_acc6_prop4 is', _expected_reward_acc6_prop_4);
+console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_acc6 = _expected_total_reward_acc6.toString();
+_expected_total_reward_acc6 = _expected_total_reward_acc6.substring(0, _expected_total_reward_acc6.length - 3);
 
 let _effective_reward_acc6 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" );
 console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_acc6);
-// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
-assert.equal( _effective_reward_acc6, 89.55223880597077); // 89.552238805970149253731343283582‬ == _expected_reward_acc6_prop_4
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_acc6 = _effective_reward_acc6.toString();
+_effective_reward_acc6 = _effective_reward_acc6.substring(0, _effective_reward_acc6.length - 2);
+
+// acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc6, _expected_total_reward_acc6); // 62.94838356665059 == _expected_reward_acc6_prop_4
+// ----------- ACCOUNT 6   -----------  //
+
+// ----- ACCOUNT 7  ------------ //
+let _expected_reward_acc7_prop_4 = await get_expected_reward(test_account7, IPFS4_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_acc7 =  _expected_reward_acc7_prop_4;
+console.log('_expected_reward_acc7_prop4 is', _expected_reward_acc7_prop_4);
+console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
+_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 3);
 
 let _effective_reward_acc7 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" );
 console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
-// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
-assert.equal( _effective_reward_acc7, 153.51812366737795); // 153,51812366737739872068230277186‬ == _expected_reward_acc7_prop_4
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_acc7 = _effective_reward_acc7.toString();
+_effective_reward_acc7 = _effective_reward_acc7.substring(0, _effective_reward_acc7.length - 3);
+
+// acc7 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 113.906598834890 == _expected_reward_acc_7_prop_4
 
 console.log('MID BALANCES CHECKED');
 
@@ -566,7 +613,7 @@ console.log('_expected_total_reward_acc1 is', _expected_total_reward_acc1);
 let _effective_reward_acc1 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" );
 console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_acc1);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
-assert.equal( _effective_reward_acc1, _expected_total_reward_acc1); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
+assert.equal( _effective_reward_acc1, _expected_total_reward_acc1); // 13767.044628187738 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
 
 
 // --------------- ACCOUNT 2 -------------------  //
@@ -590,14 +637,14 @@ let _expected_total_reward_acc2 =  _expected_reward_acc2_prop_1 + _expected_rewa
 // console.log('_expected_total_reward_acc2 is', _expected_total_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc2 = _expected_total_reward_acc2.toString();
-_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 2);
+_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 3);
 
 
 let _effective_reward_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
-//console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_acc2);
+console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc2 = _effective_reward_acc2.toString();
-_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 2);
+_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 3);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc2, _expected_total_reward_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -623,17 +670,17 @@ let _expected_reward_acc3_prop_7 = await get_expected_reward(test_account3, IPFS
 
 
 let _expected_total_reward_acc3 =  _expected_reward_acc3_prop_1 + _expected_reward_acc3_prop_2 + _expected_reward_acc3_prop_3 + _expected_reward_acc3_prop_4 + _expected_reward_acc3_prop_5 + _expected_reward_acc3_prop_6 + _expected_reward_acc3_prop_7;
-// console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
+ console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc3 = _expected_total_reward_acc3.toString();
 _expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc3.length - 2);
 
 
 let _effective_reward_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
-//console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_acc3);
+console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc3 = _effective_reward_acc3.toString();
-_effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_acc3.length - 3);
+_effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_acc3.length - 2);
 
 // acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc3, _expected_total_reward_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -661,11 +708,11 @@ let _expected_total_reward_acc4 =  _expected_reward_acc4_prop_1 + _expected_rewa
 // console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc4 = _expected_total_reward_acc4.toString();
-_expected_total_reward_acc4 = _expected_total_reward_acc4.substring(0, _expected_total_reward_acc4.length - 3);
+_expected_total_reward_acc4 = _expected_total_reward_acc4.substring(0, _expected_total_reward_acc4.length - 2);
 
 
 let _effective_reward_acc4 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" );
-//console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_acc4);
+console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_acc4);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc4 = _effective_reward_acc4.toString();
 _effective_reward_acc4 = _effective_reward_acc4.substring(0, _effective_reward_acc4.length - 2);
@@ -693,8 +740,8 @@ let _expected_reward_acc5_prop_6 = await get_expected_reward(test_account5, IPFS
 let _expected_reward_acc5_prop_7 = await get_expected_reward(test_account5, IPFS7_WITH_FIRTDISEASEHASH);
 
 
-let _expected_total_reward_acc5 =  _expected_reward_acc5_prop_1 + _expected_reward_acc5_prop_2 + _expected_reward_acc5_prop_3 + _expected_reward_acc5_prop_6 + _expected_reward_acc5_prop_7;
-// console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
+_expected_total_reward_acc5 =  _expected_reward_acc5_prop_1 + _expected_reward_acc5_prop_2 + _expected_reward_acc5_prop_3 + _expected_reward_acc5_prop_6 + _expected_reward_acc5_prop_7;
+ console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
 _expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
@@ -728,8 +775,8 @@ let _expected_reward_acc6_prop_6 = await get_expected_reward(test_account6, IPFS
 let _expected_reward_acc6_prop_7 = await get_expected_reward(test_account6, IPFS7_WITH_FIRTDISEASEHASH);
 
 
-let _expected_total_reward_acc6 =  _expected_reward_acc6_prop_1 + _expected_reward_acc6_prop_2 + _expected_reward_acc6_prop_3 + _expected_reward_acc6_prop_5 + _expected_reward_acc6_prop_6 + _expected_reward_acc6_prop_7;
-// console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
+_expected_total_reward_acc6 =  _expected_reward_acc6_prop_1 + _expected_reward_acc6_prop_2 + _expected_reward_acc6_prop_3 + _expected_reward_acc6_prop_5 + _expected_reward_acc6_prop_6 + _expected_reward_acc6_prop_7;
+ console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc6 = _expected_total_reward_acc6.toString();
 _expected_total_reward_acc6 = _expected_total_reward_acc6.substring(0, _expected_total_reward_acc6.length - 2);
@@ -764,11 +811,11 @@ let _expected_reward_acc7_prop_6 = await get_expected_reward(test_account7, IPFS
 let _expected_reward_acc7_prop_7 = await get_expected_reward(test_account7, IPFS7_WITH_FIRTDISEASEHASH);
 
 
-let _expected_total_reward_acc7 =  _expected_reward_acc7_prop_1 + _expected_reward_acc7_prop_2 + _expected_reward_acc7_prop_3 + _expected_reward_acc7_prop_5 + _expected_reward_acc7_prop_6 + _expected_reward_acc7_prop_7;
-// console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
+_expected_total_reward_acc7 =  _expected_reward_acc7_prop_1 + _expected_reward_acc7_prop_2 + _expected_reward_acc7_prop_3 + _expected_reward_acc7_prop_5 + _expected_reward_acc7_prop_6 + _expected_reward_acc7_prop_7;
+ console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
-_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 1);
+_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 2);
 
 
 _effective_reward_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );
@@ -1142,7 +1189,7 @@ await stakeclmidx(test_account7, 1);
     //console.log('period is', _period);
     let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
     let _expected_curation_reward_ratio = _expected_curation_reward_num / _period.curation_sum;
-    let _expected_curation_reward = _expected_curation_reward_ratio * PERIOD_CURATION_REWARD;
+    let _expected_curation_reward = _expected_curation_reward_ratio * _period.reward_for_curation;
 
     let _expected_editor_reward = 0; // initialtiaze var
 
@@ -1150,7 +1197,7 @@ await stakeclmidx(test_account7, 1);
     if(_vote.is_editor && _proposaldatas.status == 1){
     let _expected_editor_reward_ratio = web3.utils.fromWei(_proposaldatas.lasteditor_weight, "ether" ) / _period.editor_sum;
     //console.log('_expected_editor_reward_ratio is', _expected_editor_reward_ratio);
-    _expected_editor_reward = _expected_editor_reward_ratio * PERIOD_EDITOR_REWARD;
+    _expected_editor_reward = _expected_editor_reward_ratio * _period.reward_for_editor;
     }
     
     

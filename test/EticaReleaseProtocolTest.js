@@ -1,4 +1,4 @@
-var EticaReleaseVotingTest = artifacts.require("./EticaReleaseVotingTest.sol");
+var EticaReleaseProtocolTest = artifacts.require("./EticaReleaseProtocolTest.sol");
 
 var solidityHelper =  require('./solidity-helper');
 var miningHelper =  require('./mining-helper-fast');
@@ -15,8 +15,8 @@ var PERIOD_EDITOR_REWARD = 0; // initialize global variable PERIOD_EDITOR_REWARD
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
 
 // test suite
-contract('EticaReleaseVotingTest', function(accounts){
-  var EticaReleaseVotingTestInstance;
+contract('EticaReleaseProtocolTest', function(accounts){
+  var EticaReleaseProtocolTestInstance;
   var i;
 
   // ENTER USER ACCOUNTS KEYS, FOR EXEMPLE YOU CAN TAKE THE ONE FROM GANACHE
@@ -82,21 +82,21 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
 
   // wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
   //await timeout(150000);
-  return EticaReleaseVotingTest.deployed().then(function(instance){
-  EticaReleaseVotingTestInstance = instance;
-  return EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
+  return EticaReleaseProtocolTest.deployed().then(function(instance){
+  EticaReleaseProtocolTestInstance = instance;
+  return EticaReleaseProtocolTestInstance.balanceOf(miner_account.address);
   }).then(function(receipt){
   console.log('asserting miner_account has at least 100 000 ETI', web3.utils.fromWei(receipt, "ether" ), 'ETI');
   assert(web3.utils.fromWei(receipt, "ether" ) >= 100000, 'miner_account should have at least 100 000 ETI before starting the tests !');
   }).then(async function(){
 
-    DEFAULT_VOTING_TIME = await EticaReleaseVotingTestInstance.DEFAULT_VOTING_TIME(); 
+    DEFAULT_VOTING_TIME = await EticaReleaseProtocolTestInstance.DEFAULT_VOTING_TIME(); 
     console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
 
-    PERIOD_CURATION_REWARD = await EticaReleaseVotingTestInstance.PERIOD_CURATION_REWARD();
+    PERIOD_CURATION_REWARD = await EticaReleaseProtocolTestInstance.PERIOD_CURATION_REWARD();
     console.log('PERIOD_CURATION_REWARD IS ', PERIOD_CURATION_REWARD);
 
-    PERIOD_EDITOR_REWARD = await EticaReleaseVotingTestInstance.PERIOD_EDITOR_REWARD();
+    PERIOD_EDITOR_REWARD = await EticaReleaseProtocolTestInstance.PERIOD_EDITOR_REWARD();
     console.log('PERIOD_EDITOR_REWARD IS ', PERIOD_EDITOR_REWARD);
 
   // TRANSFERS FROM MINER ACCOUNT:
@@ -109,14 +109,14 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
   await transferto(test_account7);
   await transferto(test_account8);
 
-  let OLD_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
-  let OLD_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-  let OLD_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
-  let OLD_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
-  let OLD_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
-  let OLD_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
-  let OLD_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
-  let OLD_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+  let OLD_BALANCE_ACCOUNT = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);  
+  let OLD_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.balanceOf(test_account2.address);
+  let OLD_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.balanceOf(test_account3.address);
+  let OLD_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.balanceOf(test_account4.address);
+  let OLD_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.balanceOf(test_account5.address);
+  let OLD_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.balanceOf(test_account6.address);
+  let OLD_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.balanceOf(test_account7.address);
+  let OLD_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.balanceOf(test_account8.address);
 
 
    // TRANSFERS FROM MINER ACCOUNT:
@@ -130,14 +130,14 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
 
 
 
-  let NEW_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
-  let NEW_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-  let NEW_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
-  let NEW_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
-  let NEW_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
-  let NEW_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
-  let NEW_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
-  let NEW_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+  let NEW_BALANCE_ACCOUNT = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);
+  let NEW_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.balanceOf(test_account2.address);
+  let NEW_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.balanceOf(test_account3.address);
+  let NEW_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.balanceOf(test_account4.address);
+  let NEW_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.balanceOf(test_account5.address);
+  let NEW_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.balanceOf(test_account6.address);
+  let NEW_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.balanceOf(test_account7.address);
+  let NEW_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.balanceOf(test_account8.address);
 
 
 
@@ -188,17 +188,17 @@ let IPFS7 = randomipfs();
 let IPFS8 = randomipfs();
 
 await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
-let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
-let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
+let indexfromhash = await EticaReleaseProtocolTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
+let hashfromname = await EticaReleaseProtocolTestInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
 
 // Retrieve BLOCKEDETICAS:
-let OLD_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseVotingTestInstance.blockedeticas(test_account.address);
-let OLD_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseVotingTestInstance.blockedeticas(test_account2.address);
-let OLD_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseVotingTestInstance.blockedeticas(test_account3.address);
-let OLD_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseVotingTestInstance.blockedeticas(test_account4.address);
-let OLD_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseVotingTestInstance.blockedeticas(test_account5.address);
-let OLD_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseVotingTestInstance.blockedeticas(test_account6.address);
-let OLD_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseVotingTestInstance.blockedeticas(test_account7.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseProtocolTestInstance.blockedeticas(test_account.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account2.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account3.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account4.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account5.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account6.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account7.address);
 
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT is ", OLD_BLOCKED_ETI_TEST_ACCOUNT);
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_2 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_2);
@@ -270,25 +270,25 @@ await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-
 
 // CHECK PROPOSALSDATA
 
-let _proposal1 = await EticaReleaseVotingTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
+let _proposal1 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
 
-let _proposal2 = await EticaReleaseVotingTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
+let _proposal2 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
 
-let _proposal3 = await EticaReleaseVotingTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
+let _proposal3 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
 
-let _proposal4 = await EticaReleaseVotingTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
+let _proposal4 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
 
-let _proposal5 = await EticaReleaseVotingTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
+let _proposal5 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
 
-let _proposal6 = await EticaReleaseVotingTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
+let _proposal6 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
 
-let _proposal7 = await EticaReleaseVotingTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
+let _proposal7 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
 
 console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
@@ -360,13 +360,13 @@ console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <------------
 
 
 // Retrieve BLOCKEDETICAS:
-let NEW_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseVotingTestInstance.blockedeticas(test_account.address);
-let NEW_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseVotingTestInstance.blockedeticas(test_account2.address);
-let NEW_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseVotingTestInstance.blockedeticas(test_account3.address);
-let NEW_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseVotingTestInstance.blockedeticas(test_account4.address);
-let NEW_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseVotingTestInstance.blockedeticas(test_account5.address);
-let NEW_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseVotingTestInstance.blockedeticas(test_account6.address);
-let NEW_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseVotingTestInstance.blockedeticas(test_account7.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseProtocolTestInstance.blockedeticas(test_account.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account2.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account3.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account4.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account5.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account6.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account7.address);
 
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT, "ether" ));
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_2 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_2, "ether" ));
@@ -386,13 +386,13 @@ assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 1000)
 
 
 // Retrieve General Information of Proposals:
-let _general_proposal1 = await EticaReleaseVotingTestInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
-let _general_proposal2 = await EticaReleaseVotingTestInstance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
-let _general_proposal3 = await EticaReleaseVotingTestInstance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
-let _general_proposal4 = await EticaReleaseVotingTestInstance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
-let _general_proposal5 = await EticaReleaseVotingTestInstance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
-let _general_proposal6 = await EticaReleaseVotingTestInstance.proposals(IPFS6_WITH_FIRTDISEASEHASH);
-let _general_proposal7 = await EticaReleaseVotingTestInstance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
+let _general_proposal1 = await EticaReleaseProtocolTestInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
+let _general_proposal2 = await EticaReleaseProtocolTestInstance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
+let _general_proposal3 = await EticaReleaseProtocolTestInstance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
+let _general_proposal4 = await EticaReleaseProtocolTestInstance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
+let _general_proposal5 = await EticaReleaseProtocolTestInstance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
+let _general_proposal6 = await EticaReleaseProtocolTestInstance.proposals(IPFS6_WITH_FIRTDISEASEHASH);
+let _general_proposal7 = await EticaReleaseProtocolTestInstance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
 
 // assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
 console.log('_general_proposal1.period_id is', _general_proposal1.period_id.toString());
@@ -402,7 +402,7 @@ assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.t
 
 
 // assert Period's curation_sum and editor_sum values are OK
-let _period1  = await EticaReleaseVotingTestInstance.periods(_general_proposal1.period_id);
+let _period1  = await EticaReleaseProtocolTestInstance.periods(_general_proposal1.period_id);
 console.log('_period1 is:', _period1);
 console.log('_period1.reward_curation is:', _period1.reward_for_curation);
 console.log('_period1.reward_editor is:', _period1.reward_for_editor);
@@ -419,14 +419,14 @@ await advanceminutes(DEFAULT_VOTING_TIME);
 await should_fail_votebyhash(test_account2, IPFS5_WITH_FIRTDISEASEHASH, true, '20');
 
 
-OLD_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
-OLD_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-OLD_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
-OLD_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
-OLD_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
-OLD_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
-OLD_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
-OLD_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+OLD_BALANCE_ACCOUNT = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);  
+OLD_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.balanceOf(test_account2.address);
+OLD_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.balanceOf(test_account3.address);
+OLD_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.balanceOf(test_account4.address);
+OLD_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.balanceOf(test_account5.address);
+OLD_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.balanceOf(test_account6.address);
+OLD_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.balanceOf(test_account7.address);
+OLD_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.balanceOf(test_account8.address);
 
 // should pass
 await clmpropbyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
@@ -437,14 +437,14 @@ await clmpropbyhash(test_account5, IPFS5_WITH_FIRTDISEASEHASH);
 
 
 
-MID_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
-MID_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-MID_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
-MID_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
-MID_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
-MID_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
-MID_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
-MID_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+MID_BALANCE_ACCOUNT = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);  
+MID_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.balanceOf(test_account2.address);
+MID_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.balanceOf(test_account3.address);
+MID_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.balanceOf(test_account4.address);
+MID_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.balanceOf(test_account5.address);
+MID_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.balanceOf(test_account6.address);
+MID_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.balanceOf(test_account7.address);
+MID_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.balanceOf(test_account8.address);
 
 
 // ------------  ACCOUNT 5----------- //
@@ -541,7 +541,7 @@ await clmpropbyhash(test_account7, IPFS3_WITH_FIRTDISEASEHASH);
 
 await clmpropbyhash(test_account2, IPFS4_WITH_FIRTDISEASEHASH);
 await clmpropbyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH);
-let contract_balance_before_createdisease2 = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
+let contract_balance_before_createdisease2 = await EticaReleaseProtocolTestInstance.balanceOf(EticaReleaseProtocolTestInstance.address);
 console.log('conract balance 2 is', web3.utils.fromWei(contract_balance_before_createdisease2, "ether" ));
 await clmpropbyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH);
 // next 3 should fail:
@@ -594,14 +594,14 @@ await should_fail_clmpropbyhash(test_account5, IPFS7_WITH_FIRTDISEASEHASH);
 await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
 
 
-NEW_BALANCE_ACCOUNT = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);  
-NEW_BALANCE_ACCOUNT_2 = await EticaReleaseVotingTestInstance.balanceOf(test_account2.address);
-NEW_BALANCE_ACCOUNT_3 = await EticaReleaseVotingTestInstance.balanceOf(test_account3.address);
-NEW_BALANCE_ACCOUNT_4 = await EticaReleaseVotingTestInstance.balanceOf(test_account4.address);
-NEW_BALANCE_ACCOUNT_5 = await EticaReleaseVotingTestInstance.balanceOf(test_account5.address);
-NEW_BALANCE_ACCOUNT_6 = await EticaReleaseVotingTestInstance.balanceOf(test_account6.address);
-NEW_BALANCE_ACCOUNT_7 = await EticaReleaseVotingTestInstance.balanceOf(test_account7.address);
-NEW_BALANCE_ACCOUNT_8 = await EticaReleaseVotingTestInstance.balanceOf(test_account8.address);
+NEW_BALANCE_ACCOUNT = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);  
+NEW_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestInstance.balanceOf(test_account2.address);
+NEW_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestInstance.balanceOf(test_account3.address);
+NEW_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.balanceOf(test_account4.address);
+NEW_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.balanceOf(test_account5.address);
+NEW_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.balanceOf(test_account6.address);
+NEW_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.balanceOf(test_account7.address);
+NEW_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.balanceOf(test_account8.address);
 
 
 // ACCOUNT 1:
@@ -832,25 +832,25 @@ assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 188.63355
 
 // RECHECKING PROPOSAL DATA AFTER CLAIMING
 console.log('RECHECKING OF PROPOSALS DATA STARTED');
-_proposal1 = await EticaReleaseVotingTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
+_proposal1 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
 
-_proposal2 = await EticaReleaseVotingTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
+_proposal2 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
 
-_proposal3 = await EticaReleaseVotingTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
+_proposal3 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
 
-_proposal4 = await EticaReleaseVotingTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
+_proposal4 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
 
-_proposal5 = await EticaReleaseVotingTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
+_proposal5 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
 
-_proposal6 = await EticaReleaseVotingTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
+_proposal6 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
 
-_proposal7 = await EticaReleaseVotingTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
+_proposal7 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
 
 console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
@@ -964,7 +964,7 @@ await stakeclmidx(test_account7, 1);
    }
 
    async function printEtiBalance(testaccount) {
-       var balance_val = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
+       var balance_val = await EticaReleaseProtocolTestInstance.balanceOf(testaccount.address);
        console.log('ETI the balance of ', testaccount.address, 'is',  web3.utils.fromWei(balance_val.toString() , 'ether') );
        return balance_val;
    }
@@ -972,13 +972,13 @@ await stakeclmidx(test_account7, 1);
    async function transferto(testaccount) {
 
     console.log('transfering 10000 ETI from miner_account to test_account', testaccount.address);
-    let test_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
-    let miner_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
+    let test_accountbalancebefore = await EticaReleaseProtocolTestInstance.balanceOf(testaccount.address);
+    let miner_accountbalancebefore = await EticaReleaseProtocolTestInstance.balanceOf(miner_account.address);
     console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
     console.log('test_account', testaccount.address,'ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
-    return EticaReleaseVotingTestInstance.transfer(testaccount.address,  web3.utils.toWei('10000', 'ether'), {from: miner_account.address}).then(async function() {
-      let test_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(testaccount.address);
-      let miner_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(miner_account.address);
+    return EticaReleaseProtocolTestInstance.transfer(testaccount.address,  web3.utils.toWei('10000', 'ether'), {from: miner_account.address}).then(async function() {
+      let test_accountbalanceafter = await EticaReleaseProtocolTestInstance.balanceOf(testaccount.address);
+      let miner_accountbalanceafter = await EticaReleaseProtocolTestInstance.balanceOf(miner_account.address);
       console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
       console.log('test_account', testaccount.address,'ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
      });
@@ -990,7 +990,7 @@ await stakeclmidx(test_account7, 1);
 
     console.log('transfering', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
 
-    return EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}).then(async function() {
+    return EticaReleaseProtocolTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}).then(async function() {
  
     console.log('transfered', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
 
@@ -1001,7 +1001,7 @@ await stakeclmidx(test_account7, 1);
    async function eticatobosom(useraccount, amount){
 
     console.log('---> Staking Eticas for Bosoms. Stake amount is', amount, 'ETI. User is ', useraccount.address);
-    return EticaReleaseVotingTestInstance.eticatobosoms(useraccount.address,  web3.utils.toWei(amount, 'ether'), {from: useraccount.address}).then(async function(receipt){
+    return EticaReleaseProtocolTestInstance.eticatobosoms(useraccount.address,  web3.utils.toWei(amount, 'ether'), {from: useraccount.address}).then(async function(receipt){
     console.log('---> The stake of Eticas for Bosoms worth', amount, 'ETI', 'was successfull');
 
       }).catch(async function(error){
@@ -1013,7 +1013,7 @@ await stakeclmidx(test_account7, 1);
    async function should_fail_eticatobosom(useraccount, amount){
 
     console.log('---> Staking Eticas for Bosoms. Stake amount is', amount, 'ETI. User is ', useraccount.address);
-    await truffleAssert.fails(EticaReleaseVotingTestInstance.eticatobosoms(useraccount.address,  web3.utils.toWei(amount, 'ether'), {from: useraccount.address}));
+    await truffleAssert.fails(EticaReleaseProtocolTestInstance.eticatobosoms(useraccount.address,  web3.utils.toWei(amount, 'ether'), {from: useraccount.address}));
     console.log('---> As expected failed to make the stake worth', amount, 'ETI from user: ', useraccount.address);
 
    }
@@ -1022,7 +1022,7 @@ await stakeclmidx(test_account7, 1);
    async function should_fail_transferfromto(senderaccount, receiveraccount, amount) {
      
     console.log('should fail transfering', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
-    await truffleAssert.fails(EticaReleaseVotingTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}));
+    await truffleAssert.fails(EticaReleaseProtocolTestInstance.transfer(receiveraccount.address,  web3.utils.toWei(amount, 'ether'), {from: senderaccount.address}));
     console.log('as expected failed to transfer', amount,'ETI from senderaccount', senderaccount.address, 'to receiveraccount', receiveraccount.address);
 
   }
@@ -1031,7 +1031,7 @@ await stakeclmidx(test_account7, 1);
      async function should_fail_propose(_from_account, _diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash) {
      
       console.log('should fail to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
-      await truffleAssert.fails(EticaReleaseVotingTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: _from_account.address}));
+      await truffleAssert.fails(EticaReleaseProtocolTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: _from_account.address}));
       console.log('as expected failed to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
   
     }
@@ -1040,7 +1040,7 @@ await stakeclmidx(test_account7, 1);
          async function should_fail_votebyhash(_from_account, _proposed_release_hash, _choice, _amount) {
      
           console.log('should fail this votebyhash');
-          await truffleAssert.fails(EticaReleaseVotingTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
+          await truffleAssert.fails(EticaReleaseProtocolTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
           console.log('as expected failed to make this votebyhash');
       
         }
@@ -1048,7 +1048,7 @@ await stakeclmidx(test_account7, 1);
         async function should_fail_clmpropbyhash(_from_account, _proposalhash) {
 
           console.log('should fail to clmpropbyhash');
-        await truffleAssert.fails(EticaReleaseVotingTestInstance.clmpropbyhash(_proposalhash, {from: _from_account.address}));
+        await truffleAssert.fails(EticaReleaseProtocolTestInstance.clmpropbyhash(_proposalhash, {from: _from_account.address}));
         console.log('as expected failed to clmpropbyhash');
 
         }
@@ -1165,11 +1165,11 @@ await stakeclmidx(test_account7, 1);
    async function get_expected_reward(_from_account, _rawrelease){
 
     // curation reward:
-    let _vote = await EticaReleaseVotingTestInstance.votes(_rawrelease, _from_account.address);
+    let _vote = await EticaReleaseProtocolTestInstance.votes(_rawrelease, _from_account.address);
     //console.log('_vote is', _vote);
     
-    let _proposal = await EticaReleaseVotingTestInstance.proposals(_rawrelease);
-    let _proposaldatas = await EticaReleaseVotingTestInstance.propsdatas(_rawrelease);
+    let _proposal = await EticaReleaseProtocolTestInstance.proposals(_rawrelease);
+    let _proposaldatas = await EticaReleaseProtocolTestInstance.propsdatas(_rawrelease);
     //console.log('proposal is', _proposal);
     
     // only slash and reward if prop is not tie:
@@ -1185,7 +1185,7 @@ await stakeclmidx(test_account7, 1);
       // reward only if vote right
       if(voterChoice == _proposaldatas.status) {  
 
-    let _period = await EticaReleaseVotingTestInstance.periods(_proposal.period_id);
+    let _period = await EticaReleaseProtocolTestInstance.periods(_proposal.period_id);
     //console.log('period is', _period);
     let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
     let _expected_curation_reward_ratio = _expected_curation_reward_num / _period.curation_sum;
@@ -1230,24 +1230,24 @@ await stakeclmidx(test_account7, 1);
 
   console.log('................................  START CREATION OF NEW PROPOSAL', _title,' ....................... ');
 
-  let oldproposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
+  let oldproposalsCounter = await EticaReleaseProtocolTestInstance.proposalsCounter();
 
-  let _from_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(_from_account.address);
+  let _from_accountbalancebefore = await EticaReleaseProtocolTestInstance.balanceOf(_from_account.address);
   //console.log('_from_account ETI balance before:', web3.utils.fromWei(_from_accountbalancebefore, "ether" ));
 
-  let _from_accountbosomsbefore = await EticaReleaseVotingTestInstance.bosoms(_from_account.address);
+  let _from_accountbosomsbefore = await EticaReleaseProtocolTestInstance.bosoms(_from_account.address);
   //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
 
-  return EticaReleaseVotingTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: _from_account.address}).then(async function(response){
+  return EticaReleaseProtocolTestInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, {from: _from_account.address}).then(async function(response){
 
-    let first_proposal = await EticaReleaseVotingTestInstance.proposals(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
-    let proposalsCounter = await EticaReleaseVotingTestInstance.proposalsCounter();
+    let first_proposal = await EticaReleaseProtocolTestInstance.proposals(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
+    let proposalsCounter = await EticaReleaseProtocolTestInstance.proposalsCounter();
     //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-    let first_proposal_ipfs = await EticaReleaseVotingTestInstance.propsipfs(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
+    let first_proposal_ipfs = await EticaReleaseProtocolTestInstance.propsipfs(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
     //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 
-    let first_proposal_data = await EticaReleaseVotingTestInstance.propsdatas(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
+    let first_proposal_data = await EticaReleaseProtocolTestInstance.propsdatas(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
     //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
     // check Proposal's general information:
@@ -1289,23 +1289,23 @@ await stakeclmidx(test_account7, 1);
   // calculate expected hash of disease:
   let _expectedhash = get_expected_keccak256_hash(_diseasename);
 
-  let test_accountbalance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
-  let contract_balance_before_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
+  let test_accountbalance_before_createdisease = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);
+  let contract_balance_before_createdisease = await EticaReleaseProtocolTestInstance.balanceOf(EticaReleaseProtocolTestInstance.address);
   //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
    
-  return EticaReleaseVotingTestInstance.createdisease(_diseasename, _diseasedescription, {from: test_account.address}).then(async function(receipt){
+  return EticaReleaseProtocolTestInstance.createdisease(_diseasename, _diseasedescription, {from: test_account.address}).then(async function(receipt){
    // check diseasesbyIds and diseasesbyNames mappings insertion:
-let hashfromname = await EticaReleaseVotingTestInstance.getdiseasehashbyName(_diseasename);
-let indexfromhash = await EticaReleaseVotingTestInstance.diseasesbyIds(_expectedhash);
+let hashfromname = await EticaReleaseProtocolTestInstance.getdiseasehashbyName(_diseasename);
+let indexfromhash = await EticaReleaseProtocolTestInstance.diseasesbyIds(_expectedhash);
 
 assert.equal(indexfromhash, TOTAL_DISEASES + 1, '_expectedhash should have an entry in diseasesbyIds with value of total number of diseases created in the protocol');
 assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in diseasesbyNames with value of _expectedhash');
    
    
-    let new_disease = await EticaReleaseVotingTestInstance.diseases(indexfromhash);
-    let diseasesCounter = await EticaReleaseVotingTestInstance.diseasesCounter();
-    let test_accountbalance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(test_account.address);
-    let contract_balance_after_createdisease = await EticaReleaseVotingTestInstance.balanceOf(EticaReleaseVotingTestInstance.address);
+    let new_disease = await EticaReleaseProtocolTestInstance.diseases(indexfromhash);
+    let diseasesCounter = await EticaReleaseProtocolTestInstance.diseasesCounter();
+    let test_accountbalance_after_createdisease = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);
+    let contract_balance_after_createdisease = await EticaReleaseProtocolTestInstance.balanceOf(EticaReleaseProtocolTestInstance.address);
 //console.log('THE NEW DISEASE IS:', new_disease);
 //console.log('NAME OF THE NEW DISEASE IS:', new_disease.name);
 //console.log('DESCRIPTION OF THE NEW DISEASE IS:', new_disease.description);
@@ -1333,14 +1333,14 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
 
 
  async function votebyhash(_from_account, _proposed_release_hash, _choice, _amount){
-  return EticaReleaseVotingTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
+  return EticaReleaseProtocolTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
 
   console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }
 
  async function clmpropbyhash(_from_account, _proposed_release_hash){
-  return EticaReleaseVotingTestInstance.clmpropbyhash(_proposed_release_hash, {from: _from_account.address}).then(async function(response){
+  return EticaReleaseProtocolTestInstance.clmpropbyhash(_proposed_release_hash, {from: _from_account.address}).then(async function(response){
 
   console.log('................................  CLAIMED PROPOSAL ', _proposed_release_hash,' WITH SUCCESS ....................... ');
   });
@@ -1348,12 +1348,12 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
 
 
  async function stakeclmidx(_from_account, _index){
-  let _from_accountbalancebefore = await EticaReleaseVotingTestInstance.balanceOf(_from_account.address);
-  let _from_accountstakebefore = await EticaReleaseVotingTestInstance.stakes(_from_account.address, 1);
-  return EticaReleaseVotingTestInstance.stakeclmidx(_index, {from: _from_account.address}).then(async function(resp){
+  let _from_accountbalancebefore = await EticaReleaseProtocolTestInstance.balanceOf(_from_account.address);
+  let _from_accountstakebefore = await EticaReleaseProtocolTestInstance.stakes(_from_account.address, 1);
+  return EticaReleaseProtocolTestInstance.stakeclmidx(_index, {from: _from_account.address}).then(async function(resp){
     assert(true);
-    let _from_accountbalanceafter = await EticaReleaseVotingTestInstance.balanceOf(_from_account.address);
-    let _from_accountstakeafter = await EticaReleaseVotingTestInstance.stakes(_from_account.address,1);
+    let _from_accountbalanceafter = await EticaReleaseProtocolTestInstance.balanceOf(_from_account.address);
+    let _from_accountstakeafter = await EticaReleaseProtocolTestInstance.stakes(_from_account.address,1);
     let stakenoldbalance = web3.utils.toBN(_from_accountbalancebefore).add(web3.utils.toBN(_from_accountstakebefore.amount)).toString();
     //console.log('------test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
     //console.log('------stakenoldbalance is:::', web3.utils.fromWei(stakenoldbalance, "ether"));

@@ -19106,16 +19106,6 @@
                           "lValueRequested": false,
                           "leftExpression": {
                             "argumentTypes": null,
-                            "id": 1334,
-                            "name": "_periodsupply",
-                            "nodeType": "TupleExpression",
-                            "overloadedDeclarations": [],
-                            "referencedDeclaration": 1289,
-                            "src": "22802:46:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_uint256",
-                              "typeString": "uint256"
-                            },
                             "components": [
                               {
                                 "argumentTypes": null,
@@ -19163,83 +19153,37 @@
                                 }
                               }
                             ],
+                            "id": 1334,
                             "isConstant": false,
                             "isInlineArray": false,
                             "isLValue": false,
                             "isPure": false,
-                            "lValueRequested": false
+                            "lValueRequested": false,
+                            "nodeType": "TupleExpression",
+                            "src": "22802:46:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
                           },
                           "nodeType": "BinaryOperation",
                           "operator": "/",
                           "rightExpression": {
                             "argumentTypes": null,
-                            "components": [
-                              {
-                                "argumentTypes": null,
-                                "commonType": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                },
-                                "id": 1330,
-                                "isConstant": false,
-                                "isLValue": false,
-                                "isPure": false,
-                                "lValueRequested": false,
-                                "leftExpression": {
-                                  "argumentTypes": null,
-                                  "id": 1328,
-                                  "name": "PERIOD_CURATION_REWARD_RATIO",
-                                  "nodeType": "Identifier",
-                                  "overloadedDeclarations": [],
-                                  "referencedDeclaration": 208,
-                                  "src": "22773:28:0",
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_uint256",
-                                    "typeString": "uint256"
-                                  }
-                                },
-                                "nodeType": "BinaryOperation",
-                                "operator": "/",
-                                "rightExpression": {
-                                  "argumentTypes": null,
-                                  "hexValue": "313030",
-                                  "id": 1329,
-                                  "isConstant": false,
-                                  "isLValue": false,
-                                  "isPure": true,
-                                  "kind": "number",
-                                  "lValueRequested": false,
-                                  "nodeType": "Literal",
-                                  "src": "22804:3:0",
-                                  "subdenomination": null,
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_100_by_1",
-                                    "typeString": "int_const 100"
-                                  },
-                                  "value": "100"
-                                },
-                                "src": "22773:34:0",
-                                "typeDescriptions": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                }
-                              }
-                            ],
+                            "hexValue": "313030",
                             "id": 1335,
                             "isConstant": false,
-                            "isInlineArray": false,
                             "isLValue": false,
                             "isPure": true,
+                            "kind": "number",
                             "lValueRequested": false,
                             "nodeType": "Literal",
                             "src": "22851:3:0",
+                            "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_rational_100_by_1",
                               "typeString": "int_const 100"
                             },
-                            "hexValue": "313030",
-                            "kind": "number",
-                            "subdenomination": null,
                             "value": "100"
                           },
                           "src": "22802:52:0",
@@ -19348,16 +19292,6 @@
                           "lValueRequested": false,
                           "leftExpression": {
                             "argumentTypes": null,
-                            "id": 1347,
-                            "name": "_periodsupply",
-                            "nodeType": "TupleExpression",
-                            "overloadedDeclarations": [],
-                            "referencedDeclaration": 1289,
-                            "src": "22889:44:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_uint256",
-                              "typeString": "uint256"
-                            },
                             "components": [
                               {
                                 "argumentTypes": null,
@@ -19405,83 +19339,37 @@
                                 }
                               }
                             ],
+                            "id": 1347,
                             "isConstant": false,
                             "isInlineArray": false,
                             "isLValue": false,
                             "isPure": false,
-                            "lValueRequested": false
+                            "lValueRequested": false,
+                            "nodeType": "TupleExpression",
+                            "src": "22889:44:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
                           },
                           "nodeType": "BinaryOperation",
                           "operator": "/",
                           "rightExpression": {
                             "argumentTypes": null,
-                            "components": [
-                              {
-                                "argumentTypes": null,
-                                "commonType": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                },
-                                "id": 1343,
-                                "isConstant": false,
-                                "isLValue": false,
-                                "isPure": false,
-                                "lValueRequested": false,
-                                "leftExpression": {
-                                  "argumentTypes": null,
-                                  "id": 1341,
-                                  "name": "PERIOD_EDITOR_REWARD_RATIO",
-                                  "nodeType": "Identifier",
-                                  "overloadedDeclarations": [],
-                                  "referencedDeclaration": 211,
-                                  "src": "22860:26:0",
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_uint256",
-                                    "typeString": "uint256"
-                                  }
-                                },
-                                "nodeType": "BinaryOperation",
-                                "operator": "/",
-                                "rightExpression": {
-                                  "argumentTypes": null,
-                                  "hexValue": "313030",
-                                  "id": 1342,
-                                  "isConstant": false,
-                                  "isLValue": false,
-                                  "isPure": true,
-                                  "kind": "number",
-                                  "lValueRequested": false,
-                                  "nodeType": "Literal",
-                                  "src": "22889:3:0",
-                                  "subdenomination": null,
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_100_by_1",
-                                    "typeString": "int_const 100"
-                                  },
-                                  "value": "100"
-                                },
-                                "src": "22860:32:0",
-                                "typeDescriptions": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                }
-                              }
-                            ],
+                            "hexValue": "313030",
                             "id": 1348,
                             "isConstant": false,
-                            "isInlineArray": false,
                             "isLValue": false,
                             "isPure": true,
+                            "kind": "number",
                             "lValueRequested": false,
                             "nodeType": "Literal",
                             "src": "22936:3:0",
+                            "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_rational_100_by_1",
                               "typeString": "int_const 100"
                             },
-                            "hexValue": "313030",
-                            "kind": "number",
-                            "subdenomination": null,
                             "value": "100"
                           },
                           "src": "22889:50:0",
@@ -63060,16 +62948,6 @@
                           "lValueRequested": false,
                           "leftExpression": {
                             "argumentTypes": null,
-                            "id": 1334,
-                            "name": "_periodsupply",
-                            "nodeType": "TupleExpression",
-                            "overloadedDeclarations": [],
-                            "referencedDeclaration": 1289,
-                            "src": "22802:46:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_uint256",
-                              "typeString": "uint256"
-                            },
                             "components": [
                               {
                                 "argumentTypes": null,
@@ -63117,83 +62995,37 @@
                                 }
                               }
                             ],
+                            "id": 1334,
                             "isConstant": false,
                             "isInlineArray": false,
                             "isLValue": false,
                             "isPure": false,
-                            "lValueRequested": false
+                            "lValueRequested": false,
+                            "nodeType": "TupleExpression",
+                            "src": "22802:46:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
                           },
                           "nodeType": "BinaryOperation",
                           "operator": "/",
                           "rightExpression": {
                             "argumentTypes": null,
-                            "components": [
-                              {
-                                "argumentTypes": null,
-                                "commonType": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                },
-                                "id": 1330,
-                                "isConstant": false,
-                                "isLValue": false,
-                                "isPure": false,
-                                "lValueRequested": false,
-                                "leftExpression": {
-                                  "argumentTypes": null,
-                                  "id": 1328,
-                                  "name": "PERIOD_CURATION_REWARD_RATIO",
-                                  "nodeType": "Identifier",
-                                  "overloadedDeclarations": [],
-                                  "referencedDeclaration": 208,
-                                  "src": "22773:28:0",
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_uint256",
-                                    "typeString": "uint256"
-                                  }
-                                },
-                                "nodeType": "BinaryOperation",
-                                "operator": "/",
-                                "rightExpression": {
-                                  "argumentTypes": null,
-                                  "hexValue": "313030",
-                                  "id": 1329,
-                                  "isConstant": false,
-                                  "isLValue": false,
-                                  "isPure": true,
-                                  "kind": "number",
-                                  "lValueRequested": false,
-                                  "nodeType": "Literal",
-                                  "src": "22804:3:0",
-                                  "subdenomination": null,
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_100_by_1",
-                                    "typeString": "int_const 100"
-                                  },
-                                  "value": "100"
-                                },
-                                "src": "22773:34:0",
-                                "typeDescriptions": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                }
-                              }
-                            ],
+                            "hexValue": "313030",
                             "id": 1335,
                             "isConstant": false,
-                            "isInlineArray": false,
                             "isLValue": false,
                             "isPure": true,
+                            "kind": "number",
                             "lValueRequested": false,
                             "nodeType": "Literal",
                             "src": "22851:3:0",
+                            "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_rational_100_by_1",
                               "typeString": "int_const 100"
                             },
-                            "hexValue": "313030",
-                            "kind": "number",
-                            "subdenomination": null,
                             "value": "100"
                           },
                           "src": "22802:52:0",
@@ -63302,16 +63134,6 @@
                           "lValueRequested": false,
                           "leftExpression": {
                             "argumentTypes": null,
-                            "id": 1347,
-                            "name": "_periodsupply",
-                            "nodeType": "TupleExpression",
-                            "overloadedDeclarations": [],
-                            "referencedDeclaration": 1289,
-                            "src": "22889:44:0",
-                            "typeDescriptions": {
-                              "typeIdentifier": "t_uint256",
-                              "typeString": "uint256"
-                            },
                             "components": [
                               {
                                 "argumentTypes": null,
@@ -63359,83 +63181,37 @@
                                 }
                               }
                             ],
+                            "id": 1347,
                             "isConstant": false,
                             "isInlineArray": false,
                             "isLValue": false,
                             "isPure": false,
-                            "lValueRequested": false
+                            "lValueRequested": false,
+                            "nodeType": "TupleExpression",
+                            "src": "22889:44:0",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_uint256",
+                              "typeString": "uint256"
+                            }
                           },
                           "nodeType": "BinaryOperation",
                           "operator": "/",
                           "rightExpression": {
                             "argumentTypes": null,
-                            "components": [
-                              {
-                                "argumentTypes": null,
-                                "commonType": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                },
-                                "id": 1343,
-                                "isConstant": false,
-                                "isLValue": false,
-                                "isPure": false,
-                                "lValueRequested": false,
-                                "leftExpression": {
-                                  "argumentTypes": null,
-                                  "id": 1341,
-                                  "name": "PERIOD_EDITOR_REWARD_RATIO",
-                                  "nodeType": "Identifier",
-                                  "overloadedDeclarations": [],
-                                  "referencedDeclaration": 211,
-                                  "src": "22860:26:0",
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_uint256",
-                                    "typeString": "uint256"
-                                  }
-                                },
-                                "nodeType": "BinaryOperation",
-                                "operator": "/",
-                                "rightExpression": {
-                                  "argumentTypes": null,
-                                  "hexValue": "313030",
-                                  "id": 1342,
-                                  "isConstant": false,
-                                  "isLValue": false,
-                                  "isPure": true,
-                                  "kind": "number",
-                                  "lValueRequested": false,
-                                  "nodeType": "Literal",
-                                  "src": "22889:3:0",
-                                  "subdenomination": null,
-                                  "typeDescriptions": {
-                                    "typeIdentifier": "t_rational_100_by_1",
-                                    "typeString": "int_const 100"
-                                  },
-                                  "value": "100"
-                                },
-                                "src": "22860:32:0",
-                                "typeDescriptions": {
-                                  "typeIdentifier": "t_uint256",
-                                  "typeString": "uint256"
-                                }
-                              }
-                            ],
+                            "hexValue": "313030",
                             "id": 1348,
                             "isConstant": false,
-                            "isInlineArray": false,
                             "isLValue": false,
                             "isPure": true,
+                            "kind": "number",
                             "lValueRequested": false,
                             "nodeType": "Literal",
                             "src": "22936:3:0",
+                            "subdenomination": null,
                             "typeDescriptions": {
                               "typeIdentifier": "t_rational_100_by_1",
                               "typeString": "int_const 100"
                             },
-                            "hexValue": "313030",
-                            "kind": "number",
-                            "subdenomination": null,
                             "value": "100"
                           },
                           "src": "22889:50:0",
@@ -89552,7 +89328,7 @@
     }
   },
   "schemaVersion": "3.0.9",
-  "updatedAt": "2019-07-12T13:32:48.504Z",
+  "updatedAt": "2019-07-15T07:53:20.104Z",
   "devdoc": {
     "methods": {}
   },

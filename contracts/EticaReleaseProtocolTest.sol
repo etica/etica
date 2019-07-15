@@ -1,7 +1,7 @@
 pragma solidity ^0.5.2;
 
 // ONLY FOR TESTING !!!
-// EticaReleaseVotingTest: Same as EticaRelease contract but with initial ETI balance for miner_account to make tests easier
+// EticaReleaseProtocolTest: Same as EticaRelease contract but with initial ETI balance for miner_account to make tests easier
 // You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
 // Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
 
@@ -438,7 +438,7 @@ function () payable external {
 
 
 
-contract EticaReleaseVotingTest is EticaToken {
+contract EticaReleaseProtocolTest is EticaToken {
   /* --------- PROD -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours

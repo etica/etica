@@ -208,7 +208,13 @@ contract EticaToken is ERC20Interface{
 
       // --> PHASE 2
       // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656;
-      inflationrate = 26180339887498948482045868343656; // (need to multiple by 10^(-33) to get 0.026180339887498948482045868343656);
+      // Thus yearly inflation target is 2.6180339887498948482045868343656%
+      // inflationrate calculation:
+      // Each Period is 7 days, so we need to get a weekly inflationrate from the yearlyinflationrate target: 
+      // 1.026180339887498948482045868343656 ^(1 / 52.1429) = 1,0004957512263080183722688891602;
+      // 1,0004957512263080183722688891602 - 1 = 0,0004957512263080183722688891602;
+      // Hence weekly inflationrate is 0,04957512263080183722688891602%
+      inflationrate = 4957512263080183722688891602;  // (need to multiple by 10^(-31) to get 0,0004957512263080183722688891602;
 
        // PHASE 2 <--
 
@@ -644,9 +650,7 @@ uint _periodsupply;
 
 // era 2 (after 21 000 000 ETI has been reached)
 if(supply >= 21000000 * 10**(decimals)){
- _periodsupply = uint((supply * inflationrate).div(10**(33)));
- // Get from yearly to weekly:
- _periodsupply = uint(_periodsupply.div(521429) * 10000); // divid _periodsupply by 52.1429 to get weekly reward
+_periodsupply = uint((supply * inflationrate).div(10**(31)));
 }
 // era 1 (before 21 000 000 ETI has been reached)
 else {

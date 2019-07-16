@@ -644,8 +644,9 @@ uint _periodsupply;
 
 // era 2 (after 21 000 000 ETI has been reached)
 if(supply >= 21000000 * 10**(decimals)){
- uint _rate = uint(inflationrate / 10**(33));
- _periodsupply = supply * _rate;
+ _periodsupply = uint((supply * inflationrate).div(10**(33)));
+ // Get from yearly to weekly:
+ _periodsupply = uint(_periodsupply.div(521429) * 10000); // divid _periodsupply by 52.1429 to get weekly reward
 }
 // era 1 (before 21 000 000 ETI has been reached)
 else {

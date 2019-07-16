@@ -456,7 +456,7 @@ console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
 console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
-_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 4);
+_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
 
 let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
@@ -637,14 +637,14 @@ let _expected_total_reward_acc2 =  _expected_reward_acc2_prop_1 + _expected_rewa
 // console.log('_expected_total_reward_acc2 is', _expected_total_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc2 = _expected_total_reward_acc2.toString();
-_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 4);
+_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 3);
 
 
 let _effective_reward_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
 console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc2 = _effective_reward_acc2.toString();
-_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 2);
+_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 3);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc2, _expected_total_reward_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -673,14 +673,14 @@ let _expected_total_reward_acc3 =  _expected_reward_acc3_prop_1 + _expected_rewa
  console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc3 = _expected_total_reward_acc3.toString();
-_expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc3.length - 2);
+_expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc3.length - 3);
 
 
 let _effective_reward_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
 console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc3 = _effective_reward_acc3.toString();
-_effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_acc3.length - 2);
+_effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_acc3.length - 3);
 
 // acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc3, _expected_total_reward_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -815,7 +815,7 @@ _expected_total_reward_acc7 =  _expected_reward_acc7_prop_1 + _expected_reward_a
  console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
-_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 3);
+_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 2);
 
 
 _effective_reward_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );

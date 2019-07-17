@@ -267,6 +267,13 @@ await votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
 await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
 await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
 
+// should fail for usaers to vote twice on same Proposal:
+await should_fail_votebyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
+await should_fail_votebyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
+await should_fail_votebyhash(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
+await should_fail_votebyhash(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
+await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
+
 
 // CHECK PROPOSALSDATA
 

@@ -1068,6 +1068,12 @@ Period storage period = periods[proposal.period_id];
  blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
 
 
+// Check that vote does not already exist
+// only allow one vote for each {raw_release_hash, voter} combinasion
+bytes32 existing_vote = votes[proposal.proposed_release_hash][msg.sender].proposal_hash;
+if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amount != 0) revert();  //prevent the same user from voting twice for same raw_release_hash. Double condition check for better security and slightly higher gas cost even though one would be enough !
+
+
  // store vote:
  Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
  vote.proposal_hash = proposal.proposed_release_hash;

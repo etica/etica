@@ -976,6 +976,54 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               
                             });
 
+          // test too late voting should fail
+          it("cannot vote twice on same Proposal :", async function () {
+            console.log('------------------------------- Starting test ---------------------------');
+            console.log('.......................... Cannot VOTE TWICE FOR SAME PROPOSAL ? ..................... ');
+
+            let test_account_2_balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
+            let test_account_2_stakebefore = await EticaReleaseInstance.stakes(test_account2.address, 1);
+            //console.log('test_account3 ETI balance before:', web3.utils.fromWei(test_account_3_balancebefore, "ether" ));
+            //console.log('test_account3 Stake before:', test_account_3_stakebefore);
+            //console.log('test_account3 Stake amount before:', web3.utils.fromWei(test_account_3_stakebefore.amount, "ether" ));
+
+            let test_account_2_bosomsbefore = await EticaReleaseInstance.bosoms(test_account2.address);
+            //console.log('test_account3 Bosoms before:', web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ));
+
+            let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+                        let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                        //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+            assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 2, 'test_account2 should have enough Bosoms before CALLING VOTEBYHASH FUNCTION (because votebyhash function should fail but not for this reason)');
+
+            let lstblock = await web3.eth.getBlock("latest");
+            //console.log('last block s timestamp is', lstblock.timestamp);
+            let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+            //console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
+
+            // vote should still be wothin time limits as we don't want the vote to fail for this reason:
+            assert(lstblock.timestamp <= first_proposal_data_after.endtime, 'Block timestamp should be lower than first proposal endvote before testing CANNOT VOTE TWICE ON SAME PROPOSAL');
+
+           // try to VOTE for proposal, should fail:
+           return EticaReleaseInstance.votebyhash(first_proposal.proposed_release_hash, true, web3.utils.toWei('2', 'ether'), {from: test_account2.address}).then(assert.fail)
+              .catch(async function(error){
+                assert(true);
+                let test_account_2_balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
+                let test_account_2_stakeafter = await EticaReleaseInstance.stakes(test_account2.address,1);
+                let test_account_2_bosomsafter = await EticaReleaseInstance.bosoms(test_account2.address);
+                let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account2.address);
+                //console.log('test_account3 ETI balance after:', web3.utils.fromWei(test_account_3_balanceafter, "ether" ));
+                //console.log('test_account3 Stake after:', test_account_3_stakeafter);
+                //console.log('test_account3 Vote is:', first_proposal_vote_after);
+                assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter, "ether" ), "0", 'test_account should not have less Bosoms!');
+                assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account2 should not have been able to vote twice for smae proposal. So the vote amount should not have changed !');
+
+                console.log('........................... VOTING TWICE ON SMAE PROPOSAL is not possible ....................... ');
+                console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+              });
+
+          });                            
+
 
 
 // test Proposals vote again just before testing cannot vote after endvote. This test is used as a way to make sure we are only testing endvote on next test

@@ -180,7 +180,7 @@ contract EticaToken is ERC20Interface{
       // The amount of reward will be twice of first rewards of phase 2
       // Calculation of first rewards of phase 2:
       // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2)
+      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
       // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
       periodrewardtemp = 21087708494827787412014; // 21087,708494827787412014415585507 ETI per period (7 days) will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
 

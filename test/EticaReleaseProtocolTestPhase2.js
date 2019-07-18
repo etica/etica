@@ -13,6 +13,7 @@ console.log('');
 var PERIOD_CURATION_REWARD = 0; // initialize global variable PERIOD_CURATION_REWARD
 var PERIOD_EDITOR_REWARD = 0; // initialize global variable PERIOD_EDITOR_REWARD
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
+var REWARD_INTERVAL = 0; // initialize global variable REWARD_INTERVAL
 
 // test suite
 contract('EticaReleaseProtocolTestPhase2', function(accounts){
@@ -98,6 +99,9 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
 
     PERIOD_EDITOR_REWARD = await EticaReleaseProtocolTestPhase2Instance.PERIOD_EDITOR_REWARD();
     console.log('PERIOD_EDITOR_REWARD IS ', PERIOD_EDITOR_REWARD);
+
+    REWARD_INTERVAL = await EticaReleaseProtocolTestPhase2Instance.REWARD_INTERVAL();
+    console.log('REWARD_INTERVAL IS ', REWARD_INTERVAL);
 
   // TRANSFERS FROM MINER ACCOUNT:
   await transferto(test_account);
@@ -548,8 +552,6 @@ await clmpropbyhash(test_account7, IPFS3_WITH_FIRTDISEASEHASH);
 
 await clmpropbyhash(test_account2, IPFS4_WITH_FIRTDISEASEHASH);
 await clmpropbyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH);
-let contract_balance_before_createdisease2 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(EticaReleaseProtocolTestPhase2Instance.address);
-console.log('conract balance 2 is', web3.utils.fromWei(contract_balance_before_createdisease2, "ether" ));
 await clmpropbyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH);
 // next 3 should fail:
 await should_fail_clmpropbyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH);
@@ -953,6 +955,804 @@ await stakeclmidx(test_account6, 1);
 await stakeclmidx(test_account7, 1);
 await stakeclmidx(test_account7, 1);
 
+
+// ----------------------  Make same tests for next Period ----------------------------- //
+
+console.log('<--------------------------- ENTERING TESTS OF NEXT PERIOD I ---------------------------------- >');
+
+// advance time so that clmpropbyhash becomes possible: 
+await advanceminutes(REWARD_INTERVAL);
+
+// --------------------- Making same tests but for next Period -----------------------------:
+
+  // begin the stake
+  await eticatobosom(test_account, '200');
+  await eticatobosom(test_account2, '2000');
+  await eticatobosom(test_account3, '2000');
+  await eticatobosom(test_account4, '2000');
+  await eticatobosom(test_account5, '2000');
+  await eticatobosom(test_account6, '2000');
+  await eticatobosom(test_account7, '2000');
+  
+  // check significant figures:
+  await eticatobosom(test_account, '0.123');
+  await eticatobosom(test_account2, '0.981516165156161651');
+  await eticatobosom(test_account3, '0.300');
+  await eticatobosom(test_account4, '0.9151651651665');
+  await eticatobosom(test_account5, '0.565156161');
+  await eticatobosom(test_account6, '0.321');
+  await eticatobosom(test_account7, '0.1805');
+
+let IPFS1B = randomipfs();
+let IPFS2B = randomipfs();
+let IPFS3B = randomipfs();
+let IPFS4B = randomipfs();
+let IPFS5B = randomipfs();
+let IPFS6B = randomipfs();
+let IPFS7B = randomipfs();
+let IPFS8B = randomipfs();
+
+
+// Retrieve BLOCKEDETICAS:
+OLD_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account.address);
+OLD_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account2.address);
+OLD_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account3.address);
+OLD_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account4.address);
+OLD_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account5.address);
+OLD_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account6.address);
+OLD_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account7.address);
+
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT is ", OLD_BLOCKED_ETI_TEST_ACCOUNT);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_2 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_2);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_3 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_3);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_4 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_4);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_5 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_5);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_6 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_6);
+console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_7 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_7);
+
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_2, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_3, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_4, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_5, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 0);
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1B, "", "");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2B, "", "");
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 3", IPFS3B, "", "");
+await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 4 Malaria", "Description 4", IPFS4B, "", "");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 5 Malaria", "Description 5", IPFS5B, "", "");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 6 Malaria", "Description 6", IPFS6B, IPFS7B, "");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria", "Description 7", IPFS7B, "", IPFS8B);
+
+// should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
+await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Malaria", "Description 8", IPFS1B, "", "");
+
+let IPFS1B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1B, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2B, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3B, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4B, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5B, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS6B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6B, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS7B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7B, EXPECTED_FIRST_DISEASE_HASH);
+
+await votebyhash(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '50');
+await votebyhash(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, true, '100');
+await votebyhash(test_account4, IPFS1B_WITH_FIRTDISEASEHASH, false, '50');
+await votebyhash(test_account5, IPFS1B_WITH_FIRTDISEASEHASH, true, '500');
+await votebyhash(test_account6, IPFS1B_WITH_FIRTDISEASEHASH, false, '350');
+await votebyhash(test_account7, IPFS1B_WITH_FIRTDISEASEHASH, false, '80');
+
+//await should_fail_votebyhash(test_account2, IPFS2B_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await votebyhash(test_account3, IPFS2B_WITH_FIRTDISEASEHASH, false, '100');
+await votebyhash(test_account4, IPFS2B_WITH_FIRTDISEASEHASH, true, '500');
+await votebyhash(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, false, '500');
+await votebyhash(test_account6, IPFS2B_WITH_FIRTDISEASEHASH, true, '35');
+await votebyhash(test_account7, IPFS2B_WITH_FIRTDISEASEHASH, false, '800');
+
+await votebyhash(test_account2, IPFS3B_WITH_FIRTDISEASEHASH, true, '5');
+//await should_fail_votebyhash(test_account3, IPFS3B_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await votebyhash(test_account4, IPFS3B_WITH_FIRTDISEASEHASH, true, '490');
+await votebyhash(test_account5, IPFS3B_WITH_FIRTDISEASEHASH, false, '600');
+await votebyhash(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '35');
+await votebyhash(test_account7, IPFS3B_WITH_FIRTDISEASEHASH, true, '60');
+
+await votebyhash(test_account2, IPFS4B_WITH_FIRTDISEASEHASH, true, '5');
+await votebyhash(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '10');
+//await should_fail_votebyhash(test_account4, IPFS4B_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await votebyhash(test_account5, IPFS4B_WITH_FIRTDISEASEHASH, true, '50');
+await votebyhash(test_account6, IPFS4B_WITH_FIRTDISEASEHASH, true, '35');
+await votebyhash(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '60');
+
+// should fail to vote with incorrect amount for a proposal:
+await should_fail_votebyhash(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '500000');
+await should_fail_votebyhash(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '-500');
+
+// should fail for usaers to vote twice on same Proposal:
+await should_fail_votebyhash(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '15');
+await should_fail_votebyhash(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, false, '25');
+await should_fail_votebyhash(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, true, '35');
+await should_fail_votebyhash(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '50');
+await should_fail_votebyhash(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '95');
+
+
+// CHECK PROPOSALSDATA
+
+let _proposal1B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1B.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+
+let _proposal2B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2B.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+
+let _proposal3B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3B.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+
+let _proposal4B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4B.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+
+let _proposal5B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5B.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
+
+let _proposal6B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6B.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
+
+let _proposal7B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7B.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
+
+console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
+
+
+assert.equal(web3.utils.fromWei(_proposal1B.forvotes.toString()), '660', 'Proposal1 should have 660 forvotes');
+assert.equal(web3.utils.fromWei(_proposal1B.againstvotes.toString()), '480', 'Proposal1 should have 480 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal2B.forvotes.toString()), '545', 'Proposal2 should have 545 forvotes');
+assert.equal(web3.utils.fromWei(_proposal2B.againstvotes.toString()), '1400', 'Proposal1 should have 1400 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal3B.forvotes.toString()), '600', 'Proposal3 should have 600 forvotes');
+assert.equal(web3.utils.fromWei(_proposal3B.againstvotes.toString()), '600', 'Proposal3 should have 500 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal4B.forvotes.toString()), '170', 'Proposal4 should have 170 forvotes');
+assert.equal(web3.utils.fromWei(_proposal4B.againstvotes.toString()), '0', 'Proposal4 should have 0 against votes');
+
+console.log('----------------->   PROPOSALS FORVOTES AND AGAINTSVOTES CHECKED  <-----------------');
+
+assert.equal(_proposal1B.prestatus, '1', 'Proposal1 prestatus should be Accepted');
+assert.equal(_proposal2B.prestatus, '0', 'Proposal2 prestatus should be Rejected');
+assert.equal(_proposal3B.prestatus, '0', 'Proposal3 prestatus should be Rejected');
+assert.equal(_proposal4B.prestatus, '1', 'Proposal4 prestatus should be Accepted');
+assert.equal(_proposal5B.prestatus, '3', 'Proposal5 prestatus should be SingleVoter');
+assert.equal(_proposal6B.prestatus, '3', 'Proposal6 prestatus should be SingleVoter');
+assert.equal(_proposal7B.prestatus, '3', 'Proposal7 prestatus should be SingleVoter');
+
+console.log('----------------->   PROPOSALS PRESTATUS CHECKED  <-----------------');
+
+assert.equal(_proposal1B.status, '2', 'Proposal1 status should be Pending');
+assert.equal(_proposal2B.status, '2', 'Proposal2 status should be Pending');
+assert.equal(_proposal3B.status, '2', 'Proposal3 status should be Pending');
+assert.equal(_proposal4B.status, '2', 'Proposal4 status should be Pending');
+assert.equal(_proposal5B.status, '2', 'Proposal5 status should be Pending');
+assert.equal(_proposal6B.status, '2', 'Proposal6 status should be Pending');
+assert.equal(_proposal7B.status, '2', 'Proposal7 status should be Pending');
+
+console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1B.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2B.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3B.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4B.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5B.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6B.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7B.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1B.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2B.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3B.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4B.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5B.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6B.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7B.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
+
+assert.equal(_proposal1B.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
+assert.equal(_proposal2B.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal3B.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
+assert.equal(_proposal4B.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5B.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6B.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7B.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+
+console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
+
+
+// Retrieve BLOCKEDETICAS:
+NEW_BLOCKED_ETI_TEST_ACCOUNT = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account.address);
+NEW_BLOCKED_ETI_TEST_ACCOUNT_2 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account2.address);
+NEW_BLOCKED_ETI_TEST_ACCOUNT_3 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account3.address);
+NEW_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account4.address);
+NEW_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account5.address);
+NEW_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account6.address);
+NEW_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseProtocolTestPhase2Instance.blockedeticas(test_account7.address);
+
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_2 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_2, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_3 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_3, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_4 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_4, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_5 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_5, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_6 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_7 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ));
+
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT, "ether" ), 10);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_2, "ether" ), 70);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_3, "ether" ), 220);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_4, "ether" ), 1050);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_5, "ether" ), 1680);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ), 455);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 1000);
+
+
+// Retrieve General Information of Proposals:
+let _general_proposal1B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1B_WITH_FIRTDISEASEHASH);
+let _general_proposal2B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2B_WITH_FIRTDISEASEHASH);
+let _general_proposal3B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3B_WITH_FIRTDISEASEHASH);
+let _general_proposal4B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4B_WITH_FIRTDISEASEHASH);
+let _general_proposal5B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5B_WITH_FIRTDISEASEHASH);
+let _general_proposal6B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6B_WITH_FIRTDISEASEHASH);
+let _general_proposal7B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7B_WITH_FIRTDISEASEHASH);
+
+// assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
+console.log('_general_proposal1B.period_id is', _general_proposal1B.period_id.toString());
+console.log('_general_proposal7B.period_id is', _general_proposal7B.period_id.toString());
+
+assert(_general_proposal1B.period_id.toString() == _general_proposal7B.period_id.toString());
+
+
+// assert Period's curation_sum and editor_sum values are OK
+let _period1B  = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1B.period_id);
+console.log('_period1B is:', _period1B);
+console.log('_period1B.reward_curation is:', web3.utils.fromWei(_period1B.reward_for_curation, "ether" ));
+console.log('_period1B.reward_editor is:', web3.utils.fromWei(_period1B.reward_for_editor, "ether" ));
+assert.equal(web3.utils.fromWei(_period1B.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
+assert.equal(web3.utils.fromWei(_period1B.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+
+// Should fail to clmpropbyhash too early: 
+await should_fail_clmpropbyhash(test_account, IPFS1B_WITH_FIRTDISEASEHASH);
+
+// advance time so that clmpropbyhash becomes possible: 
+await advanceminutes(DEFAULT_VOTING_TIME);
+console.log('waiting DEFAULT_TIME_VOTING seconds so that clmbyhash becomes possible');
+
+// Should fail to votebyhash too late:
+await should_fail_votebyhash(test_account2, IPFS5B_WITH_FIRTDISEASEHASH, true, '20');
+
+
+OLD_BALANCE_ACCOUNT = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account.address);  
+OLD_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account2.address);
+OLD_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account3.address);
+OLD_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account4.address);
+OLD_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account5.address);
+OLD_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account6.address);
+OLD_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account7.address);
+OLD_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account8.address);
+
+// should pass
+await clmpropbyhash(test_account5, IPFS4B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS4B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS4B_WITH_FIRTDISEASEHASH);
+
+await clmpropbyhash(test_account5, IPFS5B_WITH_FIRTDISEASEHASH);
+
+
+
+MID_BALANCE_ACCOUNT = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account.address);  
+MID_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account2.address);
+MID_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account3.address);
+MID_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account4.address);
+MID_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account5.address);
+MID_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account6.address);
+MID_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account7.address);
+MID_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account8.address);
+
+
+// ------------  ACCOUNT 5----------- //
+let _expected_reward_acc5_prop_4B = await get_expected_reward(test_account5, IPFS4B_WITH_FIRTDISEASEHASH);
+let _expected_reward_acc5_prop_5B = await get_expected_reward(test_account5, IPFS5B_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_B_acc5 =  _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B;
+console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4B);
+console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5B);
+console.log('_expected_total_reward_B_acc5 is', _expected_total_reward_B_acc5);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.toString();
+_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.substring(0, _expected_total_reward_B_acc5.length - 3);
+
+let _effective_reward_B_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
+console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_B_acc5);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc5 = _effective_reward_B_acc5.toString();
+_effective_reward_B_acc5 = _effective_reward_B_acc5.substring(0, _effective_reward_B_acc5.length - 3);
+
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc5, _expected_total_reward_B_acc5); // 122.67718490502358 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// ------------  ACCOUNT 5---------- //
+
+// ------------  ACCOUNT 6----------- //
+let _expected_reward_acc6_prop_4B = await get_expected_reward(test_account6, IPFS4B_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_B_acc6 =  _expected_reward_acc6_prop_4B;
+console.log('_expected_reward_acc6_prop4 is', _expected_reward_acc6_prop_4B);
+console.log('_expected_total_reward_B_acc6 is', _expected_total_reward_B_acc6);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.toString();
+_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.substring(0, _expected_total_reward_B_acc6.length - 3);
+
+let _effective_reward_B_acc6 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" );
+console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_B_acc6);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc6 = _effective_reward_B_acc6.toString();
+_effective_reward_B_acc6 = _effective_reward_B_acc6.substring(0, _effective_reward_B_acc6.length - 3);
+
+// acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc6, _expected_total_reward_B_acc6); // 62.94838356665059 == _expected_reward_acc6_prop_4B
+// ----------- ACCOUNT 6   -----------  //
+
+// ----- ACCOUNT 7  ------------ //
+let _expected_reward_acc7_prop_4B = await get_expected_reward(test_account7, IPFS4B_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_B_acc7 =  _expected_reward_acc7_prop_4B;
+console.log('_expected_reward_acc7_prop4 is', _expected_reward_acc7_prop_4B);
+console.log('_expected_total_reward_B_acc7 is', _expected_total_reward_B_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.toString();
+_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.substring(0, _expected_total_reward_B_acc7.length - 3);
+
+let _effective_reward_B_acc7 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" );
+console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_B_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc7 = _effective_reward_B_acc7.toString();
+_effective_reward_B_acc7 = _effective_reward_B_acc7.substring(0, _effective_reward_B_acc7.length - 3);
+
+// acc7 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc7, _expected_total_reward_B_acc7); // 113.906598834890 == _expected_reward_acc_7_prop_4B
+
+console.log('MID BALANCES CHECKED');
+
+
+
+await clmpropbyhash(test_account, IPFS1B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account2, IPFS1B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS1B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS1B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS1B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS1B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS1B_WITH_FIRTDISEASEHASH);
+
+// next line should fail:
+await should_fail_clmpropbyhash(test_account, IPFS2B_WITH_FIRTDISEASEHASH);
+
+await clmpropbyhash(test_account2, IPFS2B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS2B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS2B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS2B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS2B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS2B_WITH_FIRTDISEASEHASH);
+
+
+
+await clmpropbyhash(test_account2, IPFS3B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS3B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS3B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS3B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS3B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account7, IPFS3B_WITH_FIRTDISEASEHASH);
+
+
+
+await clmpropbyhash(test_account2, IPFS4B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS4B_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS4B_WITH_FIRTDISEASEHASH);
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account5, IPFS4B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account6, IPFS4B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS4B_WITH_FIRTDISEASEHASH);
+
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account2, IPFS5B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account3, IPFS5B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account4, IPFS5B_WITH_FIRTDISEASEHASH);
+// next must fail because already called before when calculating middle balances:
+await should_fail_clmpropbyhash(test_account5, IPFS5B_WITH_FIRTDISEASEHASH);
+// next 2 should fail:
+await should_fail_clmpropbyhash(test_account6, IPFS5B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS5B_WITH_FIRTDISEASEHASH);
+
+
+
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account2, IPFS6B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account3, IPFS6B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account4, IPFS6B_WITH_FIRTDISEASEHASH);
+
+await clmpropbyhash(test_account5, IPFS6B_WITH_FIRTDISEASEHASH);
+// next 2 should fail:
+await should_fail_clmpropbyhash(test_account6, IPFS6B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS6B_WITH_FIRTDISEASEHASH);
+
+
+
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account2, IPFS7B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account3, IPFS7B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account4, IPFS7B_WITH_FIRTDISEASEHASH);
+// should pass:
+await clmpropbyhash(test_account5, IPFS7B_WITH_FIRTDISEASEHASH);
+// next 2 should fail:
+await should_fail_clmpropbyhash(test_account6, IPFS7B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account7, IPFS7B_WITH_FIRTDISEASEHASH);
+
+IPFS_IDONTEXIST_DISEASEHASH = randomipfs();
+
+// next 3 should fail:
+await should_fail_clmpropbyhash(test_account4, IPFS2B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account5, IPFS7B_WITH_FIRTDISEASEHASH);
+await should_fail_clmpropbyhash(test_account5, IPFS_IDONTEXIST_DISEASEHASH);
+
+
+NEW_BALANCE_ACCOUNT = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account.address);  
+NEW_BALANCE_ACCOUNT_2 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account2.address);
+NEW_BALANCE_ACCOUNT_3 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account3.address);
+NEW_BALANCE_ACCOUNT_4 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account4.address);
+NEW_BALANCE_ACCOUNT_5 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account5.address);
+NEW_BALANCE_ACCOUNT_6 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account6.address);
+NEW_BALANCE_ACCOUNT_7 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account7.address);
+NEW_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(test_account8.address);
+
+
+// ACCOUNT 1:
+let _expected_reward_acc1_prop_1B = await get_expected_reward(test_account, IPFS1B_WITH_FIRTDISEASEHASH);
+let _expected_total_reward_B_acc1 =  _expected_reward_acc1_prop_1B;
+console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1B);
+console.log('_expected_total_reward_B_acc1 is', _expected_total_reward_B_acc1);
+
+let _effective_reward_B_acc1 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" );
+console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_B_acc1);
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc1, _expected_total_reward_B_acc1); // 13767.044628187738 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+
+// --------------- ACCOUNT 2 -------------------  //
+
+let _expected_reward_acc2_prop_1B = await get_expected_reward(test_account2, IPFS1B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_2B = await get_expected_reward(test_account2, IPFS2B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_3B = await get_expected_reward(test_account2, IPFS3B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_4B = await get_expected_reward(test_account2, IPFS4B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_5B = await get_expected_reward(test_account2, IPFS5B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_6B = await get_expected_reward(test_account2, IPFS6B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc2_prop_7B = await get_expected_reward(test_account2, IPFS7B_WITH_FIRTDISEASEHASH);
+
+
+let _expected_total_reward_B_acc2 =  _expected_reward_acc2_prop_1B + _expected_reward_acc2_prop_2B + _expected_reward_acc2_prop_3B + _expected_reward_acc2_prop_4B + _expected_reward_acc2_prop_5B + _expected_reward_acc2_prop_6B + _expected_reward_acc2_prop_7B;
+// console.log('_expected_total_reward_B_acc2 is', _expected_total_reward_B_acc2);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc2 = _expected_total_reward_B_acc2.toString();
+_expected_total_reward_B_acc2 = _expected_total_reward_B_acc2.substring(0, _expected_total_reward_B_acc2.length - 3);
+
+
+let _effective_reward_B_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
+console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_B_acc2);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc2 = _effective_reward_B_acc2.toString();
+_effective_reward_B_acc2 = _effective_reward_B_acc2.substring(0, _effective_reward_B_acc2.length - 3);
+
+// acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc2, _expected_total_reward_B_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// --------------- ACCOUNT 2 -------------------  //
+
+
+// --------------- ACCOUNT 3 -------------------  //
+
+let _expected_reward_acc3_prop_1B = await get_expected_reward(test_account3, IPFS1B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc3_prop_2B = await get_expected_reward(test_account3, IPFS2B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc3_prop_3B = await get_expected_reward(test_account3, IPFS3B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc3_prop_4B = await get_expected_reward(test_account3, IPFS4B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc3_prop_5B = await get_expected_reward(test_account3, IPFS5B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc3_prop_6B = await get_expected_reward(test_account3, IPFS6B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc3_prop_7B = await get_expected_reward(test_account3, IPFS7B_WITH_FIRTDISEASEHASH);
+
+
+let _expected_total_reward_B_acc3 =  _expected_reward_acc3_prop_1B + _expected_reward_acc3_prop_2B + _expected_reward_acc3_prop_3B + _expected_reward_acc3_prop_4B + _expected_reward_acc3_prop_5B + _expected_reward_acc3_prop_6B + _expected_reward_acc3_prop_7B;
+ console.log('_expected_total_reward_B_acc3 is', _expected_total_reward_B_acc3);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc3 = _expected_total_reward_B_acc3.toString();
+_expected_total_reward_B_acc3 = _expected_total_reward_B_acc3.substring(0, _expected_total_reward_B_acc3.length - 3);
+
+
+let _effective_reward_B_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
+console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_B_acc3);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc3 = _effective_reward_B_acc3.toString();
+_effective_reward_B_acc3 = _effective_reward_B_acc3.substring(0, _effective_reward_B_acc3.length - 3);
+
+// acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc3, _expected_total_reward_B_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// --------------- ACCOUNT 3 -------------------  //
+
+// --------------- ACCOUNT 4 -------------------  //
+
+let _expected_reward_acc4_prop_1B = await get_expected_reward(test_account4, IPFS1B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_2B = await get_expected_reward(test_account4, IPFS2B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_3B = await get_expected_reward(test_account4, IPFS3B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_4B = await get_expected_reward(test_account4, IPFS4B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_5B = await get_expected_reward(test_account4, IPFS5B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_6B = await get_expected_reward(test_account4, IPFS6B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc4_prop_7B = await get_expected_reward(test_account4, IPFS7B_WITH_FIRTDISEASEHASH);
+
+
+let _expected_total_reward_B_acc4 =  _expected_reward_acc4_prop_1B + _expected_reward_acc4_prop_2B + _expected_reward_acc4_prop_3B + _expected_reward_acc4_prop_4B + _expected_reward_acc4_prop_5B + _expected_reward_acc4_prop_6B + _expected_reward_acc4_prop_7B;
+// console.log('_expected_total_reward_B_acc3 is', _expected_total_reward_B_acc3);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc4 = _expected_total_reward_B_acc4.toString();
+_expected_total_reward_B_acc4 = _expected_total_reward_B_acc4.substring(0, _expected_total_reward_B_acc4.length - 2);
+
+
+let _effective_reward_B_acc4 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" );
+console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_B_acc4);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc4 = _effective_reward_B_acc4.toString();
+_effective_reward_B_acc4 = _effective_reward_B_acc4.substring(0, _effective_reward_B_acc4.length - 3);
+
+// acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc4, _expected_total_reward_B_acc4); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// --------------- ACCOUNT 4 -------------------  //
+
+
+// --------------- ACCOUNT 5 -------------------  //
+
+let _expected_reward_acc5_prop_1B = await get_expected_reward(test_account5, IPFS1B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc5_prop_2B = await get_expected_reward(test_account5, IPFS2B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc5_prop_3B = await get_expected_reward(test_account5, IPFS3B_WITH_FIRTDISEASEHASH);
+
+//let _expected_reward_acc5_prop_4B = await get_expected_reward(test_account5, IPFS4B_WITH_FIRTDISEASEHASH); Already done
+
+//let _expected_reward_acc5_prop_5B = await get_expected_reward(test_account5, IPFS5B_WITH_FIRTDISEASEHASH); Already done
+
+let _expected_reward_acc5_prop_6B = await get_expected_reward(test_account5, IPFS6B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc5_prop_7B = await get_expected_reward(test_account5, IPFS7B_WITH_FIRTDISEASEHASH);
+
+
+_expected_total_reward_B_acc5 =  _expected_reward_acc5_prop_1B + _expected_reward_acc5_prop_2B + _expected_reward_acc5_prop_3B + _expected_reward_acc5_prop_6B + _expected_reward_acc5_prop_7B;
+ console.log('_expected_total_reward_B_acc5 is', _expected_total_reward_B_acc5);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.toString();
+_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.substring(0, _expected_total_reward_B_acc5.length - 3);
+
+
+_effective_reward_B_acc5 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" );
+//console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_B_acc5);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc5 = _effective_reward_B_acc5.toString();
+_effective_reward_B_acc5 = _effective_reward_B_acc5.substring(0, _effective_reward_B_acc5.length - 2);
+
+// acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc5, _expected_total_reward_B_acc5); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// --------------- ACCOUNT 5 -------------------  //
+
+// --------------- ACCOUNT 6 -------------------  //
+
+let _expected_reward_acc6_prop_1B = await get_expected_reward(test_account6, IPFS1B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc6_prop_2B = await get_expected_reward(test_account6, IPFS2B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc6_prop_3B = await get_expected_reward(test_account6, IPFS3B_WITH_FIRTDISEASEHASH);
+
+//let _expected_reward_acc5_prop_4B = await get_expected_reward(test_account5, IPFS4B_WITH_FIRTDISEASEHASH); Already done
+
+let _expected_reward_acc6_prop_5B = await get_expected_reward(test_account6, IPFS5B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc6_prop_6B = await get_expected_reward(test_account6, IPFS6B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc6_prop_7B = await get_expected_reward(test_account6, IPFS7B_WITH_FIRTDISEASEHASH);
+
+
+_expected_total_reward_B_acc6 =  _expected_reward_acc6_prop_1B + _expected_reward_acc6_prop_2B + _expected_reward_acc6_prop_3B + _expected_reward_acc6_prop_5B + _expected_reward_acc6_prop_6B + _expected_reward_acc6_prop_7B;
+ console.log('_expected_total_reward_B_acc6 is', _expected_total_reward_B_acc6);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.toString();
+_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.substring(0, _expected_total_reward_B_acc6.length - 2);
+
+
+_effective_reward_B_acc6 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" );
+//console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_B_acc6);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc6 = _effective_reward_B_acc6.toString();
+_effective_reward_B_acc6 = _effective_reward_B_acc6.substring(0, _effective_reward_B_acc6.length - 2);
+
+// acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc6, _expected_total_reward_B_acc6); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// --------------- ACCOUNT 6 -------------------  //
+
+
+// --------------- ACCOUNT 7 -------------------  //
+
+let _expected_reward_acc7_prop_1B = await get_expected_reward(test_account7, IPFS1B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_2B = await get_expected_reward(test_account7, IPFS2B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_3B = await get_expected_reward(test_account7, IPFS3B_WITH_FIRTDISEASEHASH);
+
+//let _expected_reward_acc7_prop_4B = await get_expected_reward(test_account7, IPFS4B_WITH_FIRTDISEASEHASH); Already done
+
+let _expected_reward_acc7_prop_5B = await get_expected_reward(test_account7, IPFS5B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_6B = await get_expected_reward(test_account7, IPFS6B_WITH_FIRTDISEASEHASH);
+
+let _expected_reward_acc7_prop_7B = await get_expected_reward(test_account7, IPFS7B_WITH_FIRTDISEASEHASH);
+
+
+_expected_total_reward_B_acc7 =  _expected_reward_acc7_prop_1B + _expected_reward_acc7_prop_2B + _expected_reward_acc7_prop_3B + _expected_reward_acc7_prop_5B + _expected_reward_acc7_prop_6B + _expected_reward_acc7_prop_7B;
+ console.log('_expected_total_reward_B_acc7 is', _expected_total_reward_B_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.toString();
+_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.substring(0, _expected_total_reward_B_acc7.length - 3);
+
+
+_effective_reward_B_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );
+//console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_B_acc7);
+// ---> because of significant figure issues we remove last 2 figures:
+_effective_reward_B_acc7 = _effective_reward_B_acc7.toString();
+_effective_reward_B_acc7 = _effective_reward_B_acc7.substring(0, _effective_reward_B_acc7.length - 3);
+
+// acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
+assert.equal( _effective_reward_B_acc7, _expected_total_reward_B_acc7); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
+
+// --------------- ACCOUNT 7 -------------------  //
+
+
+// RECHECKING PROPOSAL DATA AFTER CLAIMING
+console.log('RECHECKING OF PROPOSALS DATA STARTED');
+_proposal1B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1B.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+
+_proposal2B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2B.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+
+_proposal3B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3B.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+
+_proposal4B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4B.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+
+_proposal5B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5B.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
+
+_proposal6B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6B.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
+
+_proposal7B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7B.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
+
+console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
+
+
+assert.equal(web3.utils.fromWei(_proposal1B.forvotes.toString()), '660', 'Proposal1 should have 660 forvotes');
+assert.equal(web3.utils.fromWei(_proposal1B.againstvotes.toString()), '480', 'Proposal1 should have 480 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal2B.forvotes.toString()), '545', 'Proposal2 should have 545 forvotes');
+assert.equal(web3.utils.fromWei(_proposal2B.againstvotes.toString()), '1400', 'Proposal1 should have 1400 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal3B.forvotes.toString()), '600', 'Proposal3 should have 600 forvotes');
+assert.equal(web3.utils.fromWei(_proposal3B.againstvotes.toString()), '600', 'Proposal3 should have 500 against votes');
+
+assert.equal(web3.utils.fromWei(_proposal4B.forvotes.toString()), '170', 'Proposal4 should have 170 forvotes');
+assert.equal(web3.utils.fromWei(_proposal4B.againstvotes.toString()), '0', 'Proposal4 should have 0 against votes');
+
+console.log('----------------->   PROPOSALS FORVOTES AND AGAINTSVOTES CHECKED  <-----------------');
+
+assert.equal(_proposal1B.prestatus, '1', 'Proposal1 prestatus should be Accepted');
+assert.equal(_proposal2B.prestatus, '0', 'Proposal2 prestatus should be Rejected');
+assert.equal(_proposal3B.prestatus, '0', 'Proposal3 prestatus should be Rejected');
+assert.equal(_proposal4B.prestatus, '1', 'Proposal4 prestatus should be Accepted');
+assert.equal(_proposal5B.prestatus, '3', 'Proposal5 prestatus should be SingleVoter');
+assert.equal(_proposal6B.prestatus, '3', 'Proposal6 prestatus should be SingleVoter');
+assert.equal(_proposal7B.prestatus, '3', 'Proposal7 prestatus should be SingleVoter');
+
+console.log('----------------->   PROPOSALS PRESTATUS CHECKED  <-----------------');
+
+assert.equal(_proposal1B.status, '1', 'Proposal1 status should be Pending');
+assert.equal(_proposal2B.status, '0', 'Proposal2 status should be Pending');
+assert.equal(_proposal3B.status, '0', 'Proposal3 status should be Pending');
+assert.equal(_proposal4B.status, '1', 'Proposal4 status should be Pending');
+assert.equal(_proposal5B.status, '1', 'Proposal5 status should be Pending');
+assert.equal(_proposal6B.status, '1', 'Proposal6 status should be Pending');
+assert.equal(_proposal7B.status, '1', 'Proposal7 status should be Pending');
+
+console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1B.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2B.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3B.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4B.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5B.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6B.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7B.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
+
+assert.equal(web3.utils.fromWei(_proposal1B.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2B.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal3B.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4B.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal5B.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6B.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7B.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
+
+console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
+
+assert.equal(_proposal1B.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
+assert.equal(_proposal2B.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal3B.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
+assert.equal(_proposal4B.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5B.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6B.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7B.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+
+console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
+
+console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
+// RECHECKING PROPOSALDATA DONE
+
+// TESTS GET ETICA BACK:
+// Every account has made to stakes:
+await stakeclmidx(test_account, 1);
+await stakeclmidx(test_account, 1);
+
+await stakeclmidx(test_account2, 1);
+await stakeclmidx(test_account2, 1);
+
+await stakeclmidx(test_account3, 1);
+await stakeclmidx(test_account3, 1);
+
+await stakeclmidx(test_account4, 1);
+await stakeclmidx(test_account4, 1);
+
+await stakeclmidx(test_account5, 1);
+await stakeclmidx(test_account5, 1);
+
+await stakeclmidx(test_account6, 1);
+await stakeclmidx(test_account6, 1);
+
+await stakeclmidx(test_account7, 1);
+await stakeclmidx(test_account7, 1);
 
 
 

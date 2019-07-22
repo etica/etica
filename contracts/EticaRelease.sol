@@ -86,9 +86,8 @@ contract EticaToken is ERC20Interface{
     uint public decimals = 18;
 
     uint public supply;
-    // fixed inflation rate after etica supply has reached 21 Million
-    uint public inflationrate;
-    uint public  periodrewardtemp; // Amount of ETI issued per period during phase1
+    uint public inflationrate; // fixed inflation rate of phase2 (after Etica supply has reached 21 Million ETI)
+    uint public  periodrewardtemp; // Amount of ETI issued per period during phase1 (before Etica supply has reached 21 Million ETI)
 
     uint public PERIOD_CURATION_REWARD_RATIO = 20; // 20% of period reward will be used as curation reward
     uint public PERIOD_EDITOR_REWARD_RATIO = 80; // 80% of period reward will be used as editor reward
@@ -103,7 +102,7 @@ contract EticaToken is ERC20Interface{
 
     //allowed[0x1111....][0x22222...] = 100;
 
-    // Mining system state variables
+    // ----------- Mining system state variables ------------ //
     uint public _totalMiningSupply;
 
 
@@ -112,7 +111,7 @@ contract EticaToken is ERC20Interface{
 
 
 
-    uint public epochCount;//number of 'blocks' mined
+    uint public epochCount; //number of 'blocks' mined
 
 
     uint public _BLOCKS_PER_READJUSTMENT = 2016;
@@ -122,7 +121,7 @@ contract EticaToken is ERC20Interface{
     uint public  _MINIMUM_TARGET = 2**16;
 
 
-      //a big number is easier ; just find a solution that is smaller
+    //a big number is easier ; just find a solution that is smaller
     //uint public  _MAXIMUM_TARGET = 2**224;  bitcoin uses 224
     uint public  _MAXIMUM_TARGET = 2**242; // used for tests 243 much faster, 242 seems to be the limit where mining gets much harder
     // uint public  _MAXIMUM_TARGET = 2**234; // used for prod
@@ -145,7 +144,7 @@ contract EticaToken is ERC20Interface{
 
     uint public tokensMinted;
 
-    // Mining system state variables
+    // ----------- Mining system state variables ------------ //
 
 
 
@@ -160,22 +159,25 @@ contract EticaToken is ERC20Interface{
       balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
 
 
-      // PHASE 1 (before 21 Million ETI has been reached) -->
-      // 10 500 000 ETI to be issued as periodrewardtemp for ETICA reward system
-      // 10 500 000 ETI to be MINED
+      // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
+      
+      /* Phase 1:
+      --> 10 500 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
+      --> 10 500 000 ETI to be distributed trough MINING as block reward
+      */
 
-
-      // <--phase1--> periodrewardtemp:
-      // fixed Etica issued per period (7 days) during phase1 (before 21 Million ETI has been reached)
-      // The amount of reward will be twice of first rewards of phase 2
-      // Calculation of first rewards of phase 2:
-      // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
-      // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
+      // --- PUBLISHING REWARD --- //
+      // periodrewardtemp: Temporary fixed ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
+      // Calculation of periodrewardtemp:
+        // The amount of reward will be about twice as much as the first rewards of phase 2
+          // Calculation of first rewards of phase 2:
+            // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
+              // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
+                // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
       periodrewardtemp = 21087708494827787412014; // 21087,708494827787412014415585507 ETI per period (7 days) will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
+      // --- PUBLISHING REWARD --- //
 
-
-      // <--phase1--> mining:
+      // --- MINING REWARD --- //
       _totalMiningSupply = 10500000 * 10**uint(decimals);
 
       if(locked) revert();
@@ -185,9 +187,9 @@ contract EticaToken is ERC20Interface{
 
 
       // The amount of etica mined per 7 days will be twice of first rewards of phase 2
-      // Calculation of first rewards of phase 2:
+      // eSTIMATION of first rewards of phase 2:
       // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2)
+      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (wide ESTIMATION of first weeks reward of phase2)
       // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI per 7 days
       // 21087,708494827787412014415585507 ETI per 7 days = 20,920345728995820845252396414193‬ ETI per block (10 minutes)
       blockreward = 20920345728995820845;
@@ -197,20 +199,23 @@ contract EticaToken is ERC20Interface{
       latestDifficultyPeriodStarted = block.timestamp;
 
       _startNewMiningEpoch();
+      // --- MINING REWARD --- //
 
-      // PHASE 1 <--
+      // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
+      
 
-      // --> PHASE 2
+      // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
+
       // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656;
       // Thus yearly inflation target is 2.6180339887498948482045868343656%
       // inflationrate calculation:
-      // Each Period is 7 days, so we need to get a weekly inflationrate from the yearlyinflationrate target: 
+      // Each Period is 7 days, so we need to get a weekly inflationrate from the yearlyinflationrate target (1.026180339887498948482045868343656): 
       // 1.026180339887498948482045868343656 ^(1 / 52.1429) = 1,0004957512263080183722688891602;
       // 1,0004957512263080183722688891602 - 1 = 0,0004957512263080183722688891602;
       // Hence weekly inflationrate is 0,04957512263080183722688891602%
       inflationrate = 4957512263080183722688891602;  // (need to multiple by 10^(-31) to get 0,0004957512263080183722688891602;
 
-       // PHASE 2 <--
+       // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
 
 
        //The founder gets nothing! You must mine or earn the Etica ERC20 token
@@ -439,12 +444,12 @@ function () payable external {
 
 
 contract EticaRelease is EticaToken {
-  /* --------- PROD -------------
+  /* --------- PROD VALUES -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
 uint ETICA_TO_BOSOM_RATIO = 1; //
 uint DEFAULT_VOTING_TIME = 28 days; // default stake duration 28 days
-     --------- PROD ------------- */
+     --------- PROD VALUES ------------- */
 
 /* --------- TESTING VALUES -------------*/
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
@@ -460,7 +465,7 @@ uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amoun
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
-uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 % 60 would mean 60%
+uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
 
 struct Period{
     uint id;
@@ -468,8 +473,8 @@ struct Period{
     uint curation_sum; // used for proposals weight system
     uint editor_sum; // used for proposals weight system
     uint total_voters; // TOTAL nb of voters in this period
-    uint reward_for_curation; // total ETI used as Period reward for Curation
-    uint reward_for_editor; // total ETI used as Period reward for Editor
+    uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
+    uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
 }
 
   struct Stake{
@@ -478,10 +483,10 @@ struct Period{
       uint endTime;
   }
 
-  // -----------  PROPOSALS  ------------  //
+  // -----------  PROPOSALS STRUCTS  ------------  //
 
 
-// Stuct used only inside Proposals as Proposals' s Targets.
+// Stuct used only inside Proposals as Proposals' Targets.
 // The software has no independent Target structs with Target ids and details ...
   struct Target{
       string name;
@@ -490,7 +495,7 @@ struct Period{
       string freefield; // used by front end apps and communities to fit their needs and process
   }
 
-  // Stuct used only inside Proposals as Proposals' s Compounds.
+  // Stuct used only inside Proposals as Proposals' Compounds.
   // The software has no independent Compounds structs with Compounds ids and details ...
     struct Compound{
         string name;
@@ -547,9 +552,9 @@ struct Period{
       Compound[] compounds;
   }
 
-  // -----------  PROPOSALS  ------------  //
+  // -----------  PROPOSALS STRUCTS ------------  //
 
-  // -----------  VOTES  ----------------  //
+  // -----------  VOTES STRUCTS ----------------  //
   struct Vote{
     uint id; // not necessary, may remove this field
     bytes32 proposal_hash; // proposed_release_hash of proposal
@@ -560,7 +565,9 @@ struct Period{
     uint timestamp; // epoch time of the vote
     bool is_claimed; // keeps tarck of whether or not vote has been claimed to avoid double claim on same vote
   }
-    // -----------  VOTES  ----------------  //
+    // -----------  VOTES STRUCTS ----------------  //
+
+    // -----------  DISEASES STRUCTS ----------------  //
 
   struct Disease{
       bytes32 disease_hash;
@@ -568,6 +575,7 @@ struct Period{
       string description;
   }
 
+     // -----------  DISEASES STRUCTS ----------------  //
 
 enum ProposalStatus { Rejected, Accepted, Pending, Singlevoter }
 
@@ -584,7 +592,7 @@ uint public diseasesCounter;
 mapping(bytes32 => uint) public diseasesbyIds; // example:    [leiojej757575ero] => [0]  where leiojej757575ero is id of a Disease
 mapping(string => bytes32) private diseasesbyNames; // example:    ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is id of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
-// -----------  PROPOSALS  ------------  //
+// -----------  PROPOSALS MAPPINGS ------------  //
 mapping(bytes32 => Proposal) public proposals;
 uint public proposalsCounter;
 
@@ -592,11 +600,11 @@ mapping(bytes32 => ProposalData) public propsdatas;
 mapping(bytes32 => ProposalIpfs) public propsipfs;
 mapping(bytes32 => ProposalFreefield) public propsfreefields;
 mapping(bytes32 => ProposalTenor) private propstenors;
-// -----------  PROPOSALS  ------------  //
+// -----------  PROPOSALS MAPPINGS ------------  //
 
-// -----------  VOTES  ----------------  //
+// -----------  VOTES MAPPINGS ----------------  //
 mapping(bytes32 => mapping(address => Vote)) public votes;
-// -----------  VOTES  ----------------  //
+// -----------  VOTES MAPPINGS ----------------  //
 
 mapping(address => uint) public bosoms;
 mapping(address => mapping(uint => Stake)) public stakes;
@@ -610,6 +618,7 @@ mapping(address => uint) public stakesAmount; // keeps track of total amount of 
 // Blocked ETI amount, user has votes with this amount in process and can't retrieve this amount before the system knows if the user has to be slahed
 mapping(address => uint) public blockedeticas;
 
+// ---------- EVENTS ----------- //
 event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, uint periodrwdeditor);
 event NewStake(address indexed staker, uint amount);
@@ -617,10 +626,11 @@ event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
 event NewProposal(bytes32 proposed_release_hash, bytes32 diseasehash, string title, string description);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
+// ----------- EVENTS ---------- //
 
 
 
-// -------------  Reward system functions ---------------- //
+// -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
 
 function issue(uint _id) internal returns (bool success) {
   // we check whether there is at least one period
@@ -702,14 +712,11 @@ function newPeriod() public {
   emit CreatedPeriod(periodsCounter, _interval);
 }
 
+// -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
 
 
-
-// -------------  Reward system functions ---------------- //
-
-
-// ------- STAKING ---------- //
-// Stake etica in exchange for bosom
+// -------------------- STAKING ----------------------- //
+// eticatobosoms(): Stake etica in exchange for bosom
 function eticatobosoms(address _staker, uint _amount) public returns (bool success){
   require(msg.sender == _staker);
   require(_amount > 0); // even if transfer require amount > 0 I prefer checking for more security and very few more gas
@@ -728,7 +735,7 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
 
 // ----  Get bosoms and add Stake ------  //
 
-// Only contract must be able to call this function:
+//bosomget(): Get bosoms and add Stake. Only contract must be able to call this function:
 function bosomget (address _staker, uint _amount) internal {
 
 addStake(_staker, _amount);
@@ -785,7 +792,7 @@ function splitStake(address _staker, uint _amount, uint _startTime, uint _endTim
 
 
 // ----  Redeem a Stake ------  //
-
+//stakeclmidx(): redeem a stake by its index
 function stakeclmidx (uint _stakeidx) public {
 
   // we check that the stake exists
@@ -842,12 +849,10 @@ function stakescount(address _staker) public view returns (uint slength){
   return stakesCounters[_staker];
 }
 
-// ------- STAKING ---------- //
+// ----------------- STAKING ------------------ //
 
 
-
-
-
+// -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
 function createdisease(string memory _name, string memory _description) public {
 
 
@@ -1298,11 +1303,11 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
   }
 
+// -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
 
 
 
-
-
+// -------------  GETTER FUNCTIONS ---------------- //
 // get bosoms balance of user:
 function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
      return bosoms[tokenOwner];
@@ -1311,6 +1316,6 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
  function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
      return diseasesbyNames[_name];
  }
-
+// -------------  GETTER FUNCTIONS ---------------- //
 
 }

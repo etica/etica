@@ -411,10 +411,12 @@ assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.t
 // assert Period's curation_sum and editor_sum values are OK
 let _period1  = await EticaReleaseProtocolTestInstance.periods(_general_proposal1.period_id);
 console.log('_period1 is:', _period1);
-console.log('_period1.reward_curation is:', _period1.reward_for_curation);
-console.log('_period1.reward_editor is:', _period1.reward_for_editor);
+console.log('_period1.reward_curation is:', web3.utils.fromWei(_period1.reward_for_curation, "ether" ));
+console.log('_period1.reward_editor is:', web3.utils.fromWei(_period1.reward_for_editor, "ether" ));
+console.log('_period1.total_voters is:', _period1.total_voters);
 assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
 assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+assert.equal(_period1.total_voters.toString(), "28"); // Period nb votes
 
 // Should fail to clmpropbyhash too early: 
 await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
@@ -930,10 +932,10 @@ console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <------------
 console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 // RECHECKING PROPOSALDATA DONE
 
-// CHECKINKG PERIOD NB VOTERS
-let _period_B = await EticaReleaseProtocolTestPhase2Instance.periods(_proposal1B.period_id);
-assert.equal(_period_B.total_voters.toNumber(), 28, 'Period_B should have 28 voters');
-// CHECKING PERIOD NB VOTERS
+
+// RECHECKINKG PERIOD NB VOTERS
+assert.equal(_period1B.total_voters.toNumber(), 28, 'Period_1B should have 28 voters');
+// RECHECKING PERIOD NB VOTERS
 
 // TESTS GET ETICA BACK:
 // Every account has made to stakes:

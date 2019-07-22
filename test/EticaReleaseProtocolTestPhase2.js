@@ -409,7 +409,7 @@ let _general_proposal7 = await EticaReleaseProtocolTestPhase2Instance.proposals(
 console.log('_general_proposal1.period_id is', _general_proposal1.period_id.toString());
 console.log('_general_proposal7.period_id is', _general_proposal7.period_id.toString());
 
-assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString());
+assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString(), "Please relaunch the test, proposal1 and proposal7 need to be created in same Period. Will be more lucky next time !");
 
 
 // assert Period's curation_sum and editor_sum values are OK
@@ -417,8 +417,10 @@ let _period1  = await EticaReleaseProtocolTestPhase2Instance.periods(_general_pr
 console.log('_period1 is:', _period1);
 console.log('_period1.reward_curation is:', web3.utils.fromWei(_period1.reward_for_curation, "ether" ));
 console.log('_period1.reward_editor is:', web3.utils.fromWei(_period1.reward_for_editor, "ether" ));
+console.log('_period1.total_voters is:', _period1.total_voters);
 assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
 assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+assert.equal(_period1.total_voters.toString(), "28"); // Period nb votes
 
 // Should fail to clmpropbyhash too early: 
 await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
@@ -1207,7 +1209,7 @@ let _general_proposal7B = await EticaReleaseProtocolTestPhase2Instance.proposals
 console.log('_general_proposal1B.period_id is', _general_proposal1B.period_id.toString());
 console.log('_general_proposal7B.period_id is', _general_proposal7B.period_id.toString());
 
-assert(_general_proposal1B.period_id.toString() == _general_proposal7B.period_id.toString());
+assert(_general_proposal1B.period_id.toString() == _general_proposal7B.period_id.toString(), "Please relaunch the test, proposal1B and proposal7B need to be created in same Period. Will be more lucky next time !");
 
 
 // assert Period's curation_sum and editor_sum values are OK
@@ -1215,8 +1217,10 @@ let _period1B  = await EticaReleaseProtocolTestPhase2Instance.periods(_general_p
 console.log('_period1B is:', _period1B);
 console.log('_period1B.reward_curation is:', web3.utils.fromWei(_period1B.reward_for_curation, "ether" ));
 console.log('_period1B.reward_editor is:', web3.utils.fromWei(_period1B.reward_for_editor, "ether" ));
+console.log('_period1B.total_voters is:', _period1B.total_voters.toString());
 assert.equal(web3.utils.fromWei(_period1B.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
 assert.equal(web3.utils.fromWei(_period1B.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+assert.equal(_period1B.total_voters.toString(), "28"); // Period nb votes
 
 // Should fail to clmpropbyhash too early: 
 await should_fail_clmpropbyhash(test_account, IPFS1B_WITH_FIRTDISEASEHASH);
@@ -1731,10 +1735,9 @@ console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <------------
 console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 // RECHECKING PROPOSALDATA DONE
 
-// CHECKINKG PERIOD NB VOTERS
-let _period_B = await EticaReleaseProtocolTestPhase2Instance.periods(_proposal1B.period_id);
-assert.equal(_period_B.total_voters.toNumber(), 28, 'Period_B should have 28 voters');
-// CHECKING PERIOD NB VOTERS
+// RECHECKINKG PERIOD NB VOTERS
+assert.equal(_period1B.total_voters.toNumber(), 28, 'Period_1B should have 28 voters');
+// RECHECKING PERIOD NB VOTERS
 
 // TESTS GET ETICA BACK:
 // Every account has made to stakes:

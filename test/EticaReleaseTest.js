@@ -318,6 +318,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
         //console.log('NUMBER OF PERIODS IS:', periodsCounter);
         assert.equal(first_period.id.toNumber(), 1, 'First period should exists');
         assert.equal(periodsCounter, 1, 'First period should exists');
+        assert.equal(first_period.total_voters.toNumber(), 0, 'First period nb voters should be 0');
         console.log('................................  CAN CREATE A PERIOD  ....................... ');
         console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
         })
@@ -722,6 +723,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lastcuration_weight');
                     assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lasteditor_weight');
 
+                    let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
+                    assert.equal(first_period.total_voters.toNumber(), 1, 'First period should have 1 voter');
+
                     // ------------ WARNING
                     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
                     // ------------ WARNING
@@ -841,6 +845,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                           let test_account_2_bosomsafter = await EticaReleaseInstance.bosoms(test_account2.address);
 
                           assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');
+
+                          let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
+                          assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
 
 
                         // ------------ WARNING

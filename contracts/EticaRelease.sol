@@ -1022,6 +1022,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       // UPDATE PERIOD:
       period.curation_sum = period.curation_sum + PROPOSAL_DEFAULT_VOTE;
       period.editor_sum = period.editor_sum + PROPOSAL_DEFAULT_VOTE;
+      period.total_voters += 1;
 
  }
 
@@ -1142,6 +1143,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
              period.editor_sum = period.editor_sum - _old_proposal_editorweight;
          }
          }
+
+         period.total_voters += 1;
 
   }
 

@@ -930,6 +930,11 @@ console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <------------
 console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 // RECHECKING PROPOSALDATA DONE
 
+// CHECKINKG PERIOD NB VOTERS
+let _period_B = await EticaReleaseProtocolTestPhase2Instance.periods(_proposal1B.period_id);
+assert.equal(_period_B.total_voters.toNumber(), 28, 'Period_B should have 28 voters');
+// CHECKING PERIOD NB VOTERS
+
 // TESTS GET ETICA BACK:
 // Every account has made to stakes:
 await stakeclmidx(test_account, 1);

@@ -11,7 +11,7 @@ console.log('---------------> DECENTRALISED RESEARCH INDUSTRY <-----------------
 console.log('');
 
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
-var PERIOD_EDITOR_REWARD = 0; // initialize global variable PERIOD_EDITOR_REWARD
+var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
 var REWARD_INTERVAL = 0; // initialize global variable REWARD_INTERVAL
 
@@ -97,8 +97,8 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
     PERIOD_CURATION_REWARD_RATIO = await EticaReleaseProtocolTestPhase2Instance.PERIOD_CURATION_REWARD_RATIO();
     console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO);
 
-    PERIOD_EDITOR_REWARD = await EticaReleaseProtocolTestPhase2Instance.PERIOD_EDITOR_REWARD();
-    console.log('PERIOD_EDITOR_REWARD IS ', PERIOD_EDITOR_REWARD);
+    PERIOD_EDITOR_REWARD_RATIO = await EticaReleaseProtocolTestPhase2Instance.PERIOD_EDITOR_REWARD_RATIO();
+    console.log('PERIOD_EDITOR_REWARD_RATIO IS ', PERIOD_EDITOR_REWARD_RATIO);
 
     REWARD_INTERVAL = await EticaReleaseProtocolTestPhase2Instance.REWARD_INTERVAL();
     console.log('REWARD_INTERVAL IS ', REWARD_INTERVAL);
@@ -1730,6 +1730,11 @@ console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <------------
 
 console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 // RECHECKING PROPOSALDATA DONE
+
+// CHECKINKG PERIOD NB VOTERS
+let _period_B = await EticaReleaseProtocolTestPhase2Instance.periods(_proposal1B.period_id);
+assert.equal(_period_B.total_voters.toNumber(), 28, 'Period_B should have 28 voters');
+// CHECKING PERIOD NB VOTERS
 
 // TESTS GET ETICA BACK:
 // Every account has made to stakes:

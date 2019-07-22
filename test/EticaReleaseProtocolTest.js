@@ -10,8 +10,8 @@ console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------')
 console.log('---------------> DECENTRALISED RESEARCH INDUSTRY <------------------');
 console.log('');
 
-var PERIOD_CURATION_REWARD = 0; // initialize global variable PERIOD_CURATION_REWARD
-var PERIOD_EDITOR_REWARD = 0; // initialize global variable PERIOD_EDITOR_REWARD
+var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
+var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
 
 // test suite
@@ -93,11 +93,11 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
     DEFAULT_VOTING_TIME = await EticaReleaseProtocolTestInstance.DEFAULT_VOTING_TIME(); 
     console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
 
-    PERIOD_CURATION_REWARD = await EticaReleaseProtocolTestInstance.PERIOD_CURATION_REWARD();
-    console.log('PERIOD_CURATION_REWARD IS ', PERIOD_CURATION_REWARD);
+    PERIOD_CURATION_REWARD_RATIO = await EticaReleaseProtocolTestInstance.PERIOD_CURATION_REWARD_RATIO();
+    console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO);
 
-    PERIOD_EDITOR_REWARD = await EticaReleaseProtocolTestInstance.PERIOD_EDITOR_REWARD();
-    console.log('PERIOD_EDITOR_REWARD IS ', PERIOD_EDITOR_REWARD);
+    PERIOD_EDITOR_REWARD_RATIO = await EticaReleaseProtocolTestInstance.PERIOD_EDITOR_REWARD_RATIO();
+    console.log('PERIOD_EDITOR_REWARD_RATIO IS ', PERIOD_EDITOR_REWARD_RATIO);
 
   // TRANSFERS FROM MINER ACCOUNT:
   await transferto(test_account);

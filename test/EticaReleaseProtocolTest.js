@@ -934,7 +934,7 @@ console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 
 
 // RECHECKINKG PERIOD NB VOTERS
-assert.equal(_period1B.total_voters.toNumber(), 28, 'Period_1B should have 28 voters');
+assert.equal(_period1.total_voters.toNumber(), 28, 'Period_1 should have 28 voters');
 // RECHECKING PERIOD NB VOTERS
 
 // TESTS GET ETICA BACK:
@@ -960,7 +960,31 @@ await stakeclmidx(test_account6, 1);
 await stakeclmidx(test_account7, 1);
 await stakeclmidx(test_account7, 1);
 
+// ------------ Stake Consolidation ------------- //
 
+  // begin the stakes
+  await eticatobosom(test_account, '20');
+  await eticatobosom(test_account, '12');
+  await eticatobosom(test_account, '5');
+  await eticatobosom(test_account, '8');
+  await eticatobosom(test_account, '30');
+  await eticatobosom(test_account, '10');
+  await eticatobosom(test_account, '9');
+
+  let _nbstakes_before_test_account = await EticaReleaseProtocolTestInstance.stakesCounters(test_account.address);
+  console.log('_nbstakes_test_account before is', _nbstakes_before_test_account);
+  let stake1 = getstake(test_account, 1);
+  console.log('consolidatedstake1 is', stake1);
+
+  await stakescsldt(test_account, 500, 5, 7);
+
+  let _nbstakes_after_test_account = await EticaReleaseProtocolTestInstance.stakesCounters(test_account.address);
+  console.log('_nbstakes_test_account after is', _nbstakes_test_account);
+  let consolidatedstake1 = getstake(test_account, 1);
+  console.log('consolidatedstake1 is', consolidatedstake1);
+
+
+// ------------ Stake Consolidation -------------- //
 
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
@@ -1021,6 +1045,30 @@ await stakeclmidx(test_account7, 1);
       }).catch(async function(error){
         console.log('An error has occured !', error);
       })
+   }
+
+
+   async function stakescsldt(useraccount, endTime, min_limit, maxidx){
+
+    let bloctimestamp = await web3.eth.getBlock(web3.eth.blockNumber).timestamp;
+    console.log('bloctimestamp is ', bloctimestamp);
+    endTime = bloctimestamp + endTime;
+    min_limit = bloctimestamp;
+
+    console.log('---> Consolidating stakes. New endTime is', endTime, '.');
+    return EticaReleaseProtocolTestInstance.stakescsldt(useraccount.address,  endTime, min_limit, maxidx, {from: useraccount.address}).then(async function(receipt){
+    console.log('---> The consolidation of', endtime, ' endTime', 'was successfull');
+
+      }).catch(async function(error){
+        console.log('An error has occured !', error);
+      })
+   }
+
+   async function getstake(_from_account, _idx){
+
+    let _thestake = await EticaReleaseProtocolTestInstance.stakes(_from_account.address,_idx);
+    return _thestake;
+
    }
 
 

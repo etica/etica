@@ -776,6 +776,28 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 }
 
 
+function addConsolidation(address _staker, uint _amount, uint _endTime) internal returns (bool success) {
+
+    require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
+    stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
+
+
+    // increase variable that keeps track of total value of user's stakes
+    stakesAmount[_staker] = stakesAmount[_staker].add(_amount);
+
+    // store this stake in _staker's stakes with the index stakesCounters[_staker]
+    stakes[_staker][stakesCounters[_staker]] = Stake(
+      _amount, // stake amount
+      block.timestamp, // startTime
+      _endTime // endTime
+    );
+
+    emit NewStake(_staker, _amount);
+
+    return true;
+}
+
+
 
 function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
 
@@ -849,6 +871,36 @@ function _deletestake(address _staker,uint _index) internal {
 }
 
 // ----  Redeem a Stake ------  //
+
+// ----- Stakes consolidation  ----- //
+
+function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
+
+// limit for loop, maximum index:
+require(_maxidx <= 100);
+
+uint newAmount = 0;           
+
+for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
+      //if stake should end sooner it can be consolidated into a stake that end latter:
+      // Plus we check the stake endTime is above the minimum limit the user is willing to consolidate. For instance user doesn't want to consolidate a stake that is ending tomorrow
+      if(stakes[msg.sender][_stakeidx].endTime <= _endTime && stakes[msg.sender][_stakeidx].endTime >= _min_limit) {
+
+        newAmount += stakes[msg.sender][_stakeidx].amount;
+
+        _deletestake(msg.sender, _stakeidx);    
+
+      }
+}
+
+// creates the new Stake
+addConsolidation(msg.sender, newAmount, _endTime);
+
+}
+
+// ----- Stakes consolidation  ----- //
+
+
 
 
 function stakescount(address _staker) public view returns (uint slength){

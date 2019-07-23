@@ -865,23 +865,44 @@ function _deletestake(address _staker,uint _index) internal {
 
 // ----- Stakes consolidation  ----- //
 
-function stakescsldt (address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
+function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
 
-// limit for loop, maximum index:
-require(_maxidx <= 100);
+// _maxidx must be less or equal to nb of stakes and we set a limit for loop of 100:
+require(_maxidx <= 100 && _maxidx <= stakesCounters[msg.sender]);
 
-uint newAmount = 0;           
+uint newAmount = 0;
+
+uint _nbdeletes = 0;
+
+uint _currentidx = 1;
 
 for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
-      //if stake should end sooner it can be consolidated into a stake that end latter:
-      // Plus we check the stake endTime is above the minimum limit the user is willing to consolidate. For instance user doesn't want to consolidate a stake that is ending tomorrow
-      if(stakes[msg.sender][_stakeidx].endTime <= _endTime && stakes[msg.sender][_stakeidx].endTime >= _min_limit) {
+    // only consolidates if account nb of stakes >= 2 :
+    if(stakesCounters[msg.sender] >= 2){
 
-        newAmount += stakes[msg.sender][_stakeidx].amount;
+    if(_stakeidx <= stakesCounters[msg.sender]){
+       _currentidx = _stakeidx;
+    } 
+    // if _stakeidx > stakesCounters[msg.sender] it means the deletes function has pushed the next stakes at the begining:
+    else {
+      _currentidx = _stakeidx - _nbdeletes; //Notice: initial stakesCounters[msg.sender] = stakesCounters[msg.sender] + _nbdeletes. 
+      //So "_stackidx <= _maxidx <= initial stakesCounters[msg.sender]" ===> "_stakidx <= stakesCounters[msg.sender] + _nbdeletes" ===> "_stackidx - _nbdeletes <= stakesCounetrs[msg.sender]"
+      require(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
+    }
+      
+      //if stake should end sooner than _endTime it can be consolidated into a stake that end latter:
+      // Plus we check the stake.endTime is above the minimum limit the user is willing to consolidate. For instance user doesn't want to consolidate a stake that is ending tomorrow
+      if(stakes[msg.sender][_currentidx].endTime <= _endTime && stakes[msg.sender][_currentidx].endTime >= _min_limit) {
 
-        _deletestake(msg.sender, _stakeidx);    
+        newAmount += stakes[msg.sender][_currentidx].amount;
 
-      }
+        _deletestake(msg.sender, _currentidx);    
+
+        _nbdeletes += 1;
+
+      }  
+
+    }
 }
 
 // creates the new Stake

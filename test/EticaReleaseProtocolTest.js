@@ -963,6 +963,28 @@ await stakeclmidx(test_account7, 1);
 // ------------ Stake Consolidation ------------- //
 
   // ---------- FIRST ROW   --------------  //
+
+    /*
+  Stakes expected new Order trhough the stakescsldt function process:
+
+  First state: 1 | 2 | 3 | 4 | 5 | 6 | 7
+  
+  Second state: 7 | 2 | 3 | 4 | 5 | 6
+
+  Third state: 7 | 6 | 3 | 4 | 5
+
+  Fourth state: | 7 | 6 | 5 | 4
+
+  Fith state: 5 | 6
+
+  Sixth state: 6
+
+  Result and expected state:  6 | NewConsolidatedStake
+
+  */
+
+
+
   // begin the stakes of test.account
   await eticatobosom(test_account, '20');
   await eticatobosom(test_account, '12');
@@ -1081,11 +1103,22 @@ await stakeclmidx(test_account7, 1);
 
   // --- ONLY 2 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
 
+      // should fail to consolidate the stakes:
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 101); // never allow more than 100 for the loop
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 3); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 4); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 5); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 6); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 7); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 8); // test_account has only 2 stakes
+    
+      // -------  should FAIL TO CONSOLIDATE WITH OUT OF RANGE PARAMS --- //
+
        // ---------- FIRST ROW   --------------  //
 
   // ---------- SECOND ROW   --------------  //
   /*
-  Stakes expected Order trhough the stakescsldt function process
+  Stakes expected new Order trhough the stakescsldt function process:
 
   First state: 1 | 2 | 3 | 4 | 5 | 6 | 7
   
@@ -1156,6 +1189,7 @@ await stakeclmidx(test_account7, 1);
   _new_endTime = lastblock.timestamp + 500;
   _min_limit = lastblock.timestamp;
 
+  // consolidates the stakes:
   await stakescsldt(test_account3, _new_endTime, _min_limit, 2);
 
   let _nbstakes_after_test_account3 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account3.address);
@@ -1226,6 +1260,12 @@ await stakeclmidx(test_account7, 1);
   assert.equal(web3.utils.fromWei(consolidatedstake7_acc3.amount, "ether" ), 0, 'test_account3 consolidatedstake7_acc3 amount should be 0 ETI');
 
   // --- ONLY 5 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+
+    // should fail to consolidate the stakes:
+    await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 101); // never allow more than 100 for the loop
+    await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 7); // test_account3 has only 6 stakes
+  
+    // -------  should FAIL TO CONSOLIDATE WITH OUT OF RANGE PARAMS --- //
 
        // ---------- SECOND ROW   --------------  //
 
@@ -1305,6 +1345,14 @@ await stakeclmidx(test_account7, 1);
         console.log('An error has occured !', error);
       })
    }
+
+   async function should_fail_to_stakescsldt(useraccount, endTime, min_limit, maxidx){
+
+    console.log('---> Should fail to consolidate with out of range params:  --> endTime:', endTime, '--> min_limit is:: ', min_limit, '--> maxidx is:', maxidx);
+    await truffleAssert.fails(EticaReleaseProtocolTestInstance.stakescsldt(useraccount.address,  endTime, min_limit, maxidx, {from: useraccount.address}));
+    console.log('---> As expected failed to consolidate with out of range params: --> endTime:', endTime, '--> min_limit is:: ', min_limit, '--> maxidx is:', maxidx);
+   
+  }
 
    async function getstake(_from_account, _idx){
 

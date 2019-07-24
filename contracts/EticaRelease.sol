@@ -905,8 +905,10 @@ for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
     }
 }
 
+if (newAmount > 0){
 // creates the new Stake
 addConsolidation(msg.sender, newAmount, _endTime);
+}
 
 }
 

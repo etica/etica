@@ -865,7 +865,11 @@ function _deletestake(address _staker,uint _index) internal {
 
 // ----- Stakes consolidation  ----- //
 
+// this function is necessary to make sure stakesclm() call is possible even if user has made too many stakes 
 function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
+
+// security to avoid blocking ETI by front end app that could call function with too high _endTime:
+require(_endTime < block.timestamp + 730 days); // _endTime cannot be more than two years ahead  
 
 // _maxidx must be less or equal to nb of stakes and we set a limit for loop of 100:
 require(_maxidx <= 100 && _maxidx <= stakesCounters[msg.sender]);

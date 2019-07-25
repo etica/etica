@@ -1184,8 +1184,9 @@ await stakeclmidx(test_account7, 1);
   _new_endTime = lastblock.timestamp + 500;
   _min_limit = stake1_acc3.endTime; // all 7 Stakes should be concerned;
 
-
   await advanceminutes(20); // advances 20 seconds to pass at least one block so that NewConsolidatedStake has a endTime superior to 7 first stakes
+  
+  
   // consolidates the stakes:
   await stakescsldt(test_account3, _new_endTime, _min_limit, 2);
     /*
@@ -1316,7 +1317,7 @@ await stakeclmidx(test_account7, 1);
 
   sevnth state: 7 | 6 | 3 | 4 | 5
 
-  Result and expected state:  7 | 6 | 3 | 4 | 5 | 9 | NewConsolidatedStake2
+  Result and expected state:  7 | 6 | 3 | 4 | 5 | NewConsolidatedStake2
 
   */
 

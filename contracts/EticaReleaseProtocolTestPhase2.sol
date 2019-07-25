@@ -485,7 +485,7 @@ struct Period{
 
   struct Stake{
       uint amount;
-      uint startTime;
+      uint startTime; // CREATION Time of the struct, doesnt represent the actual time of stake START as stakescsldt() can create consolidated Stake with increased startTime
       uint endTime;
   }
 

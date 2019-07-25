@@ -976,6 +976,8 @@ await stakeclmidx(test_account7, 1);
 
   let _nbstakes_before_test_account = await EticaReleaseProtocolTestInstance.stakesCounters(test_account.address);
   console.log('_nbstakes_test_account before is', _nbstakes_before_test_account);
+  assert.equal(_nbstakes_before_test_account, 7, 'test_account should have 7 stakes');
+
   let stake1 = await getstake(test_account, 1);
   console.log('stake1 amount is', web3.utils.fromWei(stake1.amount, "ether" ));
   console.log('stake1 startTime is', stake1.startTime.toString());
@@ -1048,6 +1050,9 @@ await stakeclmidx(test_account7, 1);
 
   let _nbstakes_after_test_account = await EticaReleaseProtocolTestInstance.stakesCounters(test_account.address);
   console.log('_nbstakes_test_account after is', _nbstakes_after_test_account);
+  assert.equal(_nbstakes_after_test_account, 2, 'test_account should have 2 stakes');
+
+
   let consolidatedstake1 = await getstake(test_account, 1);
   //console.log('consolidatedstake1 is', consolidatedstake1);
   console.log('consolidatedstake1 amount is', web3.utils.fromWei(consolidatedstake1.amount, "ether" ));
@@ -1129,6 +1134,8 @@ await stakeclmidx(test_account7, 1);
 
   let _nbstakes_before_test_account3 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account3.address);
   console.log('_nbstakes_test_account3 before is', _nbstakes_before_test_account3);
+  assert.equal(_nbstakes_before_test_account3, 7, 'test_account should have 7 stakes');
+
   let stake1_acc3 = await getstake(test_account3, 1);
   console.log('stake1_acc3 amount is', web3.utils.fromWei(stake1_acc3.amount, "ether" ));
   console.log('stake1_acc3 startTime is', stake1_acc3.startTime.toString());
@@ -1196,6 +1203,8 @@ await stakeclmidx(test_account7, 1);
 
   let _nbstakes_after_test_account3 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account3.address);
   console.log('_nbstakes_test_account3 after is', _nbstakes_after_test_account3);
+  assert.equal(_nbstakes_after_test_account3, 6, 'test_account3 should have 6 stakes');
+
   let consolidatedstake1_acc3 = await getstake(test_account3, 1);
   //console.log('consolidatedstake1_acc3 is', consolidatedstake1_acc3);
   console.log('consolidatedstake1_acc3 amount is', web3.utils.fromWei(consolidatedstake1_acc3.amount, "ether" ));
@@ -1317,6 +1326,9 @@ await stakeclmidx(test_account7, 1);
 
  let _nbstakes_after_test_account3_2 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account3.address);
  console.log('_nbstakes_test_account3_2 after is', _nbstakes_after_test_account3_2);
+ assert.equal(_nbstakes_after_test_account3_2, 6, 'test_account3 should have 6 stakes');
+
+
  let consolidatedstake1_acc3_2 = await getstake(test_account3, 1);
  //console.log('consolidatedstake1_acc3_2 is', consolidatedstake1_acc3_2);
  console.log('consolidatedstake1_acc3_2 amount is', web3.utils.fromWei(consolidatedstake1_acc3_2.amount, "ether" ));

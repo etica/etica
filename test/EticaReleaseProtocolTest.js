@@ -1397,6 +1397,18 @@ await stakeclmidx(test_account7, 1);
    assert.equal(web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ), 0, 'test_account3 consolidatedstake7_acc3_2 amount should be 0 ETI');
  // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
 
+// -- TEST 2 YEAR LIMIT OF _endTime -- //
+     // should fail to consolidate the stakes:
+     await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 8); // test_account3 has only 7 stakes
+     let _more_than_2_years = lastblock.timestamp + 63075000; // 31536000 seconds = 1 year ==> 31536000 * 2 = 63 072 000 = 2 years
+     await should_fail_to_stakescsldt(test_account3, _more_than_2_years, _min_limit, 6); // cannot consolidate with _endTime over 2 years
+     // should fail to consolidate the stakes
+
+      // consolidating just under 2 years should work:
+      let _just_under_2_years = _more_than_2_years - 4000; // 31536000 seconds = 2 years
+      await stakescsldt(test_account3, _just_under_2_years, _min_limit, 6);
+// -- TEST 2 YEAR LIMIT OF _endTime -- //      
+
        // ---------- SECOND ROW   --------------  //
 
 

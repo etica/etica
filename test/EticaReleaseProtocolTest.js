@@ -1175,7 +1175,7 @@ await stakeclmidx(test_account7, 1);
   //console.log('lastest block is ', lastblock);
   console.log('lastblock.timestamp is ', lastblock.timestamp);
   _new_endTime = lastblock.timestamp + 500;
-  _min_limit = lastblock.timestamp;
+  _min_limit = stake1_acc3.endTime; // all 7 Stakes should be concerned;
 
 
   await advanceminutes(20); // advances 20 seconds to pass at least one block so that NewConsolidatedStake has a endTime superior to 7 first stakes
@@ -1269,28 +1269,24 @@ await stakeclmidx(test_account7, 1);
     // should fail to consolidate the stakes
 
 
-  lastblock = await web3.eth.getBlock("latest");
-  //console.log('lastest block is ', lastblock);
-  console.log('lastblock.timestamp is ', lastblock.timestamp);
-
-  _new_endTime = lastblock.timestamp + 500;
-  _min_limit = lastblock.timestamp;
+    lastblock = await web3.eth.getBlock("latest");
+    //console.log('lastest block is ', lastblock);
+    console.log('lastblock.timestamp is ', lastblock.timestamp);
+  
+    _min_limit = _new_endTime; // only NewConsolidatedStake and Stake9 should be concerned
+    _new_endTime = lastblock.timestamp + 500;
 
   
-    // make a new stake:
+    // creates the nineth stake:
     await eticatobosom(test_account3, '2');
+    let stake9_acc3 = await getstake(test_account3, 7);
+    //console.log('stake9_acc3 is', stake7_acc3);
 
 
     // should fail to consolidate the stakes:
     await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 8); // test_account3 has only 7 stakes
     // should fail to consolidate the stakes
-
-    lastblock = await web3.eth.getBlock("latest");
-    //console.log('lastest block is ', lastblock);
-    console.log('lastblock.timestamp is ', lastblock.timestamp);
-  
-    _new_endTime = lastblock.timestamp + 500;
-    _min_limit = lastblock.timestamp;    
+    
 
  // consolidates the stakes:
  await stakescsldt(test_account3, _new_endTime, _min_limit, 7);
@@ -1311,9 +1307,13 @@ await stakeclmidx(test_account7, 1);
 
   sevnth state: 7 | 6 | 3 | 4 | 5
 
-  Result and expected state:  7 | 6 | 3 | 4 | 5 | NewConsolidatedStake2
+  Result and expected state:  7 | 6 | 3 | 4 | 5 | 9 | NewConsolidatedStake2
 
   */
+
+ console.log('stake7_acc3 amount is', web3.utils.fromWei(stake7_acc3.amount, "ether" ));
+ console.log('stake7_acc3 startTime is', stake7_acc3.startTime.toString());
+ console.log('stake7_acc3 endTime is', stake7_acc3.endTime.toString());
 
  let _nbstakes_after_test_account3_2 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account3.address);
  console.log('_nbstakes_test_account3_2 after is', _nbstakes_after_test_account3_2);
@@ -1363,25 +1363,25 @@ await stakeclmidx(test_account7, 1);
  assert.equal(consolidatedstake5_acc3_2.endTime.toString(), stake5_acc3.endTime.toString(), 'test_account3 consolidatedstake5_acc3_2 endTime should equal stake5_acc3 endTime');
  assert.equal(consolidatedstake5_acc3_2.startTime.toString(), stake5_acc3.startTime.toString(), 'test_account3 consolidatedstake5_acc3_2 startTime should equal stake5_acc3 startTime');
 
- // The Newly created and Consolidated Stake:
- let consolidatedstake6_acc3_2 = await getstake(test_account3, 6);
- //console.log('consolidatedstake6_acc3_2 is', consolidatedstake6_acc3_2);
- console.log('consolidatedstake6_acc3_2 amount is', web3.utils.fromWei(consolidatedstake6_acc3_2.amount, "ether" ));
- console.log('consolidatedstake6_acc3_2 startTime is', consolidatedstake6_acc3_2.startTime.toString());
- console.log('consolidatedstake6_acc3_2 endTime is', consolidatedstake6_acc3_2.endTime.toString());
- assert.equal(web3.utils.fromWei(consolidatedstake6_acc3_2.amount, "ether" ), 7, 'test_account3 consolidatedstake6_acc3_2 amount should be 7 ETI');
- //assert.equal(consolidatedstake6_acc3_2.endTime.toNumber(), _new_endTime, 'test_account3 consolidatedstake6_acc3_2 endTime should equal _new_endTime');
- //assert(consolidatedstake6_acc3_2.startTime.toNumber() >= lastblock.timestamp, 'test_account3 consolidatedstake6_acc3_2 starTime should be greater than or equal to latest block timestamp');
 
-
- // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
- let consolidatedstake7_acc3_2 = await getstake(test_account3, 7);
- //console.log('consolidatedstake7_acc3_2 is', consolidatedstake7_acc3_2);
- console.log('consolidatedstake7_acc3_2 amount is', web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ));
- console.log('consolidatedstake7_acc3_2 startTime is', consolidatedstake7_acc3_2.startTime.toString());
- console.log('consolidatedstake7_acc3_2 endTime is', consolidatedstake7_acc3_2.endTime.toString());
- assert.equal(web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ), 0, 'test_account3 consolidatedstake7_acc3_2 amount should be 0 ETI');
-
+   // The Newly created and Consolidated Stake:
+   let consolidatedstake6_acc3_2 = await getstake(test_account3, 6);
+   //console.log('consolidatedstake6_acc3 is', consolidatedstake6_acc3);
+   console.log('consolidatedstake6_acc3_2 amount is', web3.utils.fromWei(consolidatedstake6_acc3_2.amount, "ether" ));
+   console.log('consolidatedstake6_acc3_2 startTime is', consolidatedstake6_acc3_2.startTime.toString());
+   console.log('consolidatedstake6_acc3_2 endTime is', consolidatedstake6_acc3_2.endTime.toString());
+   assert.equal(web3.utils.fromWei(consolidatedstake6_acc3_2.amount, "ether" ), 9, 'test_account3 consolidatedstake6_acc3_2 amount should be 9 ETI');
+   assert.equal(consolidatedstake6_acc3_2.endTime.toNumber(), _new_endTime, 'test_account3 consolidatedstake6_acc3_2 endTime should equal _new_endTime');
+   assert(consolidatedstake6_acc3_2.startTime.toNumber() >= lastblock.timestamp, 'test_account3 consolidatedstake6_acc3_2 starTime should be greater than or equal to latest block timestamp');
+ 
+ 
+   // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+   let consolidatedstake7_acc3_2 = await getstake(test_account3, 7);
+   //console.log('consolidatedstake7_acc3_2 is', consolidatedstake7_acc3_2);
+   console.log('consolidatedstake7_acc3_2 amount is', web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ));
+   console.log('consolidatedstake7_acc3_2 startTime is', consolidatedstake7_acc3_2.startTime.toString());
+   console.log('consolidatedstake7_acc3_2 endTime is', consolidatedstake7_acc3_2.endTime.toString());
+   assert.equal(web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ), 0, 'test_account3 consolidatedstake7_acc3_2 amount should be 0 ETI');
  // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
 
        // ---------- SECOND ROW   --------------  //

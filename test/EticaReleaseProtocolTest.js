@@ -266,6 +266,7 @@ await votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
 // should fail to vote with incorrect amount for a proposal:
 await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
 await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
+await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0');
 
 // should fail for usaers to vote twice on same Proposal:
 await should_fail_votebyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');

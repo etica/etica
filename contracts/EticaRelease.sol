@@ -159,7 +159,7 @@ contract EticaToken is ERC20Interface{
       balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
 
 
-      // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
+    // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
       /* Phase 1:
       --> 10 500 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
@@ -167,13 +167,13 @@ contract EticaToken is ERC20Interface{
       */
 
       // --- PUBLISHING REWARD --- //
-      // periodrewardtemp: Temporary fixed ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
-      // Calculation of periodrewardtemp:
-        // The amount of reward will be about twice as much as the first rewards of phase 2
-          // Calculation of first rewards of phase 2:
-            // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-              // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
-                // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
+       // periodrewardtemp: Temporary fixed ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
+         // Calculation of periodrewardtemp:
+           // The amount of reward will be about twice as much as the first rewards of phase 2
+           // Calculation of first rewards of phase 2:
+           // 21 000 000 * 0.026180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
+           // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
+           // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
       periodrewardtemp = 21087708494827787412014; // 21087,708494827787412014415585507 ETI per period (7 days) will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
       // --- PUBLISHING REWARD --- //
 
@@ -188,7 +188,7 @@ contract EticaToken is ERC20Interface{
 
       // The amount of etica mined per 7 days will be twice of first rewards of phase 2
       // eSTIMATION of first rewards of phase 2:
-      // 21 000 000 * 0.26180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
+      // 21 000 000 * 0.026180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
       // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (wide ESTIMATION of first weeks reward of phase2)
       // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI per 7 days
       // 21087,708494827787412014415585507 ETI per 7 days = 20,920345728995820845252396414193‬ ETI per block (10 minutes)
@@ -201,10 +201,10 @@ contract EticaToken is ERC20Interface{
       _startNewMiningEpoch();
       // --- MINING REWARD --- //
 
-      // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
+    // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
 
-      // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
+    // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
 
       // Golden number power 2: 1,6180339887498948482045868343656 * 1,6180339887498948482045868343656 = 2.6180339887498948482045868343656;
       // Thus yearly inflation target is 2.6180339887498948482045868343656%
@@ -215,7 +215,7 @@ contract EticaToken is ERC20Interface{
       // Hence weekly inflationrate is 0,04957512263080183722688891602%
       inflationrate = 4957512263080183722688891602;  // (need to multiple by 10^(-31) to get 0,0004957512263080183722688891602;
 
-       // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
+    // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
 
 
        //The founder gets nothing! You must mine or earn the Etica ERC20 token
@@ -447,15 +447,15 @@ contract EticaRelease is EticaToken {
   /* --------- PROD VALUES -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
-uint ETICA_TO_BOSOM_RATIO = 1; //
-uint DEFAULT_VOTING_TIME = 28 days; // default stake duration 28 days
+uint ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
+uint DEFAULT_VOTING_TIME = 28 days; // default voting duration 28 days
      --------- PROD VALUES ------------- */
 
 /* --------- TESTING VALUES -------------*/
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
-uint public ETICA_TO_BOSOM_RATIO = 1; //
-uint public DEFAULT_VOTING_TIME = 4 minutes; // default stake duration 28 days
+uint public ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
+uint public DEFAULT_VOTING_TIME = 4 minutes; // default voting duration 28 days
 /* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -469,18 +469,18 @@ struct Period{
     uint interval;
     uint curation_sum; // used for proposals weight system
     uint editor_sum; // used for proposals weight system
-    uint total_voters; // TOTAL nb of voters in this period
+    uint total_voters; // Total nb of voters in this period
     uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
     uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
 }
 
   struct Stake{
       uint amount;
-      uint startTime; // CREATION Time of the struct, doesnt represent the actual time of stake START as stakescsldt() can create consolidated Stake with increased startTime
-      uint endTime;
+      uint startTime; // CREATION Time of the struct, doesnt represent the actual time when the stake STARTED as stakescsldt() can create consolidated Stakes with increased startTime
+      uint endTime; // Time when the stake will be claimable
   }
 
-  // -----------  PROPOSALS STRUCTS  ------------  //
+// -----------  PROPOSALS STRUCTS  ------------  //
 
 
 // Stuct used only inside Proposals as Proposals' Targets.
@@ -508,7 +508,7 @@ struct Period{
       bytes32 proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
       bytes32 disease_id;
       uint period_id;
-      address proposer; // account address of the proposer
+      address proposer; // address of the proposer
       string title; // Title of the Proposal
       string description; // Description of the Proposal
   }
@@ -518,16 +518,16 @@ struct Period{
 
       uint starttime; // epoch time of the proposal
       uint endtime;  // voting limite
-      uint finalized_time; // when first voteclm() was called
-      ProposalStatus status; // will be initialized with value ProposalStatus.Pending
-      ProposalStatus prestatus; // will be initialzed with value ProposalStatus.Pending
+      uint finalized_time; // when first clmpropbyhash() was called
+      ProposalStatus status; // Only updates once, when the voting process is over
+      ProposalStatus prestatus; // Updates During voting process
       bool istie;  // will be initialized with value 0. if prop is tie it won't slash nor reward participants
       uint nbvoters;
-      uint slashingratio; // will be initialized with value 0. solidity does not support float type. So will emulate float type by using uint
+      uint slashingratio; // solidity does not support float type. So will emulate float type by using uint
       uint forvotes;
       uint againstvotes;
-      uint lastcuration_weight; // will be initialized with value 0.
-      uint lasteditor_weight; // will be initialized with value 0.
+      uint lastcuration_weight; // period curation weight of proposal
+      uint lasteditor_weight; // period editor weight of proposal
   }
 
   struct ProposalIpfs{
@@ -560,7 +560,7 @@ struct Period{
     uint amount;
     address voter; // address of the voter
     uint timestamp; // epoch time of the vote
-    bool is_claimed; // keeps tarck of whether or not vote has been claimed to avoid double claim on same vote
+    bool is_claimed; // keeps track of whether or not vote has been claimed to avoid double claim on same vote
   }
     // -----------  VOTES STRUCTS ----------------  //
 
@@ -586,8 +586,8 @@ uint public IntervalsPeriodsCounter;
 
 mapping(uint => Disease) public diseases; // keeps track of which intervals have already a period
 uint public diseasesCounter;
-mapping(bytes32 => uint) public diseasesbyIds; // example:    [leiojej757575ero] => [0]  where leiojej757575ero is id of a Disease
-mapping(string => bytes32) private diseasesbyNames; // example:    ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is id of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
+mapping(bytes32 => uint) public diseasesbyIds; // get disease.index by giving its disease_hash: example: [leiojej757575ero] => [0]  where leiojej757575ero is disease_hash of a Disease
+mapping(string => bytes32) private diseasesbyNames; // get disease.disease_hash by giving its name: example: ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is disease_hash of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
 // -----------  PROPOSALS MAPPINGS ------------  //
 mapping(bytes32 => Proposal) public proposals;
@@ -608,9 +608,7 @@ mapping(address => mapping(uint => Stake)) public stakes;
 mapping(address => uint) public stakesCounters; // keeps track of how many stakes for each user
 mapping(address => uint) public stakesAmount; // keeps track of total amount of stakes for each user
 // stakes ----> slashing function will need to loop trough stakes. Can create issues for claiming votes:
-// will create a function to gather stakes when user has to much stakes.
-// The function will take a completion_time as parameter and will loop trough 50 indexes and will put all stakes with
-// lower completion_time into a  single new stake with parameter completion_time
+// The function stakescsldt() has been created to gather stakes when user has to much stakes.
 
 // Blocked ETI amount, user has votes with this amount in process and can't retrieve this amount before the system knows if the user has to be slahed
 mapping(address => uint) public blockedeticas;
@@ -694,7 +692,7 @@ function newPeriod() public {
     _interval,
     0x0, //_curation_sum
     0x0, //_editor_sum
-    0x0, //_total_voters; // TOTAL nb of voters in this period
+    0x0, //_total_voters;
     0x0, //_reward_for_curation
     0x0 //_reward_for_editor
   );
@@ -732,7 +730,7 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
 
 // ----  Get bosoms and add Stake ------  //
 
-//bosomget(): Get bosoms and add Stake. Only contract must be able to call this function:
+//bosomget(): Get bosoms and add Stake. Only contract is able to call this function:
 function bosomget (address _staker, uint _amount) internal {
 
 addStake(_staker, _amount);
@@ -745,7 +743,7 @@ bosoms[_staker] = bosoms[_staker].add(newBosoms);
 
 function addStake(address _staker, uint _amount) internal returns (bool success) {
 
-    require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
+    require(_amount > 0);
     stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
 
@@ -768,7 +766,7 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 
 function addConsolidation(address _staker, uint _amount, uint _endTime) internal returns (bool success) {
 
-    require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
+    require(_amount > 0);
     stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
 
@@ -791,7 +789,7 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
 
 function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
 
-    require(_amount > 0); // may not be necessary as _amount is uint but I let it for better security
+    require(_amount > 0);
     stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
 
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
@@ -822,7 +820,7 @@ function stakeclmidx (uint _stakeidx) public {
   // The stake must be over
   require(block.timestamp > _stake.endTime);
 
-  // the amount to be unstake must be less or equal to the amount of ETI currently marked as blocked in blockedeticas as they need to go through the clmpropbyhash before being unstaked !
+  // the amount to be unstaked must be less or equal to the amount of ETI currently marked as blocked in blockedeticas as they need to go through the clmpropbyhash before being unstaked !
   require(_stake.amount <= stakesAmount[msg.sender] - blockedeticas[msg.sender]);
 
   // transfer back ETI from contract to staker:
@@ -868,7 +866,7 @@ function _deletestake(address _staker,uint _index) internal {
 // this function is necessary to make sure stakesclm() call is possible even if user has made too many stakes 
 function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
 
-// security to avoid blocking ETI by front end app that could call function with too high _endTime:
+// security to avoid blocking ETI by front end apps that could call function with too high _endTime:
 require(_endTime < block.timestamp + 730 days); // _endTime cannot be more than two years ahead  
 
 // _maxidx must be less or equal to nb of stakes and we set a limit for loop of 100:
@@ -887,10 +885,10 @@ for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
     if(_stakeidx <= stakesCounters[msg.sender]){
        _currentidx = _stakeidx;
     } 
-    // if _stakeidx > stakesCounters[msg.sender] it means the deletes function has pushed the next stakes at the begining:
     else {
+      // if _stakeidx > stakesCounters[msg.sender] it means the _deletestake() function has pushed the next stakes at the begining:
       _currentidx = _stakeidx - _nbdeletes; //Notice: initial stakesCounters[msg.sender] = stakesCounters[msg.sender] + _nbdeletes. 
-      //So "_stackidx <= _maxidx <= initial stakesCounters[msg.sender]" ===> "_stakidx <= stakesCounters[msg.sender] + _nbdeletes" ===> "_stackidx - _nbdeletes <= stakesCounetrs[msg.sender]"
+      //So "_stackidx <= _maxidx <= initial stakesCounters[msg.sender]" ===> "_stakidx <= stakesCounters[msg.sender] + _nbdeletes" ===> "_stackidx - _nbdeletes <= stakesCounters[msg.sender]"
       require(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
     }
       
@@ -945,10 +943,10 @@ function createdisease(string memory _name, string memory _description) public {
   diseasesCounter = diseasesCounter + 1; // notice that first disease will have the index of 1 thus not 0 !
 
   //check: if the disease is new we continue, otherwise we exit
-   if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will nott have index of 0 thus should pass this check
+   if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will not have index of 0 thus should pass this check
 
 
-   // store this stake in _staker's stakes with the index stakesCounters[_staker]
+   // store the Disease
    diseases[diseasesCounter] = Disease(
      _diseasehash,
      _name,
@@ -978,8 +976,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
      proposalsCounter = proposalsCounter + 1; // notice that first proposal will have the index of 1 thus not 0 !
 
 
-     // store this disease in diseases mapping.
-     // ------- Warning ----
      // Check that proposal does not already exist
      // only allow one proposal for each {raw_release_hash,  _diseasehash} combinasion
       bytes32 existing_proposal = proposals[_proposed_release_hash].proposed_release_hash;
@@ -993,7 +989,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       }
 
      Proposal storage proposal = proposals[_proposed_release_hash];
-     // ------- Warning ----
 
        proposal.id = proposalsCounter;
        proposal.disease_id = _diseasehash; // _diseasehash has already been checked to equal diseases[diseasesbyIds[_diseasehash]].disease_hash
@@ -1013,9 +1008,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
        //  Proposal Data:
        ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
-       //starttime,
-       //endtime,
-       //finalized_time,
        proposaldata.status = ProposalStatus.Pending;
        proposaldata.istie = false;
        proposaldata.prestatus = ProposalStatus.Pending;
@@ -1044,7 +1036,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
  function defaultvote(bytes32 _proposed_release_hash) internal {
 
-   require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // may not be necessary as wil be handled by safemath sub function: bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
+   require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
 
    //check if the proposal exists and that we get the right proposal:
    Proposal storage proposal = proposals[_proposed_release_hash];
@@ -1106,6 +1098,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
  function votebyhash(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
 
+require(_amount > 0);   
+
 //check if the proposal exists and that we get the right proposal:
 Proposal storage proposal = proposals[_proposed_release_hash];
 require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
@@ -1126,7 +1120,7 @@ uint _old_proposal_curationweight = proposaldata.lastcuration_weight;
 uint _old_proposal_editorweight = proposaldata.lasteditor_weight;
 
  // Consume bosom:
- require(bosoms[msg.sender] >= _amount); // may not be necessary as handled by safemath sub function
+ require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
  bosoms[msg.sender] = bosoms[msg.sender].sub(_amount);
 
 
@@ -1168,9 +1162,9 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      bool _isapproved = false;
      bool _istie = false;
      uint totalVotes = proposaldata.forvotes + proposaldata.againstvotes;
-     uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
-     uint _forvotesdiff_numerator = (proposaldata.forvotes - proposaldata.againstvotes) * 100; // ((newproposal_forvotes - proposaldata.againstvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
-     uint _againstvotesdiff_numerator = (proposaldata.againstvotes - proposaldata.forvotes) * 100; // ((proposaldata.againstvotes - newproposal_forvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to stare it as uint
+     uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
+     uint _forvotesdiff_numerator = (proposaldata.forvotes - proposaldata.againstvotes) * 100; // ((newproposal_forvotes - proposaldata.againstvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
+     uint _againstvotesdiff_numerator = (proposaldata.againstvotes - proposaldata.forvotes) * 100; // ((proposaldata.againstvotes - newproposal_forvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
 
      if ((_forvotes_numerator / totalVotes) >= TIER_ONE_THRESHOLD){
     _isapproved = true;
@@ -1188,7 +1182,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
     proposaldata.slashingratio = _againstvotesdiff_numerator / totalVotes;
     }
 
-    // Make sure no weird bugs cause the slash reward to under/overflow
+    // Make sure the slashing reward ratio is within expected range:
      require(proposaldata.slashingratio >=0 && proposaldata.slashingratio <= 100);
 
 
@@ -1233,7 +1227,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
 
-   // verify voting still in progress
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
    // Verify voting period is over
    require( block.timestamp > proposaldata.endtime);
@@ -1259,7 +1252,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
    uint _current_interval = uint((block.timestamp).div(REWARD_INTERVAL));
 
-   // Check if Period is ready for claims or if needs to wait more
+   // Check if Period is ready for claims or if it needs to wait more
    uint _min_intervals = uint((DEFAULT_VOTING_TIME).div(REWARD_INTERVAL) + 1); // Minimum intervals before claimable
    require(_current_interval >= period.interval + _min_intervals); // Period not ready for claims yet. Need to wait more !
 
@@ -1283,9 +1276,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
   // only slash and reward if prop is not tie:
   if (!proposaldata.istie) {
-
-
-   // voter has voted wrongly and needs to be slashed
    
    // convert boolean to enum format for making comparasion with proposaldata.status possible:
    ProposalStatus voterChoice = ProposalStatus.Rejected;
@@ -1294,11 +1284,9 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    }
 
    if(voterChoice != proposaldata.status) {
-     // slash loosers
+     // slash loosers: voter has voted wrongly and needs to be slashed
      uint _slashRemaining = vote.amount;
      uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio / 100);
-
-     // get the stakes
 
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:
@@ -1311,8 +1299,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
        if(_slashRemaining == 0){
          break;
        }
-
-
       }
       else {
         // The slash amount does not fill a full stake, so the stake needs to be split
@@ -1330,21 +1316,9 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
         }
 
         break;
-
-
-
-
       }
-
-
-
-
-
     }
-
     // the slash is over
-     
-
    }
    else {
 
@@ -1369,15 +1343,10 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
     emit Transfer(address(this), msg.sender, _reward_amount);
     emit VoteClaimed(msg.sender, _reward_amount, _proposed_release_hash);
-    //transferFrom(address(this), msg.sender, _reward_amount);
-
-
    }
 
-
-  }   // end bracket if proposaldata.istie not true
-
-
+  }   // end bracket if (proposaldata.istie not true)
+  
   }
 
 // -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //

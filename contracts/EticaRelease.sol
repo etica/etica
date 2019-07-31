@@ -647,7 +647,7 @@ return true;
 // --- WARNING this function should be internal, will be called by propose proposal function and by constructor for first call
 // let public for testing only
 // create a period
-function newPeriod() public {
+function newPeriod() internal {
 
   uint _interval = uint((block.timestamp).div(REWARD_INTERVAL));
 

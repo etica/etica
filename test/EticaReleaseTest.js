@@ -293,7 +293,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
     });
 
-    // test Period creation and issuance
+  /*
+    // test Period creation and issuance (need to make NewPeriod() function public for this test)
       it("can create new Period and issue Period Reward's ETI:", async function () {
         console.log('------------------------------------ Starting test ---------------------------');
         console.log('................................  CAN CREATE A PERIOD ? .......................');
@@ -324,6 +325,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
         })
       });
 
+      */
+
 
       it("can get stakes length", async function () {
         return EticaRelease.deployed().then(function(instance){
@@ -350,8 +353,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
       });
 
 
-
-      // test Period multiple issuance should fail
+    /*
+      // test Period multiple issuance should fail (need to make NewPeriod() function public for this test)
         it("cannot create 2 Periods with same Interval :", async function () {
           console.log('------------------------------- Starting test ---------------------------');
           console.log('.......................... Cannot CREATE 2 PERIODS with same Interval ? ..................... ');
@@ -382,6 +385,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             })
 
         });
+
+      */  
 
         // test Stake claiming too soon should fail
           it("cannot claim stake too early :", async function () {

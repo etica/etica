@@ -465,7 +465,7 @@ uint public DEFAULT_VOTING_TIME = 4 minutes; // default voting duration 28 days
 /* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
-uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to pay for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
+uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to default vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
 uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
@@ -559,7 +559,6 @@ struct Period{
 
   // -----------  VOTES STRUCTS ----------------  //
   struct Vote{
-    uint id; // not necessary, may remove this field
     bytes32 proposal_hash; // proposed_release_hash of proposal
     bool approve;
     bool is_editor;

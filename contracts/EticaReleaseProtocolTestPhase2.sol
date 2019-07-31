@@ -602,7 +602,7 @@ event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, ui
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
-event NewProposal(bytes32 proposed_release_hash, bytes32 diseasehash, string title, string description);
+event NewProposal(bytes32 proposed_release_hash);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 // ----------- EVENTS ---------- //
 
@@ -947,7 +947,7 @@ function createdisease(string memory _name, string memory _description) public {
 
 
 function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
-  string memory old_release_hash, string memory grandparent_hash) public {
+  string memory old_release_hash, string memory grandparent_hash, string memory _firstfield, string memory _secondfield, string memory _thirdfield) public {
 
     //check if the disease exits
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
@@ -988,6 +988,12 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposalipfs.old_release_hash = old_release_hash;
        proposalipfs.grandparent_hash = grandparent_hash;
 
+       // Proposal freefields:
+       ProposalFreefield storage proposalfree = propsfreefields[_proposed_release_hash];
+       proposalfree.firstfield = _firstfield;
+       proposalfree.secondfield = _secondfield;
+       proposalfree.thirdfield = _thirdfield;
+
 
        //  Proposal Data:
        ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
@@ -1011,7 +1017,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
-    emit NewProposal(_proposed_release_hash, _diseasehash, _title, _description);
+    emit NewProposal(_proposed_release_hash);
 
 }
 

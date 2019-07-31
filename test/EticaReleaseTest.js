@@ -688,7 +688,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
 
-                    return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(async function(response){
+                    return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6","Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards", {from: test_account.address}).then(async function(response){
 
                     let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
@@ -699,6 +699,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     let first_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+
+                    let first_proposal_freefields = await EticaReleaseInstance.propsfreefields(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+                    //console.log('THE FIRST PROPOSAL FREEFIELDS IS:', first_proposal_freefields);
 
                     // check Proposal's general information:
                     assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
@@ -711,6 +714,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
                     assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right old_release_hash');
                     assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right grandparent_hash');
+
+                    // check Proposal's FREEFIELDS:
+                    assert.equal(first_proposal_freefields.firstfield, 'Targets:[one_target_here,another_target_here]', 'First proposal should exist with right firstfield');
+                    assert.equal(first_proposal_freefields.secondfield, 'Compounds:[one_compound_here, another_compound_here]', 'First proposal should exist with right secondfield');
+                    assert.equal(first_proposal_freefields.thirdfield, 'Use this field as the community created standards', 'First proposal should exist with right thirdfield');
 
                     // check Proposal's DATA:
                     assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
@@ -756,7 +764,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before CALLING PROPOSE FUNCTION (because propose function should fail but not for this reason)');
 
 
-                        return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6", {from: test_account.address}).then(assert.fail)
+                        return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6","Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards", {from: test_account.address}).then(assert.fail)
                         .catch(async function(error){
 
                         // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH) has not changed

@@ -543,12 +543,6 @@ struct Period{
     string thirdfield;
   }
 
-
-  struct ProposalTenor{
-      Target[] targets;
-      Compound[] compounds;
-  }
-
   // -----------  PROPOSALS STRUCTS ------------  //
 
   // -----------  VOTES STRUCTS ----------------  //
@@ -595,7 +589,6 @@ uint public proposalsCounter;
 mapping(bytes32 => ProposalData) public propsdatas;
 mapping(bytes32 => ProposalIpfs) public propsipfs;
 mapping(bytes32 => ProposalFreefield) public propsfreefields;
-mapping(bytes32 => ProposalTenor) private propstenors;
 // -----------  PROPOSALS MAPPINGS ------------  //
 
 // -----------  VOTES MAPPINGS ----------------  //

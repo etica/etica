@@ -601,6 +601,8 @@ event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
 event NewProposal(bytes32 proposed_release_hash);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
+event NewCommit(bytes32 votehash);
+event NewReveal(bytes32 votehash);
 // ----------- EVENTS ---------- //
 
 
@@ -1100,6 +1102,7 @@ require (commits[msg.sender][_votehash].amount == 0);
  commits[msg.sender][_votehash].amount = _amount;
  commits[msg.sender][_votehash].timestamp = block.timestamp;
 
+emit NewCommit(_votehash);
 
  }
 
@@ -1109,8 +1112,8 @@ require (commits[msg.sender][_votehash].amount == 0);
 
 // --- check commit --- //
 bytes32 _votehash;
-_votehash = keccak256(abi.encodePacked(_proposed_release_hash, _approved, msg.sender));
-
+_votehash = keccak256(abi.encode(_proposed_release_hash, _approved, msg.sender));
+emit NewReveal(_votehash);
 require(commits[msg.sender][_votehash].amount > 0);
 // --- check commit done --- //
 

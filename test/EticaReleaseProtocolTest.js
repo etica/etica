@@ -235,6 +235,51 @@ let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED
 let IPFS6_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS7_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7, EXPECTED_FIRST_DISEASE_HASH);
 
+
+// START COMMITING
+await commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
+await commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
+await commitvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
+await commitvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
+await commitvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
+await commitvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
+
+//await should_fail_commitvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await commitvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
+await commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
+await commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
+await commitvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
+await commitvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
+
+await commitvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
+//await should_fail_commitvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await commitvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
+await commitvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
+await commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
+await commitvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
+
+await commitvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
+await commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
+//await should_fail_commitvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
+await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
+await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
+
+// should fail to vote with incorrect amount for a proposal:
+await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
+await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
+await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0');
+
+// should fail for usaers to vote twice on same Proposal:
+await should_fail_commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
+await should_fail_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
+await should_fail_commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
+await should_fail_commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
+await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
+
+// END COMMITING
+
+
 await revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
 await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
 await revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
@@ -1657,6 +1702,17 @@ await stakeclmidx(test_account7, 1);
   
    }
 
+     // get expected hash as it will be calculated by solidity in contract code:
+  // example: should return 0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb for couple {QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t, 0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e}
+  function get_expected_votehash(_proposed_release_hash, _approved, _msgsender) {
+    var encoded = abi.rawEncode([ "bytes32", "boolean", "address" ], [ _proposed_release_hash, _approved, _msgsender ]);
+    var result_hash = web3.utils.keccak256(encoded);
+    console.log('get_expected_votehash() result is ', result_hash);
+  
+    return web3.utils.keccak256(encoded); // example: should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
+  
+   }
+
    async function get_expected_reward(_from_account, _rawrelease){
 
     // curation reward:
@@ -1827,10 +1883,28 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
  }
 
 
+ async function commitvote(_from_account, _proposed_release_hash, _choice, _amount){
+  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+  console.log('expected_votehash is', expected_votehash);
+  return EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
+
+  console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  });
+ }
+
+// vote commit should fail:
+async function should_fail_commitvote(_from_account, _proposed_release_hash, _choice, _amount) {
+console.log('should fail this commitvote');
+let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+console.log('expected_votehash is', expected_votehash);
+await truffleAssert.fails(EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}));
+console.log('as expected failed to make this commitvote');
+        }
+
  async function revealvote(_from_account, _proposed_release_hash, _choice, _amount){
   return EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
 
-  console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }
 

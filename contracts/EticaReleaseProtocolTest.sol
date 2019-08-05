@@ -1082,7 +1082,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
  }
 
 
- function votebyhash(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
+ function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
 
 require(_amount > 0);   
 

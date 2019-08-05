@@ -235,45 +235,45 @@ let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED
 let IPFS6_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS7_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7, EXPECTED_FIRST_DISEASE_HASH);
 
-await votebyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
-await votebyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
-await votebyhash(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
-await votebyhash(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
-await votebyhash(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
-await votebyhash(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
+await revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
+await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
+await revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
+await revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
+await revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
+await revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
 
-//await should_fail_votebyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
-await votebyhash(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
-await votebyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
-await votebyhash(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
-await votebyhash(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await votebyhash(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
+//await should_fail_revealvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
+await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
+await revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
+await revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
+await revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
 
-await votebyhash(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
-//await should_fail_votebyhash(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
-await votebyhash(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
-await votebyhash(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
-await votebyhash(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
-await votebyhash(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
+await revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
+//await should_fail_revealvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
+await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
+await revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
+await revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
 
-await votebyhash(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
-await votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
-//await should_fail_votebyhash(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
-await votebyhash(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
-await votebyhash(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
-await votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
+await revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
+await revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
+//await should_fail_revealvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
+await revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
+await revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
 
 // should fail to vote with incorrect amount for a proposal:
-await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
-await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
-await should_fail_votebyhash(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0');
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0');
 
 // should fail for usaers to vote twice on same Proposal:
-await should_fail_votebyhash(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
-await should_fail_votebyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
-await should_fail_votebyhash(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await should_fail_votebyhash(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
-await should_fail_votebyhash(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
+await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
+await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
+await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
+await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
 
 
 // CHECK PROPOSALSDATA
@@ -425,8 +425,8 @@ await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 // advance time so that clmpropbyhash becomes possible: 
 await advanceminutes(DEFAULT_VOTING_TIME);
 
-// Should fail to votebyhash too late:
-await should_fail_votebyhash(test_account2, IPFS5_WITH_FIRTDISEASEHASH, true, '20');
+// Should fail to revealvote too late:
+await should_fail_revealvote(test_account2, IPFS5_WITH_FIRTDISEASEHASH, true, '20');
 
 
 OLD_BALANCE_ACCOUNT = await EticaReleaseProtocolTestInstance.balanceOf(test_account.address);  
@@ -1532,11 +1532,11 @@ await stakeclmidx(test_account7, 1);
     }
 
          // propose should fail:
-         async function should_fail_votebyhash(_from_account, _proposed_release_hash, _choice, _amount) {
+         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _amount) {
      
-          console.log('should fail this votebyhash');
-          await truffleAssert.fails(EticaReleaseProtocolTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
-          console.log('as expected failed to make this votebyhash');
+          console.log('should fail this revealvote');
+          await truffleAssert.fails(EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
+          console.log('as expected failed to make this revealvote');
       
         }
 
@@ -1827,8 +1827,8 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
  }
 
 
- async function votebyhash(_from_account, _proposed_release_hash, _choice, _amount){
-  return EticaReleaseProtocolTestInstance.votebyhash(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
+ async function revealvote(_from_account, _proposed_release_hash, _choice, _amount){
+  return EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
 
   console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });

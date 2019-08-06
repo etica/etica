@@ -1109,13 +1109,118 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                         });
 
-// next function will advance time:
+                                  // test too late voting should fail
+          it("cannot reveal too soon:", async function () {
+            console.log('------------------------------- Starting test ---------------------------');
+            console.log('.......................... Cannot REVEALVOTE TOO SOON ? ..................... ');
+
+            let test_account_2_balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
+            let test_account_2_stakebefore = await EticaReleaseInstance.stakes(test_account2.address, 1);
+            //console.log('test_account3 ETI balance before:', web3.utils.fromWei(test_account_3_balancebefore, "ether" ));
+            //console.log('test_account3 Stake before:', test_account_3_stakebefore);
+            //console.log('test_account3 Stake amount before:', web3.utils.fromWei(test_account_3_stakebefore.amount, "ether" ));
+
+            let test_account_2_bosomsbefore = await EticaReleaseInstance.bosoms(test_account2.address);
+            //console.log('test_account3 Bosoms before:', web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ));
+
+            let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+                        let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                        //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+
+            assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 2, 'test_account2 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
+
+            let lstblock = await web3.eth.getBlock("latest");
+            //console.log('last block s timestamp is', lstblock.timestamp);
+            let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+            //console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
+
+            // vote should still be wothin time limits as we don't want the vote to fail for this reason:
+            assert(lstblock.timestamp <= first_proposal_data_after.endtime + 60, 'Block timestamp should be lower than revealing time end before testing REVEALVOTE TOO SOON');
+
+           // try to VOTE for proposal, should fail:
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
+              .catch(async function(error){
+                assert(true);
+                let test_account_2_balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
+                let test_account_2_stakeafter = await EticaReleaseInstance.stakes(test_account2.address,1);
+                let test_account_2_bosomsafter = await EticaReleaseInstance.bosoms(test_account2.address);
+                let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account2.address);
+                //console.log('test_account3 ETI balance after:', web3.utils.fromWei(test_account_3_balanceafter, "ether" ));
+                //console.log('test_account3 Stake after:', test_account_3_stakeafter);
+                //console.log('test_account3 Vote is:', first_proposal_vote_after);
+                assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter, "ether" ), "0", 'test_account2 should not have less Bosoms!');
+                assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "0", 'test_account2 should not have been able to revealvote too soon. So the vote amount should not have changed !');
+
+                console.log('........................... REVEALINGVOTE TOO SOON is not possible ....................... ');
+                console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+              });
+
+          });
+
+                              // test Proposals commit
+                              it("can still commit for Proposal", async function () {
+                                console.log('------------------------------------ Starting test ---------------------------');
+                                console.log('................................  CAN STILL COMMIT FOR A PROPOSAL ? .......................');
+                                // advance time just before revealing period:
+                                await advanceminutes(2);
+                                let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
+                                //console.log('idofstruct id: ', idofstruct);
+        
+                                let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+                                let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                                //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+        
+                                let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+                                //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+        
+                                let first_proposal_test_account_4_commit_before = await EticaReleaseInstance.commits(test_account4.address, first_proposal.proposed_release_hash);
+                                //console.log('THE commit for FIRST PROPOSAL of testaccount2 BEFORE commitvote IS:', first_proposal_test_account_4_commit_before);
+        
+                                let test_account_4_balancebefore = await EticaReleaseInstance.balanceOf(test_account4.address);
+                                //console.log('test_account ETI balance before revealvote IS:', web3.utils.fromWei(test_account_4_balancebefore, "ether" ));
+        
+                                let test_account_4_bosomsbefore = await EticaReleaseInstance.bosoms(test_account4.address);
+                                //console.log('test_account4 Bosoms before revealvote IS:', web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ));
+        
+                                let expected_votehash = get_expected_votehash(first_proposal.proposed_release_hash, true, test_account4.address, "random123");
+        
+                                return EticaReleaseInstance.commitvote(web3.utils.toWei('1', 'ether'), expected_votehash, {from: test_account4.address}).then(async function(response){
+        
+                                  let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+                                  //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
+        
+                                  let first_proposal_test_account_4_commit_after = await EticaReleaseInstance.commits(test_account4.address, expected_votehash);
+                                  //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
+        
+                                  assert.equal(web3.utils.fromWei(first_proposal_test_account_4_commit_after.amount, "ether" ), "1", 'test_account4 should have been able to commit for 1 Bosom!');
+        
+                                  let test_account_4_bosomsafter = await EticaReleaseInstance.bosoms(test_account4.address);
+        
+                                  assert.equal(web3.utils.fromWei(test_account_4_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_4_bosomsafter.toString(), "ether" ), "1", 'test_account4 should have 1 Bosom less!');
+        
+                                  let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
+                                  //assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
+        
+        
+                                // ------------ WARNING
+                                // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+                                // ------------ WARNING
+        
+                                console.log('................................  CAN STILL COMMIT FOR A PROPOSAL  ....................... ');
+                                console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+                                });
+        
+        
+        
+                                });
+
+// next function will advance time to after voting period to revelaing period:
                                             // test Proposals commit
                     it("cannot commit too late", async function () {
                       console.log('------------------------------------ Starting test ---------------------------');
                       console.log('................................  CANNOT COMMIT TO LATE ? .......................');
 
-                      await advanceminutes(3);
+                      await advanceminutes(1);
 
                       let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
                       //console.log('idofstruct id: ', idofstruct);
@@ -1279,70 +1384,12 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
               });
 
-          });                   
-
-
-
-// test Proposals vote again just before testing cannot vote after endvote. This test is used as a way to make sure we are only testing endvote on next test
-it("can still vote for Proposal", async function () {
+          });        
+          
+            // test Proposals vote again just before testing cannot vote after endvote. This test is used as a way to make sure we are only testing endvote on next test
+it("can revealvote against Proposal", async function () {
   console.log('------------------------------------ Starting test ---------------------------');
-  console.log('................................  CAN STILL VOTE FOR A PROPOSAL ? .......................');
-
-  let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
-  //console.log('idofstruct id: ', idofstruct);
-
-  let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
-  let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
-  //console.log('THE FIRST PROPOSAL IS:', first_proposal);
-
-  let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-  //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
-
-  let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
-  //console.log('THE FIRST PROPOSAL VOTE BEFORE revealvote IS:', first_proposal_vote_before);
-
-  let test_account_4_balancebefore = await EticaReleaseInstance.balanceOf(test_account4.address);
-  //console.log('test_account ETI balance before revealvote IS:', web3.utils.fromWei(test_account_4_balancebefore, "ether" ));
-
-  let test_account_4_bosomsbefore = await EticaReleaseInstance.bosoms(test_account4.address);
-  //console.log('test_account Bosoms before revealvote IS:', web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ));
-
-  let lstblock = await web3.eth.getBlock("latest");
-  console.log('last block s timestamp is', lstblock.timestamp);
-  let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-  console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
-
-  // vote should pass as endvote has not been reached yet
-  assert(lstblock.timestamp < first_proposal_data_after.endtime, 'Block timestamp should be lower than first proposal endvote before testing CAN STILL VOTE');
-
-  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account4.address}).then(async function(response){
-
-    let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-    //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
-
-    let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account4.address);
-    //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
-
-    assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account4 should have been able to vote for 1 Bosom!');
-
-    let test_account_4_bosomsafter = await EticaReleaseInstance.bosoms(test_account4.address);
-
-    assert.equal(web3.utils.fromWei(test_account_4_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_4_bosomsafter.toString(), "ether" ), "1", 'test_account4 should have 1 Bosom less!');
-
-
-  console.log('................................  CAN STILL VOTE FOR A PROPOSAL  ....................... ');
-  console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
-  });
-
-
-
-  });
-
-
-  // test Proposals vote again just before testing cannot vote after endvote. This test is used as a way to make sure we are only testing endvote on next test
-it("can vote against Proposal", async function () {
-  console.log('------------------------------------ Starting test ---------------------------');
-  console.log('................................  CAN VOTE AGAINST A PROPOSAL ? .......................');
+  console.log('................................  CAN REVEALVOTE AGAINST A PROPOSAL ? .......................');
 
   let idofstruct = await EticaReleaseInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
   //console.log('idofstruct id: ', idofstruct);
@@ -1369,9 +1416,10 @@ it("can vote against Proposal", async function () {
   console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
 
   // vote should pass as endvote has not been reached yet
-  assert(lstblock.timestamp < first_proposal_data_after.endtime, 'Block timestamp should be lower than first proposal endvote before testing CAN STILL VOTE');
+  assert(lstblock.timestamp <= first_proposal_data_after.endtime + 60, 'Block timestamp should be lower than first proposal end OF REVEALING votes before testing CAN STILL REVEALVOTE against');
+  assert(lstblock.timestamp > first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal end of VOTE COMMITTING OF before testing CAN REVEALVOTE against');
 
-  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, web3.utils.toWei('1', 'ether'), "random123", {from: test_account5.address}).then(async function(response){
+  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, web3.utils.toWei('1.5', 'ether'), "random123", {from: test_account5.address}).then(async function(response){
 
     let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
     //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
@@ -1379,11 +1427,12 @@ it("can vote against Proposal", async function () {
     let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account5.address);
     //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
 
-    assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account5 should have been able to vote for 1 Bosom!');
+    assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1.5", 'test_account5 should have been able to revealvote for 1.5 Bosom!');
 
     let test_account_5_bosomsafter = await EticaReleaseInstance.bosoms(test_account5.address);
 
-    assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "1", 'test_account5 should have 1 Bosom less!');
+    // revealing votes should not impact bosoms balance (instead commitvote() does):
+    assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "0", 'test_account5 should not have same amount of Bosoms!');
 
 
   console.log('................................  CAN VOTE AGAINST A PROPOSAL  ....................... ');
@@ -1395,50 +1444,51 @@ it("can vote against Proposal", async function () {
   });
 
 
-
           // test too late voting should fail
-          it("cannot vote too late :", async function () {
+          it("cannot revealvote too late :", async function () {
             console.log('------------------------------- Starting test ---------------------------');
-            console.log('.......................... Cannot VOTE TOO LATE ? ..................... ');
-            await advanceminutes(5);
-            let test_account_3_balancebefore = await EticaReleaseInstance.balanceOf(test_account3.address);
-            let test_account_3_stakebefore = await EticaReleaseInstance.stakes(test_account3.address, 1);
-            //console.log('test_account3 ETI balance before:', web3.utils.fromWei(test_account_3_balancebefore, "ether" ));
-            //console.log('test_account3 Stake before:', test_account_3_stakebefore);
-            //console.log('test_account3 Stake amount before:', web3.utils.fromWei(test_account_3_stakebefore.amount, "ether" ));
+            console.log('.......................... Cannot REVEALVOTE TOO LATE ? ..................... ');
+            await advanceminutes(2);
+            let test_account_4_balancebefore = await EticaReleaseInstance.balanceOf(test_account4.address);
+            let test_account_4_stakebefore = await EticaReleaseInstance.stakes(test_account4.address, 1);
+            //console.log('test_account4 ETI balance before:', web3.utils.fromWei(test_account_4_balancebefore, "ether" ));
+            //console.log('test_account4 Stake before:', test_account_4_stakebefore);
+            //console.log('test_account4 Stake amount before:', web3.utils.fromWei(test_account_4_stakebefore.amount, "ether" ));
 
-            let test_account_3_bosomsbefore = await EticaReleaseInstance.bosoms(test_account3.address);
-            //console.log('test_account3 Bosoms before:', web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ));
+            let test_account_4_bosomsbefore = await EticaReleaseInstance.bosoms(test_account4.address);
+            //console.log('test_account4 Bosoms before:', web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ));
 
             let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-            assert(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ) >= 1, 'test_account3 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
+            assert(web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ) >= 1, 'test_account4 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
 
             let lstblock = await web3.eth.getBlock("latest");
             //console.log('last block s timestamp is', lstblock.timestamp);
             let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
             //console.log('THE FIRST PROPOSAL ENDTIME IS:', first_proposal_data_after.endtime.toString());
 
-            // vote should fail as endvote has already been reached
-            assert(lstblock.timestamp > first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal endvote before testing CANNOT VOTE TOO LATE');
+            // revealvote should fail as revealing period has already been passed:
+            console.log('lstblock.timestamp is', lstblock.timestamp);
+            console.log('first_proposal_data_after.endtime is', first_proposal_data_after.endtime.toString());
+            assert(lstblock.timestamp > first_proposal_data_after.endtime.toNumber() + 60, 'Block timestamp should be higher than first proposal end OF revealvoting before testing CANNOT REVEALVOTE TOO LATE');
 
            // try to VOTE for proposal, should be too late:
-           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account3.address}).then(assert.fail)
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account4.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
-                let test_account_3_balanceafter = await EticaReleaseInstance.balanceOf(test_account3.address);
-                let test_account_3_stakeafter = await EticaReleaseInstance.stakes(test_account3.address,1);
-                let test_account_3_bosomsafter = await EticaReleaseInstance.bosoms(test_account3.address);
-                let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account3.address);
-                //console.log('test_account3 ETI balance after:', web3.utils.fromWei(test_account_3_balanceafter, "ether" ));
-                //console.log('test_account3 Stake after:', test_account_3_stakeafter);
-                //console.log('test_account3 Vote is:', first_proposal_vote_after);
-                assert.equal(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_3_bosomsafter, "ether" ), "0", 'test_account should not have less Bosoms!');
+                let test_account_4_balanceafter = await EticaReleaseInstance.balanceOf(test_account4.address);
+                let test_account_4_stakeafter = await EticaReleaseInstance.stakes(test_account4.address,1);
+                let test_account_4_bosomsafter = await EticaReleaseInstance.bosoms(test_account4.address);
+                let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account4.address);
+                //console.log('test_account4 ETI balance after:', web3.utils.fromWei(test_account_4_balanceafter, "ether" ));
+                //console.log('test_account4 Stake after:', test_account_4_stakeafter);
+                //console.log('test_account4 Vote is:', first_proposal_vote_after);
+                assert.equal(web3.utils.fromWei(test_account_4_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_4_bosomsafter, "ether" ), "0", 'test_account should not have less Bosoms!');
                 assert.equal(first_proposal_vote_after.amount, "0", 'test_account should not have been able to vote too late!');
 
-                console.log('........................... Too late VOTING is not possible ....................... ');
+                console.log('........................... Too late REVEALVOTING is not possible ....................... ');
                 console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
               });
 

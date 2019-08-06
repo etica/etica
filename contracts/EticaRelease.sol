@@ -1107,12 +1107,12 @@ emit NewCommit(_votehash);
  }
 
 
- function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
+ function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount, string memory _vary) public {
  
 
 // --- check commit --- //
 bytes32 _votehash;
-_votehash = keccak256(abi.encode(_proposed_release_hash, _approved, msg.sender));
+_votehash = keccak256(abi.encode(_proposed_release_hash, _approved, msg.sender, _vary));
 emit NewReveal(_votehash);
 require(commits[msg.sender][_votehash].amount > 0);
 // --- check commit done --- //

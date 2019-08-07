@@ -603,6 +603,7 @@ event NewProposal(bytes32 proposed_release_hash);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewCommit(bytes32 votehash);
 event NewReveal(bytes32 votehash);
+event NewSnap(uint stakeidx, uint amount);
 // ----------- EVENTS ---------- //
 
 
@@ -897,6 +898,34 @@ addConsolidation(msg.sender, newAmount, _endTime);
 }
 
 // ----- Stakes consolidation  ----- //
+
+// this function is necessary because if user has a stake with huge amount and has blocked few ETI then he can't claim the Stake because
+// stake.amount > StakesAmount - blockedeticas
+function stakesnap(uint _stakeidx, uint _snapamount) public {
+
+  require(_snapamount > 0);
+  
+  // we check that the stake exists
+  require(_stakeidx > 0 && _stakeidx <= stakesCounters[msg.sender]);
+
+  // we retrieve the stake
+  Stake storage _stake = stakes[msg.sender][_stakeidx];
+
+
+  // the stake.amount must be higher than _snapamount:
+  require(_stake.amount > _snapamount);
+  
+  // updates the stake amount:
+  _stake.amount = _snapamount;
+
+  uint _restAmount = _stake.amount - _snapamount;
+
+  // creates a new stake with the rest:
+  addConsolidation(msg.sender, _restAmount, _stake.endTime);
+
+emit NewSnap(_stakeidx, _snapamount);
+
+}
 
 
 function stakescount(address _staker) public view returns (uint slength){

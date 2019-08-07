@@ -1978,6 +1978,15 @@ await stakeclmidx(test_account7, 1);
   
    }
 
+   function get_expected_votehash(_proposed_release_hash, _approved, _msgsender, _vary) {
+    var encoded = abi.rawEncode([ "bytes32", "bool", "address", "string"], [ _proposed_release_hash, _approved, _msgsender, _vary ]);
+    var result_hash = web3.utils.keccak256(encoded);
+    console.log('get_expected_votehash() result is ', result_hash);
+  
+    return web3.utils.keccak256(encoded); // example: should be '0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e' for 'Malaria'
+  
+   }
+
    async function get_expected_reward(_from_account, _rawrelease){
 
     // curation reward:
@@ -2151,6 +2160,24 @@ assert.equal(new_disease.description, _diseasedescription, 'First disease should
 console.log('................................  CREATED NEW DISEASE', _diseasename,' WITH SUCCESS ....................... ');
 })
  }
+
+ async function commitvote(_from_account, _proposed_release_hash, _choice, _amount){
+  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+  console.log('expected_votehash is', expected_votehash);
+  return EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
+
+  console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  });
+ }
+
+// vote commit should fail:
+async function should_fail_commitvote(_from_account, _proposed_release_hash, _choice, _amount) {
+console.log('should fail this commitvote');
+let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+console.log('expected_votehash is', expected_votehash);
+await truffleAssert.fails(EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}));
+console.log('as expected failed to make this commitvote');
+        }
 
 
  async function revealvote(_from_account, _proposed_release_hash, _choice, _amount){

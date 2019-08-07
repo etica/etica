@@ -13,6 +13,7 @@ console.log('');
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
 var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
+var DEFAULT_REVEALING_TIME = 0;
 
 // test suite
 contract('EticaReleaseProtocolTest', function(accounts){
@@ -92,6 +93,9 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
 
     DEFAULT_VOTING_TIME = await EticaReleaseProtocolTestInstance.DEFAULT_VOTING_TIME(); 
     console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
+
+    DEFAULT_REVEALING_TIME = await EticaReleaseProtocolTestInstance.DEFAULT_REVEALING_TIME(); 
+    console.log('DEFAULT_REVEALING_TIME IS ', DEFAULT_REVEALING_TIME);
 
     PERIOD_CURATION_REWARD_RATIO = await EticaReleaseProtocolTestInstance.PERIOD_CURATION_REWARD_RATIO();
     console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO);
@@ -237,103 +241,96 @@ let IPFS7_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7, EXPECTED
 
 
 // START COMMITING
-await commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
-await commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
-await commitvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
-await commitvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
-await commitvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
-await commitvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
+await commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await commitvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await commitvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await commitvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await commitvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
 
 //await should_fail_commitvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
-await commitvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
-await commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
-await commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
-await commitvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await commitvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
+await commitvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await commitvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
 
-await commitvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
+await commitvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
 //await should_fail_commitvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
-await commitvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
-await commitvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
-await commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
-await commitvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
+await commitvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await commitvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60', "random123");
 
-await commitvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
-await commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
+await commitvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
 //await should_fail_commitvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
-await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
-await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
-await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
+await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
 
-// should fail to vote with incorrect amount for a proposal:
-await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
-await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
-await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0');
+// should fail to commitvote with incorrect amount for a proposal:
+await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
 
-// should fail for usaers to vote twice on same Proposal:
-await should_fail_commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
-await should_fail_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
-await should_fail_commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await should_fail_commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
-await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
-
+// should fail for users to commitvote twice on same Proposal:
+/* to deal with it latter:
+await should_fail_commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await should_fail_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25', "random123");
+await should_fail_commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95', "random123");
+*/
 // END COMMITING
 
-
-await revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
-await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
-await revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
-await revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
-await revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
-await revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
+// ------- should fail revealing vote too early ------------ //
+await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await should_fail_revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await should_fail_revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await should_fail_revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await should_fail_revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
 
 //await should_fail_revealvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
-await revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
-await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
-await revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
-await revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
+await should_fail_revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await should_fail_revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await should_fail_revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
 
-await revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
+await should_fail_revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
 //await should_fail_revealvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
-await revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
-await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
-await revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
+await should_fail_revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await should_fail_revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60', "random123");
 
-await revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
-await revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
+await should_fail_revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
 //await should_fail_revealvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
-await revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
-await revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
+await should_fail_revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+// ------- should fail revealing vote too early ------------ //
 
-// should fail to vote with incorrect amount for a proposal:
-await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
-await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
-await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0');
+// ------- advance time to enter revealing period: --------- //
+console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
+console.log('DEFAULT_VOTING_TIME is', DEFAULT_VOTING_TIME.toNumber());
+await advanceseconds(DEFAULT_VOTING_TIME);
 
-// should fail for usaers to vote twice on same Proposal:
-await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
-await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
-await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
-await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
-
-
-// CHECK PROPOSALSDATA
-
+// get proposals data:
 let _proposal1 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+assert.equal(_proposal1.nbvoters, '1', 'Proposal1 should have 1 nbvoters');
 
 let _proposal2 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+assert.equal(_proposal2.nbvoters, '1', 'Proposal2 should have 1 nbvoters');
 
 let _proposal3 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+assert.equal(_proposal3.nbvoters, '1', 'Proposal3 should have 1 nbvoters');
 
 let _proposal4 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+assert.equal(_proposal4.nbvoters, '1', 'Proposal4 should have 1 nbvoters');
 
 let _proposal5 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
@@ -342,6 +339,118 @@ let _proposal6 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS6_WITH_FI
 assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
 
 let _proposal7 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
+
+
+
+// (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:
+
+// assert we are within revealing period of proposal1
+let lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal1.endtime.toNumber(), 'Block timestamp should be higher than proposal1 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal1.endtime.toNumber() + DEFAULT_REVEALING_TIME.toNumber(), 'Block timestamp should be lower or equal to _proposal1.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+console.log('lstblock.timestamp is', lstblock.timestamp);
+console.log('_proposal1.endtime.toNumber() is', _proposal1.endtime.toNumber());
+console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
+
+await revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
+
+
+// assert we are within revealing period of proposal2
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal2.endtime.toNumber(), 'Block timestamp should be higher than proposal2 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal2.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal2.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+//await should_fail_revealvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+
+// assert we are within revealing period of proposal3
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal3.endtime.toNumber(), 'Block timestamp should be higher than proposal3 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal3.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal3.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+await revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
+//await should_fail_revealvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+
+// assert we are within revealing period of proposal4
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp should be higher than proposal4 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+await revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
+//await should_fail_revealvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+
+// assert we are within revealing period of proposal5
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp should be higher than proposal4 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+// should fail to vote with incorrect amount for a proposal:
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
+
+
+// assert we are within revealing period of proposal6
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal1.endtime.toNumber(), 'Block timestamp should be higher than proposal1 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal1.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal1.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal2.endtime.toNumber(), 'Block timestamp should be higher than proposal2 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal2.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal2.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal3.endtime.toNumber(), 'Block timestamp should be higher than proposal3 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal3.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal3.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp should be higher than proposal4 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+
+// should fail for users to vote twice on same Proposal:
+await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25', "random123");
+await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95', "random123");
+
+
+// CHECK PROPOSALSDATA
+
+_proposal1 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+
+_proposal2 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+
+_proposal3 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+
+_proposal4 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+
+_proposal5 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
+
+_proposal6 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
+
+_proposal7 = await EticaReleaseProtocolTestInstance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
 
 console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
@@ -468,7 +577,7 @@ assert.equal(_period1.total_voters.toString(), "28"); // Period nb votes
 await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 
 // advance time so that clmpropbyhash becomes possible: 
-await advanceminutes(DEFAULT_VOTING_TIME);
+await advanceseconds(DEFAULT_VOTING_TIME);
 
 // Should fail to revealvote too late:
 await should_fail_revealvote(test_account2, IPFS5_WITH_FIRTDISEASEHASH, true, '20');
@@ -1577,10 +1686,10 @@ await stakeclmidx(test_account7, 1);
     }
 
          // propose should fail:
-         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _amount) {
+         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary) {
      
           console.log('should fail this revealvote');
-          await truffleAssert.fails(EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
+          await truffleAssert.fails(EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}));
           console.log('as expected failed to make this revealvote');
       
         }
@@ -1593,41 +1702,43 @@ await stakeclmidx(test_account7, 1);
 
         }
 
-   async function advanceseconds(duration) {
-
-   let numberlblocks = uint(duration / 15);
-
-   console.log('numberlblocks is', numberlblocks);
-
-     for(var i=0;i<numberlbocks;i+=1){
-
-
-/*  await web3.currentProvider.send({
-     jsonrpc: '2.0',
-     method: 'evm_increaseTime',
-     params: [15], // each blocks ads 30 seconds
-     id: id,
-   }, err1 => {
-     if (err1) return
-   })*/
-
-   await web3.currentProvider.send({
-       jsonrpc: '2.0',
-       method: 'evm_mine',
-       id: id+1,
-     }, (err2, res) => {
-       return
-     })
-
-
-     }
-
-   }
-
    async function advanceminutes(duration) {
 
     let id = Date.now();
      let numberlblocks = duration * 4; // 4 is because 60 / 15 == 4
+
+     // console.log('numberlblocks is', numberlblocks);
+     console.log('---------------  SLEEPING FOR ABOUT ', duration.toString(), ' SECONDS (press ctrl + c if it takes too long)  ------------');
+
+       for(var i=0;i<numberlblocks;i+=1){
+
+
+    await web3.currentProvider.send({
+       jsonrpc: '2.0',
+       method: 'evm_increaseTime',
+       params: [15], // each blocks ads 30 seconds
+       id: id,
+     }, err1 => {
+       if (err1) return
+     })
+
+     await web3.currentProvider.send({
+         jsonrpc: '2.0',
+         method: 'evm_mine',
+         id: i+1,
+       }, (err2, res) => {
+         return
+       })
+
+
+       }
+
+   }
+
+   async function advanceseconds(duration) {
+
+    let id = Date.now();
+     let numberlblocks = duration / 15; // 1 block every 15 seconds
 
      // console.log('numberlblocks is', numberlblocks);
      console.log('---------------  SLEEPING FOR ABOUT ', duration.toString(), ' SECONDS (press ctrl + c if it takes too long)  ------------');
@@ -1704,8 +1815,8 @@ await stakeclmidx(test_account7, 1);
 
      // get expected hash as it will be calculated by solidity in contract code:
   // example: should return 0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb for couple {QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t, 0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e}
-  function get_expected_votehash(_proposed_release_hash, _approved, _msgsender) {
-    var encoded = abi.rawEncode([ "bytes32", "boolean", "address" ], [ _proposed_release_hash, _approved, _msgsender ]);
+  function get_expected_votehash(_proposed_release_hash, _approved, _msgsender, _vary) {
+    var encoded = abi.rawEncode([ "bytes32", "bool", "address", "string"], [ _proposed_release_hash, _approved, _msgsender, _vary ]);
     var result_hash = web3.utils.keccak256(encoded);
     console.log('get_expected_votehash() result is ', result_hash);
   
@@ -1883,8 +1994,8 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
  }
 
 
- async function commitvote(_from_account, _proposed_release_hash, _choice, _amount){
-  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+ async function commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
+  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
   console.log('expected_votehash is', expected_votehash);
   return EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
 
@@ -1893,16 +2004,16 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
  }
 
 // vote commit should fail:
-async function should_fail_commitvote(_from_account, _proposed_release_hash, _choice, _amount) {
+async function should_fail_commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary) {
 console.log('should fail this commitvote');
-let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
 console.log('expected_votehash is', expected_votehash);
 await truffleAssert.fails(EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}));
 console.log('as expected failed to make this commitvote');
         }
 
- async function revealvote(_from_account, _proposed_release_hash, _choice, _amount){
-  return EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
+ async function revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
+  return EticaReleaseProtocolTestInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}).then(async function(response){
 
   console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });

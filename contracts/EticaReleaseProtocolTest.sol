@@ -5,7 +5,6 @@ pragma solidity ^0.5.2;
 // You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
 // Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of EticaReleaseProtocolTest.js file assume enough ETI and don't deal with mining tests
 
-
 // ----------------------------------------------------------------------------
 
 // Safe maths
@@ -454,18 +453,20 @@ contract EticaReleaseProtocolTest is EticaToken {
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
 uint ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
-uint DEFAULT_VOTING_TIME = 28 days; // default voting duration 28 days
+uint DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
+uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 days
      --------- PROD VALUES ------------- */
 
 /* --------- TESTING VALUES -------------*/
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
 uint public ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
-uint public DEFAULT_VOTING_TIME = 4 minutes; // default voting duration 28 days
+uint public DEFAULT_VOTING_TIME = 3 minutes; // default voting duration 21 days
+uint public DEFAULT_REVEALING_TIME = 1 minutes; // default revealing duration 7 days
 /* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
-uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to default vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
+uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
 uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
@@ -487,7 +488,6 @@ struct Period{
   }
 
 // -----------  PROPOSALS STRUCTS  ------------  //
-
 
 // general information of Proposal:
   struct Proposal{
@@ -530,7 +530,6 @@ struct Period{
     string thirdfield;
   }
 
-
   // -----------  PROPOSALS STRUCTS ------------  //
 
   // -----------  VOTES STRUCTS ----------------  //
@@ -542,6 +541,11 @@ struct Period{
     address voter; // address of the voter
     uint timestamp; // epoch time of the vote
     bool is_claimed; // keeps track of whether or not vote has been claimed to avoid double claim on same vote
+  }
+
+    struct Commit{
+    uint amount;
+    uint timestamp; // epoch time of the vote
   }
     // -----------  VOTES STRUCTS ----------------  //
 
@@ -581,6 +585,7 @@ mapping(bytes32 => ProposalFreefield) public propsfreefields;
 
 // -----------  VOTES MAPPINGS ----------------  //
 mapping(bytes32 => mapping(address => Vote)) public votes;
+mapping(address => mapping(bytes32 => Commit)) public commits;
 // -----------  VOTES MAPPINGS ----------------  //
 
 mapping(address => uint) public bosoms;
@@ -601,6 +606,8 @@ event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title, string description);
 event NewProposal(bytes32 proposed_release_hash);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
+event NewCommit(bytes32 votehash);
+event NewReveal(bytes32 votehash);
 // ----------- EVENTS ---------- //
 
 
@@ -1082,9 +1089,38 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
  }
 
 
- function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount) public {
+ function commitvote(uint _amount, bytes32 _votehash) public {
 
-require(_amount > 0);   
+require(_amount > 0);
+
+// only one commit
+require (commits[msg.sender][_votehash].amount == 0);
+
+ // Consume bosom:
+ require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
+ bosoms[msg.sender] = bosoms[msg.sender].sub(_amount);
+
+ // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
+ blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
+
+ // store _votehash in commits with _amount and current block.timestamp value:
+ commits[msg.sender][_votehash].amount = _amount;
+ commits[msg.sender][_votehash].timestamp = block.timestamp;
+
+emit NewCommit(_votehash);
+
+ }
+
+
+ function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount, string memory _vary) public {
+ 
+
+// --- check commit --- //
+bytes32 _votehash;
+_votehash = keccak256(abi.encode(_proposed_release_hash, _approved, msg.sender, _vary));
+emit NewReveal(_votehash);
+require(commits[msg.sender][_votehash].amount > 0);
+// --- check commit done --- //
 
 //check if the proposal exists and that we get the right proposal:
 Proposal storage proposal = proposals[_proposed_release_hash];
@@ -1097,26 +1133,30 @@ require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_h
 
 
 ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
- // Verify voting is still in progress
- require( block.timestamp < proposaldata.endtime);
+
+ // Verify commit was done within voting time:
+ require( commits[msg.sender][_votehash].timestamp <= proposaldata.endtime);
+
+ // Verify we are within revealing time:
+ require( block.timestamp > proposaldata.endtime && block.timestamp <= proposaldata.endtime + DEFAULT_REVEALING_TIME);
 
  require(proposaldata.prestatus != ProposalStatus.Pending); // can vote for proposal only if default vote has changed prestatus of Proposal. Thus can vote only if default vote occured as supposed to
 
 uint _old_proposal_curationweight = proposaldata.lastcuration_weight;
 uint _old_proposal_editorweight = proposaldata.lasteditor_weight;
 
- // Consume bosom:
+ /* // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
- bosoms[msg.sender] = bosoms[msg.sender].sub(_amount);
+ bosoms[msg.sender] = bosoms[msg.sender].sub(_amount); */
 
 
 // get Period of Proposal:
 Period storage period = periods[proposal.period_id];
 
-
+/*
  // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
  blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
-
+*/
 
 // Check that vote does not already exist
 // only allow one vote for each {raw_release_hash, voter} combinasion
@@ -1129,7 +1169,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
  vote.proposal_hash = proposal.proposed_release_hash;
  vote.approve = _approved;
  vote.is_editor = voterIsProposer;
- vote.amount = _amount;
+ vote.amount = commits[msg.sender][_votehash].amount;
  vote.voter = msg.sender;
  vote.timestamp = block.timestamp;
 
@@ -1137,10 +1177,10 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
      // PROPOSAL VAR UPDATE
      if(_approved){
-      proposaldata.forvotes = proposaldata.forvotes + _amount;
+      proposaldata.forvotes = proposaldata.forvotes + commits[msg.sender][_votehash].amount;
      }
      else {
-       proposaldata.againstvotes = proposaldata.againstvotes + _amount;
+       proposaldata.againstvotes = proposaldata.againstvotes + commits[msg.sender][_votehash].amount;
      }
 
 
@@ -1214,8 +1254,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
 
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
-   // Verify voting period is over
-   require( block.timestamp > proposaldata.endtime);
+   // Verify voting and revealing period is over
+   require( block.timestamp > proposaldata.endtime + DEFAULT_REVEALING_TIME);
 
    
     // we check that the vote exists
@@ -1239,7 +1279,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    uint _current_interval = uint((block.timestamp).div(REWARD_INTERVAL));
 
    // Check if Period is ready for claims or if it needs to wait more
-   uint _min_intervals = uint((DEFAULT_VOTING_TIME).div(REWARD_INTERVAL) + 1); // Minimum intervals before claimable
+   uint _min_intervals = uint((DEFAULT_VOTING_TIME + DEFAULT_REVEALING_TIME).div(REWARD_INTERVAL) + 1); // Minimum intervals before claimable
    require(_current_interval >= period.interval + _min_intervals); // Period not ready for claims yet. Need to wait more !
 
   // if status equals pending this is the first claim for this proposal

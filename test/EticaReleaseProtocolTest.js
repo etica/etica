@@ -130,6 +130,7 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
    await transferfromto(test_account, test_account5, '1000');
    await transferfromto(test_account, test_account6, '1000');
    await transferfromto(test_account, test_account7, '1000');
+   await transferfromto(test_account, test_account8, '100');
 
 
 
@@ -145,13 +146,14 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
 
 
 
-  assert.equal(web3.utils.fromWei(OLD_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ),'6000');
+  assert.equal(web3.utils.fromWei(OLD_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ),'6100');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_2, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_3, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_4, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" ),'1000');
   assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" ),'1000');
+  assert.equal(web3.utils.fromWei(NEW_BALANCE_ACCOUNT_8, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_8, "ether" ),'100');
 
   // 3 next tests should fail:
   await should_fail_transferfromto(test_account, test_account2, '10000000');
@@ -167,6 +169,7 @@ await eticatobosom(test_account4, '2000');
 await eticatobosom(test_account5, '2000');
 await eticatobosom(test_account6, '2000');
 await eticatobosom(test_account7, '2000');
+await eticatobosom(test_account8, '80');
 
 // check significant figures:
 await eticatobosom(test_account, '0.123');
@@ -176,6 +179,7 @@ await eticatobosom(test_account4, '0.9151651651665');
 await eticatobosom(test_account5, '0.565156161');
 await eticatobosom(test_account6, '0.321');
 await eticatobosom(test_account7, '0.1805');
+await eticatobosom(test_account8, '3.1805');
 
 // Next 3 stakes should fail
 await should_fail_eticatobosom(test_account7,'0');
@@ -203,6 +207,7 @@ let OLD_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.bloc
 let OLD_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account5.address);
 let OLD_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account6.address);
 let OLD_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account7.address);
+let OLD_BLOCKED_ETI_TEST_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account8.address);
 
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT is ", OLD_BLOCKED_ETI_TEST_ACCOUNT);
 console.log("OLD_BLOCKED_ETI_TEST_ACCOUNT_2 is ", OLD_BLOCKED_ETI_TEST_ACCOUNT_2);
@@ -219,6 +224,7 @@ assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_4, "ether" ), 0);
 assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_5, "ether" ), 0);
 assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ), 0);
 assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 0);
+assert.equal(web3.utils.fromWei(OLD_BLOCKED_ETI_TEST_ACCOUNT_8, "ether" ), 0);
 
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
@@ -270,9 +276,9 @@ await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random1
 await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
 
 // should fail to commitvote with incorrect amount for a proposal:
-await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
-await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
-await should_fail_commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
+await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
 
 // should fail for users to commitvote twice on same Proposal:
 /* to deal with it latter:
@@ -344,6 +350,11 @@ assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
 
 
 // (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:
+await commitvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await commitvote(test_account8, IPFS3_WITH_FIRTDISEASEHASH, true, '10', "random123");
+await commitvote(test_account8, IPFS4_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
 
 // assert we are within revealing period of proposal1
 let lstblock = await web3.eth.getBlock("latest");
@@ -422,12 +433,18 @@ assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp shou
 assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
 
 
-// should fail for users to vote twice on same Proposal:
+// should fail for users to revealvote twice on same Proposal:
 await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
 await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25', "random123");
 await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50', "random123");
 await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95', "random123");
+
+
+// revealvote() of these commits should fail because the related commits were made too late:
+await should_fail_revealvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await should_fail_revealvote(test_account8, IPFS3_WITH_FIRTDISEASEHASH, true, '10', "random123");
+await should_fail_revealvote(test_account8, IPFS4_WITH_FIRTDISEASEHASH, false, '5', "random123");
 
 
 // CHECK PROPOSALSDATA
@@ -529,6 +546,7 @@ let NEW_BLOCKED_ETI_TEST_ACCOUNT_4 = await EticaReleaseProtocolTestInstance.bloc
 let NEW_BLOCKED_ETI_TEST_ACCOUNT_5 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account5.address);
 let NEW_BLOCKED_ETI_TEST_ACCOUNT_6 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account6.address);
 let NEW_BLOCKED_ETI_TEST_ACCOUNT_7 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account7.address);
+let NEW_BLOCKED_ETI_TEST_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.blockedeticas(test_account8.address);
 
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT, "ether" ));
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_2 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_2, "ether" ));
@@ -537,6 +555,7 @@ console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_4 is ", web3.utils.fromWei(NEW_BLOCKED
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_5 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_5, "ether" ));
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_6 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ));
 console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_7 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ));
+console.log("NEW_BLOCKED_ETI_TEST_ACCOUNT_8 is ", web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_8, "ether" ));
 
 assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT, "ether" ), 10);
 assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_2, "ether" ), 70);
@@ -545,6 +564,7 @@ assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_4, "ether" ), 1050)
 assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_5, "ether" ), 1680);
 assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_6, "ether" ), 455);
 assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 1000);
+assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_8, "ether" ), 75);
 
 
 // Retrieve General Information of Proposals:
@@ -560,7 +580,7 @@ let _general_proposal7 = await EticaReleaseProtocolTestInstance.proposals(IPFS7_
 console.log('_general_proposal1.period_id is', _general_proposal1.period_id.toString());
 console.log('_general_proposal7.period_id is', _general_proposal7.period_id.toString());
 
-assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString());
+assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString(), 'Please try again. Next tests assume _general_proposal1 and _general_proposal7 belong to same Period but _general_proposal7 was created too late and belong to next Period. Will be luckier next time !');
 
 
 // assert Period's curation_sum and editor_sum values are OK
@@ -1093,7 +1113,7 @@ assert.equal(_period1.total_voters.toNumber(), 28, 'Period_1 should have 28 vote
 // RECHECKING PERIOD NB VOTERS
 
 // TESTS GET ETICA BACK:
-// Every account has made to stakes:
+// Every account has made 2 stakes:
 await stakeclmidx(test_account, 1);
 await stakeclmidx(test_account, 1);
 
@@ -1114,6 +1134,12 @@ await stakeclmidx(test_account6, 1);
 
 await stakeclmidx(test_account7, 1);
 await stakeclmidx(test_account7, 1);
+
+// should fail to claim this stake as testaccount8has blocked eticas by commiting vote on proposal too late (after it's endvote).
+// Thus was not able to revealvote of this proposal and thus could not unblocked those blocked eticas
+await should_fail_stakeclmidx(test_account8, 1);
+// should at least be able to unstake second stake as its amount is lower than the value of blocked eticas
+await stakeclmidx(test_account8, 2);
 
 // ------------ Stake Consolidation ------------- //
 
@@ -2029,7 +2055,7 @@ console.log('as expected failed to make this commitvote');
 
  async function stakeclmidx(_from_account, _index){
   let _from_accountbalancebefore = await EticaReleaseProtocolTestInstance.balanceOf(_from_account.address);
-  let _from_accountstakebefore = await EticaReleaseProtocolTestInstance.stakes(_from_account.address, 1);
+  let _from_accountstakebefore = await EticaReleaseProtocolTestInstance.stakes(_from_account.address, _index);
   return EticaReleaseProtocolTestInstance.stakeclmidx(_index, {from: _from_account.address}).then(async function(resp){
     assert(true);
     let _from_accountbalanceafter = await EticaReleaseProtocolTestInstance.balanceOf(_from_account.address);
@@ -2045,6 +2071,12 @@ console.log('as expected failed to make this commitvote');
 
   });
 
+ }
+
+ async function should_fail_stakeclmidx(_index, _from_account){
+  console.log('should fail this stakeclmidx()'); 
+  await truffleAssert.fails(EticaReleaseProtocolTestInstance.stakeclmidx(_index, {from: _from_account.address}));
+  console.log('as expected failed to make this stakeclmidx()');
  }
 
  });

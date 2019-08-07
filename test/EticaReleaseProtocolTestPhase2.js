@@ -2197,7 +2197,7 @@ console.log('as expected failed to make this commitvote');
 
  async function stakeclmidx(_from_account, _index){
   let _from_accountbalancebefore = await EticaReleaseProtocolTestPhase2Instance.balanceOf(_from_account.address);
-  let _from_accountstakebefore = await EticaReleaseProtocolTestPhase2Instance.stakes(_from_account.address, 1);
+  let _from_accountstakebefore = await EticaReleaseProtocolTestPhase2Instance.stakes(_from_account.address, _index);
   return EticaReleaseProtocolTestPhase2Instance.stakeclmidx(_index, {from: _from_account.address}).then(async function(resp){
     assert(true);
     let _from_accountbalanceafter = await EticaReleaseProtocolTestPhase2Instance.balanceOf(_from_account.address);

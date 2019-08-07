@@ -899,6 +899,8 @@ addConsolidation(msg.sender, newAmount, _endTime);
 
 // ----- Stakes consolidation  ----- //
 
+// ----- Stakes de-consolidation  ----- //
+
 // this function is necessary because if user has a stake with huge amount and has blocked few ETI then he can't claim the Stake because
 // stake.amount > StakesAmount - blockedeticas
 function stakesnap(uint _stakeidx, uint _snapamount) public {
@@ -936,6 +938,8 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
 emit NewSnap(_stakeidx, _snapamount);
 
 }
+
+// ----- Stakes de-consolidation  ----- //
 
 
 function stakescount(address _staker) public view returns (uint slength){

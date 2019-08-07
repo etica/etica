@@ -1143,6 +1143,25 @@ await stakeclmidx(test_account8, 2);
 
 // ------------ Stake Consolidation ------------- //
 
+// ------------ Stake Snap ---------------------- //
+// shoudl still fail to claim first stake:
+await should_fail_stakeclmidx(test_account8, 1);
+await should_fail_stakeclmidx(test_account8, 2);
+
+// should fail to stakesnap with incorrect amount value:
+await should_fail_stakesnap(test_account8, 1, '81');
+await should_fail_stakesnap(test_account8, 1, '80');
+await should_fail_stakesnap(test_account8, 1, '0');
+
+// should be able to stakesnap with correct value:
+await stakesnap(test_account8, 1, '75');
+
+// should now be able to claim the stake 2 of 5 ETI because the stake of 80 ETI was snapped into 1 stake of 75 ETI and 1 stake of 5 ETI:
+await stakeclmidx(test_account8, 2);
+
+
+// ------------ Stake Snap ---------------------- //
+
   // ---------- FIRST ROW   --------------  //
 
 
@@ -2077,6 +2096,41 @@ console.log('as expected failed to make this commitvote');
   console.log('should fail this stakeclmidx()'); 
   await truffleAssert.fails(EticaReleaseProtocolTestInstance.stakeclmidx(_index, {from: _from_account.address}));
   console.log('as expected failed to make this stakeclmidx()');
+ }
+
+
+ async function stakesnap(_from_account, _index, _snapamount){
+  let _nbstakes_before_from_account = await EticaReleaseProtocolTestInstance.stakesCounters(_from_account.address);
+  //console.log('_nbstakes_before_from_account.toString() is', _nbstakes_before_from_account.toString());
+  let _from_accountstakebefore = await EticaReleaseProtocolTestInstance.stakes(_from_account.address, _index);
+  //console.log('_from_accountstakebefore is', _from_accountstakebefore);
+  //console.log('_from_accountstakebefore amount is', web3.utils.fromWei(_from_accountstakebefore.amount, "ether"));
+  
+  return EticaReleaseProtocolTestInstance.stakesnap(_index, web3.utils.toWei(_snapamount, 'ether'), {from: _from_account.address}).then(async function(resp){
+    assert(true);
+    let _nbstakes_after_from_account = await EticaReleaseProtocolTestInstance.stakesCounters(_from_account.address);
+    //console.log('_nbstakes_after_from_account.toString() is', _nbstakes_after_from_account.toString());
+    let _from_accountstakeafter = await EticaReleaseProtocolTestInstance.stakes(_from_account.address, _index);
+    let _newstake = await EticaReleaseProtocolTestInstance.stakes(_from_account.address, _nbstakes_after_from_account.toNumber());
+    //console.log('new stake is', _newstake);
+    //console.log('new stake amount is', web3.utils.fromWei(_newstake.amount, "ether"));
+
+    assert.equal(_nbstakes_after_from_account.toString(), _nbstakes_before_from_account.add(web3.utils.toBN('1')).toString(), '_from_account should have 1 more stake');
+    assert.equal( web3.utils.fromWei(_from_accountstakeafter.amount, "ether"), _snapamount, 'the stake amount should have been updated to snapamount value!');
+    //console.log('_from_accountstakeafter.amount is', web3.utils.fromWei(_from_accountstakeafter.amount, "ether"));
+    assert.equal(_newstake.amount.toString(),_from_accountstakebefore.amount.sub(web3.utils.toBN(web3.utils.toWei(_snapamount, 'ether'))).toString() );
+    
+    console.log('........................... Snapped the STAKE with success ! ....................... ');
+
+  });
+
+ }
+
+
+ async function should_fail_stakesnap(_from_account, _index, _snapamount){
+  console.log('should fail this stakesnap()'); 
+  await truffleAssert.fails(EticaReleaseProtocolTestInstance.stakesnap(_index, web3.utils.toWei(_snapamount, 'ether'), {from: _from_account.address}));
+  console.log('as expected failed to make this stakesnap()');
  }
 
  });

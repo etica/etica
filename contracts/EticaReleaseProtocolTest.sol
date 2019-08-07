@@ -919,14 +919,24 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
 
   // the stake.amount must be higher than _snapamount:
   require(_stake.amount > _snapamount);
+
+  // calculate the amount of new stake:
+  uint _restAmount = _stake.amount - _snapamount;
   
   // updates the stake amount:
   _stake.amount = _snapamount;
 
-  uint _restAmount = _stake.amount - _snapamount;
 
-  // creates a new stake with the rest:
-  addConsolidation(msg.sender, _restAmount, _stake.endTime);
+  // ----- creates a new stake with the rest -------- //
+  stakesCounters[msg.sender] = stakesCounters[msg.sender] + 1;
+
+  // store this stake in _staker's stakes with the index stakesCounters[_staker]
+  stakes[msg.sender][stakesCounters[msg.sender]] = Stake(
+      _restAmount, // stake amount
+      block.timestamp, // startTime
+      _stake.endTime // endTime
+    );
+  // ------ creates a new stake with the rest ------- //  
 
 emit NewSnap(_stakeidx, _snapamount);
 

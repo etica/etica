@@ -1227,8 +1227,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      bool _istie = false;
      uint totalVotes = proposaldata.forvotes + proposaldata.againstvotes;
      uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
-     uint _forvotesdiff_numerator = (proposaldata.forvotes - proposaldata.againstvotes) * 100; // ((newproposal_forvotes - proposaldata.againstvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
      uint _againstvotesdiff_numerator = (proposaldata.againstvotes - proposaldata.forvotes) * 100; // ((proposaldata.againstvotes - newproposal_forvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
+     uint _ratio_slashing = 0;
 
      if ((_forvotes_numerator / totalVotes) >= TIER_ONE_THRESHOLD){
     _isapproved = true;
@@ -1240,10 +1240,14 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
     proposaldata.istie = _istie;
 
     if (_isapproved){
-    proposaldata.slashingratio = _forvotesdiff_numerator / totalVotes;
+    _ratio_slashing = uint(((100 - TIER_ONE_THRESHOLD) * totalVotes).div(100));
+    _ratio_slashing = uint((proposaldata.againstvotes * 100).div(_ratio_slashing));  
+    proposaldata.slashingratio = uint(100 - _ratio_slashing);
     }
     else{
-    proposaldata.slashingratio = _againstvotesdiff_numerator / totalVotes;
+    _ratio_slashing = uint((totalVotes * TIER_ONE_THRESHOLD).div(100));
+    _ratio_slashing = uint(_forvotes_numerator.div(_ratio_slashing));
+    proposaldata.slashingratio = uint(100 - _ratio_slashing);
     }
 
     // Make sure the slashing reward ratio is within expected range:

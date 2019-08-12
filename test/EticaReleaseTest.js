@@ -1295,10 +1295,12 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
                         let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-                        //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+                        console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+                        console.log('old slashingratio is', first_proposal_data.slashingratio.toString());
 
                         let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
-                        //console.log('THE FIRST PROPOSAL VOTE BEFORE revealvote IS:', first_proposal_vote_before);
+                        console.log('THE FIRST PROPOSAL VOTE BEFORE revealvote IS:', first_proposal_vote_before);
+                        
 
                         let test_account_2_balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
                         //console.log('test_account ETI balance before revealvote IS:', web3.utils.fromWei(test_account_2_balancebefore, "ether" ));
@@ -1309,7 +1311,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account2.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-                          //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
+                          console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
+                          console.log('new slashingratio is', first_proposal_data_after.slashingratio.toString());
 
                           let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account2.address);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
@@ -1399,7 +1402,8 @@ it("can revealvote against Proposal", async function () {
   //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
   let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-  //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+  console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+  console.log('old slashingratio before against vote revealing is', first_proposal_data.slashingratio.toString());
 
   let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
   //console.log('THE FIRST PROPOSAL VOTE BEFORE revealvote IS:', first_proposal_vote_before);
@@ -1422,7 +1426,8 @@ it("can revealvote against Proposal", async function () {
   return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, web3.utils.toWei('1.5', 'ether'), "random123", {from: test_account5.address}).then(async function(response){
 
     let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
-    //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
+    console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
+    console.log('new slashingratio after against vote revealing is', first_proposal_data_after.slashingratio.toString());
 
     let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account5.address);
     //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);

@@ -1188,15 +1188,15 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
              // Proposal approved, strengthen curation sum
          if (_isapproved){
              proposaldata.prestatus =  ProposalStatus.Accepted;
-             proposaldata.lastcuration_weight = proposaldata.forvotes * proposaldata.nbvoters;
-             proposaldata.lasteditor_weight = proposaldata.forvotes * proposaldata.nbvoters;
+             proposaldata.lastcuration_weight = proposaldata.forvotes;
+             proposaldata.lasteditor_weight = proposaldata.forvotes;
              // Proposal approved, replace proposal curation and editor sum with forvotes
              period.curation_sum = period.curation_sum - _old_proposal_curationweight + proposaldata.lastcuration_weight;
              period.editor_sum = period.editor_sum - _old_proposal_editorweight + proposaldata.lasteditor_weight;
          }
          else{
              proposaldata.prestatus =  ProposalStatus.Rejected;
-             proposaldata.lastcuration_weight = proposaldata.againstvotes * proposaldata.nbvoters;
+             proposaldata.lastcuration_weight = proposaldata.againstvotes;
              proposaldata.lasteditor_weight = 0;
              // Proposal rejected, replace proposal curation sum with againstvotes and remove proposal editor sum
              period.curation_sum = period.curation_sum - _old_proposal_curationweight + proposaldata.lastcuration_weight;
@@ -1315,7 +1315,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
    // check beforte diving by 0
    require(period.curation_sum > 0); // period curation sum pb !
-   _reward_amount += (vote.amount * proposaldata.nbvoters * period.reward_for_curation) / (period.curation_sum);
+   _reward_amount += (vote.amount * period.reward_for_curation) / (period.curation_sum);
 
        // if voter is editor and proposal accepted:
     if (vote.is_editor && proposaldata.status == ProposalStatus.Accepted){

@@ -1432,7 +1432,7 @@ it("can revealvote against Proposal", async function () {
     let test_account_5_bosomsafter = await EticaReleaseInstance.bosoms(test_account5.address);
 
     // revealing votes should not impact bosoms balance (instead commitvote() does):
-    assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "0", 'test_account5 should not have same amount of Bosoms!');
+    assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "0", 'test_account5 should have same amount of Bosoms!');
 
 
   console.log('................................  CAN VOTE AGAINST A PROPOSAL  ....................... ');
@@ -1498,7 +1498,7 @@ it("can revealvote against Proposal", async function () {
 
 
           // test Stake claiming too soon should fail
-          it("cannot claim stake after stake end (when user has not called redeem function yet)", async function () {
+          it("cannot claim stake after stake end (when user has not called clmpropbyhash function yet)", async function () {
             console.log('------------------------------- Starting test ---------------------------');
             console.log('.......................... Cannot claim STAKE after THE STAKE END ? (when user has not called redeem function yet) ..................... ');
             let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);

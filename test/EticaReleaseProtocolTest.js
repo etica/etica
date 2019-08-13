@@ -507,33 +507,33 @@ assert.equal(_proposal7.status, '2', 'Proposal7 status should be Pending');
 
 console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '660', 'Proposal1 should have a lastcuration_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '1400', 'Proposal2 should have a lastcuration_weight of 1400');
 assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '170', 'Proposal4 should have a lastcuration_weight of 170');
 assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '660', 'Proposal1 should have a lasteditor_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 0');
 assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '170', 'Proposal4 should have a lasteditor_weight of 170');
 assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
-assert.equal(_proposal1.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
-assert.equal(_proposal2.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal1.slashingratio.toNumber(), 1579, 'Proposal1 should have a slashingratio of 0.1579');
+assert.equal(_proposal2.slashingratio.toNumber(), 4396, 'Proposal2 should have a slashingratio of 0.4396');
 assert.equal(_proposal3.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
-assert.equal(_proposal4.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
-assert.equal(_proposal5.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
-assert.equal(_proposal6.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
-assert.equal(_proposal7.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+assert.equal(_proposal4.slashingratio.toNumber(), 10000, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5.slashingratio.toNumber(), 10000, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6.slashingratio.toNumber(), 10000, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7.slashingratio.toNumber(), 10000, 'Proposal7 should have a slashingratio of 1');
 
 console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
 
@@ -589,8 +589,8 @@ console.log('_period1 is:', _period1);
 console.log('_period1.reward_curation is:', web3.utils.fromWei(_period1.reward_for_curation, "ether" ));
 console.log('_period1.reward_editor is:', web3.utils.fromWei(_period1.reward_for_editor, "ether" ));
 console.log('_period1.total_voters is:', _period1.total_voters);
-assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
-assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 2260); // Sum of proposals' curation_weight
+assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 860); // Sum of proposals' editor_weight
 assert.equal(_period1.total_voters.toString(), "28"); // Period nb votes
 
 // Should fail to clmpropbyhash too early: 
@@ -639,14 +639,16 @@ console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
 console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
 console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
-_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
+//_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
+_expected_total_reward_acc5 = Number.parseFloat(_expected_total_reward_acc5).toPrecision(9);
+console.log('_expected_reward_acc5 PARSE FLOAT --------------- is:', _expected_total_reward_acc5);;
 
 let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc5 = _effective_reward_acc5.toString();
-_effective_reward_acc5 = _effective_reward_acc5.substring(0, _effective_reward_acc5.length - 2);
+//_effective_reward_acc5 = _effective_reward_acc5.substring(0, _effective_reward_acc5.length - 2);
+_effective_reward_acc5 = Number.parseFloat(_effective_reward_acc5).toPrecision(9);
+console.log('_effective_reward_acc5 PARSE FLOAT --------------- is:', _effective_reward_acc5);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc5, _expected_total_reward_acc5); // 122.67718490502358 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -660,13 +662,13 @@ console.log('_expected_reward_acc6_prop4 is', _expected_reward_acc6_prop_4);
 console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc6 = _expected_total_reward_acc6.toString();
-_expected_total_reward_acc6 = _expected_total_reward_acc6.substring(0, _expected_total_reward_acc6.length - 3);
+_expected_total_reward_acc6 = Number.parseFloat(_expected_total_reward_acc6).toPrecision(9);
 
 let _effective_reward_acc6 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" );
 console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc6 = _effective_reward_acc6.toString();
-_effective_reward_acc6 = _effective_reward_acc6.substring(0, _effective_reward_acc6.length - 2);
+_effective_reward_acc6 = Number.parseFloat(_effective_reward_acc6).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc6, _expected_total_reward_acc6); // 62.94838356665059 == _expected_reward_acc6_prop_4
@@ -679,13 +681,13 @@ console.log('_expected_reward_acc7_prop4 is', _expected_reward_acc7_prop_4);
 console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
-_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 3);
+_expected_total_reward_acc7 = Number.parseFloat(_expected_total_reward_acc7).toPrecision(9);
 
 let _effective_reward_acc7 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" );
 console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc7 = _effective_reward_acc7.toString();
-_effective_reward_acc7 = _effective_reward_acc7.substring(0, _effective_reward_acc7.length - 3);
+_effective_reward_acc7 = Number.parseFloat(_effective_reward_acc7).toPrecision(9);
 
 // acc7 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 113.906598834890 == _expected_reward_acc_7_prop_4
@@ -791,11 +793,13 @@ NEW_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestInstance.balanceOf(test_ac
 // ACCOUNT 1:
 let _expected_reward_acc1_prop_1 = await get_expected_reward(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 let _expected_total_reward_acc1 =  _expected_reward_acc1_prop_1;
+_expected_total_reward_acc1 = Number.parseFloat(_expected_total_reward_acc1).toPrecision(9);
 console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1);
 console.log('_expected_total_reward_acc1 is', _expected_total_reward_acc1);
 
 let _effective_reward_acc1 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" );
 console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_acc1);
+_effective_reward_acc1 = Number.parseFloat(_effective_reward_acc1).toPrecision(9);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc1, _expected_total_reward_acc1); // 13767.044628187738 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
 
@@ -821,14 +825,16 @@ let _expected_total_reward_acc2 =  _expected_reward_acc2_prop_1 + _expected_rewa
 // console.log('_expected_total_reward_acc2 is', _expected_total_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc2 = _expected_total_reward_acc2.toString();
-_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 3);
+_expected_total_reward_acc2 = Number.parseFloat(_expected_total_reward_acc2).toPrecision(9);
+console.log('_expected total reward acc2 to precision 9 is', _expected_total_reward_acc2);
 
 
 let _effective_reward_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
 console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc2 = _effective_reward_acc2.toString();
-_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 3);
+_effective_reward_acc2 = Number.parseFloat(_effective_reward_acc2).toPrecision(9);
+console.log('_effective reward acc2 to precision 9 is', _effective_reward_acc2);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc2, _expected_total_reward_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -857,14 +863,14 @@ let _expected_total_reward_acc3 =  _expected_reward_acc3_prop_1 + _expected_rewa
  console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc3 = _expected_total_reward_acc3.toString();
-_expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc3.length - 2);
+_expected_total_reward_acc3 = Number.parseFloat(_expected_total_reward_acc3).toPrecision(9);
 
 
 let _effective_reward_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
 console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc3 = _effective_reward_acc3.toString();
-_effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_acc3.length - 2);
+_effective_reward_acc3 = Number.parseFloat(_effective_reward_acc3).toPrecision(9);
 
 // acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc3, _expected_total_reward_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -892,14 +898,14 @@ let _expected_total_reward_acc4 =  _expected_reward_acc4_prop_1 + _expected_rewa
 // console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc4 = _expected_total_reward_acc4.toString();
-_expected_total_reward_acc4 = _expected_total_reward_acc4.substring(0, _expected_total_reward_acc4.length - 2);
+_expected_total_reward_acc4 = Number.parseFloat(_expected_total_reward_acc4).toPrecision(9);
 
 
 let _effective_reward_acc4 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" );
 console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_acc4);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc4 = _effective_reward_acc4.toString();
-_effective_reward_acc4 = _effective_reward_acc4.substring(0, _effective_reward_acc4.length - 2);
+_effective_reward_acc4 = Number.parseFloat(_effective_reward_acc4).toPrecision(9);
 
 // acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc4, _expected_total_reward_acc4); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -928,14 +934,14 @@ _expected_total_reward_acc5 =  _expected_reward_acc5_prop_1 + _expected_reward_a
  console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
-_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
+_expected_total_reward_acc5 = Number.parseFloat(_expected_total_reward_acc5).toPrecision(9);
 
 
 _effective_reward_acc5 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" );
 //console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc5 = _effective_reward_acc5.toString();
-_effective_reward_acc5 = _effective_reward_acc5.substring(0, _effective_reward_acc5.length - 2);
+_effective_reward_acc5 = Number.parseFloat(_effective_reward_acc5).toPrecision(9);
 
 // acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc5, _expected_total_reward_acc5); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -963,14 +969,14 @@ _expected_total_reward_acc6 =  _expected_reward_acc6_prop_1 + _expected_reward_a
  console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc6 = _expected_total_reward_acc6.toString();
-_expected_total_reward_acc6 = _expected_total_reward_acc6.substring(0, _expected_total_reward_acc6.length - 2);
+_expected_total_reward_acc6 = Number.parseFloat(_expected_total_reward_acc6).toPrecision(9);
 
 
 _effective_reward_acc6 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" );
 //console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc6 = _effective_reward_acc6.toString();
-_effective_reward_acc6 = _effective_reward_acc6.substring(0, _effective_reward_acc6.length - 2);
+_effective_reward_acc6 = Number.parseFloat(_effective_reward_acc6).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc6, _expected_total_reward_acc6); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -999,14 +1005,14 @@ _expected_total_reward_acc7 =  _expected_reward_acc7_prop_1 + _expected_reward_a
  console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
-_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 2);
+_expected_total_reward_acc7 = Number.parseFloat(_expected_total_reward_acc7).toPrecision(9);
 
 
 _effective_reward_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );
 //console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
 _effective_reward_acc7 = _effective_reward_acc7.toString();
-_effective_reward_acc7 = _effective_reward_acc7.substring(0, _effective_reward_acc7.length - 2);
+_effective_reward_acc7 = Number.parseFloat(_effective_reward_acc7).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -1074,33 +1080,33 @@ assert.equal(_proposal7.status, '1', 'Proposal7 status should be Pending');
 
 console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '660', 'Proposal1 should have a lastcuration_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '1400', 'Proposal2 should have a lastcuration_weight of 8400');
 assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '170', 'Proposal4 should have a lastcuration_weight of 1020');
 assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '660', 'Proposal1 should have a lasteditor_weight of 4620');
 assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
 assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '170', 'Proposal4 should have a lasteditor_weight of 1020');
 assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
-assert.equal(_proposal1.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
-assert.equal(_proposal2.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal1.slashingratio.toNumber(), 1579, 'Proposal1 should have a slashingratio of 0.1579');
+assert.equal(_proposal2.slashingratio.toNumber(), 4396, 'Proposal2 should have a slashingratio of 0.4396');
 assert.equal(_proposal3.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
-assert.equal(_proposal4.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
-assert.equal(_proposal5.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
-assert.equal(_proposal6.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
-assert.equal(_proposal7.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+assert.equal(_proposal4.slashingratio.toNumber(), 10000, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5.slashingratio.toNumber(), 10000, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6.slashingratio.toNumber(), 10000, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7.slashingratio.toNumber(), 10000, 'Proposal7 should have a slashingratio of 1');
 
 console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
 
@@ -1117,20 +1123,39 @@ assert.equal(_period1.total_voters.toNumber(), 28, 'Period_1 should have 28 vote
 await stakeclmidx(test_account, 1);
 await stakeclmidx(test_account, 1);
 
-await stakeclmidx(test_account2, 1);
-await stakeclmidx(test_account2, 1);
+
+await should_fail_stakeclmidx(test_account2, 1); // test_account 2 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet 
+await stakeclmidx(test_account2, 2);
 
 await stakeclmidx(test_account3, 1);
 await stakeclmidx(test_account3, 1);
 
-await stakeclmidx(test_account4, 1);
-await stakeclmidx(test_account4, 1);
+
+let _nbstakes_account4 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account4.address);
+console.log('_nbstakes_account4', _nbstakes_account4);
+let acc4stake1 = await getstake(test_account4, 1);
+let acc4stake2 = await getstake(test_account4, 2);
+let acc4stake3 = await getstake(test_account4, 3);
+let acc4stake4 = await getstake(test_account4, 4);
+console.log('account4 stake 1 is', acc4stake1);
+console.log('account4 stake 2 is', acc4stake2);
+console.log('account4 stake 3 is', acc4stake3);
+console.log('account4 stake 1 amount is', web3.utils.fromWei(acc4stake1.amount.toString()));
+console.log('account4 stake 2 amount is', web3.utils.fromWei(acc4stake2.amount.toString()));
+console.log('account4 stake 3 amount is', web3.utils.fromWei(acc4stake3.amount.toString()));
+console.log('account4 stake 4 amount is', web3.utils.fromWei(acc4stake4.amount.toString()));
+console.log('account4 stake 1 endTime is', acc4stake1.endTime.toString());
+console.log('account4 stake 2 endTime is', acc4stake2.endTime.toString());
+console.log('account4 stake 3 endTime is', acc4stake3.endTime.toString());
+console.log('account4 stake 4 endTime is', acc4stake4.endTime.toString());
+await should_fail_stakeclmidx(test_account4, 1); // test_account 4 should have been slashed (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
+await stakeclmidx(test_account4, 4);
 
 await stakeclmidx(test_account5, 1);
 await stakeclmidx(test_account5, 1);
 
-await stakeclmidx(test_account6, 1);
-await stakeclmidx(test_account6, 1);
+await should_fail_stakeclmidx(test_account6, 1); // test_account 6 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
+await stakeclmidx(test_account6, 4);
 
 await stakeclmidx(test_account7, 1);
 await stakeclmidx(test_account7, 1);
@@ -1894,7 +1919,7 @@ await stakeclmidx(test_account8, 2);
 
     let _period = await EticaReleaseProtocolTestInstance.periods(_proposal.period_id);
     //console.log('period is', _period);
-    let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
+    let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" );
     let _expected_curation_reward_ratio = _expected_curation_reward_num / _period.curation_sum;
     let _expected_curation_reward = _expected_curation_reward_ratio * _period.reward_for_curation;
 
@@ -1974,7 +1999,7 @@ await stakeclmidx(test_account8, 2);
     assert.equal(first_proposal_data.istie, false, 'First proposal should exist with right istie');
     assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
     assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should exist with right nbvoters');
-    assert.equal(first_proposal_data.slashingratio.toNumber(), '100', 'First proposal should exist with right slashingratio');
+    assert.equal(first_proposal_data.slashingratio.toNumber(), '10000', 'First proposal should exist with right slashingratio');
     assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right forvotes');
     assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
     assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lastcuration_weight');

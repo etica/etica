@@ -470,6 +470,8 @@ uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to
 
 
 uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
+uint SEVERITY_LEVEL = 2; // level of severity of the protocol, the higher the more slash to wrong voters
+uint PROPOSERS_INCREASER = 2;
 
 struct Period{
     uint id;
@@ -1359,7 +1361,11 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    if(voterChoice != proposaldata.status) {
      // slash loosers: voter has voted wrongly and needs to be slashed
      uint _slashRemaining = vote.amount;
-     uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio / 10000);
+     uint _extraTimeInt = uint(STAKING_DURATION * SEVERITY_LEVEL * proposaldata.slashingratio / 10000);
+
+     if(vote.is_editor){
+     _extraTimeInt = uint(_extraTimeInt * PROPOSERS_INCREASER);
+     }
 
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:

@@ -1723,6 +1723,59 @@ it("can revealvote against Proposal", async function () {
         
         
                                 });
+                              
+                                
+                                                            // test Proposals vote claims
+                              it("can claim a right vote for a Proposal as proposer", async function () {
+                                console.log('------------------------------------ Starting test ---------------------------');
+                                console.log('....................  CAN CLAIM A RIGHT VOTE FOR A PROPOSAL AS PROPOSER ? .......................');
+        
+                                
+        
+                                let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
+                                let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+                                //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+        
+                                let first_proposal_data = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+                                //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+        
+                                let first_proposal_vote_before = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
+                                //console.log('THE FIRST PROPOSAL VOTE BEFORE revealvote IS:', first_proposal_vote_before);
+        
+                                let test_account_balancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
+                                console.log('test_account ETI balance before revealvote IS:', web3.utils.fromWei(test_account_balancebefore, "ether" ));
+        
+                                let test_account_bosomsbefore = await EticaReleaseInstance.bosoms(test_account.address);
+                                //console.log('test_account Bosoms before revealvote IS:', web3.utils.fromWei(test_account_bosomsbefore, "ether" ));
+
+        
+                                return EticaReleaseInstance.clmpropbyhash(first_proposal.proposed_release_hash, {from: test_account.address}).then(async function(response){
+        
+                                  let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
+                                  //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
+        
+                                  let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account.address);
+                                  //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
+        
+
+                                  let test_account_balanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
+                                  console.log('test_account ETI balance after revealvote IS:', web3.utils.fromWei(test_account_balanceafter, "ether" ));
+                                  console.log('test_account ETI balance before revealvote WAS:', web3.utils.fromWei(test_account_balancebefore, "ether" ));
+
+                                 // assert(web3.utils.fromWei(test_account_balanceafter.toString() - test_account_balancebefore.toString(), "ether" ) > 0, 'test_account5 should have more ETI!');
+        
+        
+                                // ------------ WARNING
+                                // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+                                // ------------ WARNING
+        
+                                console.log('.....................  CAN CLAIM A RIGHT VOTE FOR A PROPOSAL AS PROPOSER  ....................... ');
+                                console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+                                });
+        
+        
+        
+                                });  
 
 
                               // test Proposals vote claims

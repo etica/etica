@@ -1,5 +1,10 @@
 pragma solidity ^0.5.2;
 
+/*
+ETICA: a type1 civilization neutral protocol for medical research
+KEVIN WAD OSSENI
+*/
+
 
 // ----------------------------------------------------------------------------
 

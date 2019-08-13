@@ -1,5 +1,9 @@
 pragma solidity ^0.5.2;
 
+/*
+ETICA: a type1 civilization neutral protocol for medical research
+KEVIN WAD OSSENI
+*/
 // ONLY FOR TESTING !!!
 // EticaReleaseProtocolTestPhase2: Same as EticaRelease contract but with initial supply > 21 million ETI and miner_aacount with ETI available to make tests easier
 // You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 

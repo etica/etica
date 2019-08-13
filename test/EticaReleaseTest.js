@@ -737,7 +737,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     assert.equal(first_proposal_data.istie, false, 'First proposal should exist with right istie');
                     assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
                     assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should exist with right nbvoters');
-                    assert.equal(first_proposal_data.slashingratio.toNumber(), '100', 'First proposal should exist with right slashingratio');
+                    assert.equal(first_proposal_data.slashingratio.toNumber(), '10000', 'First proposal should exist with right slashingratio');
                     assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right forvotes');
                     assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
                     assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lastcuration_weight');
@@ -806,7 +806,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         assert.equal(first_proposal_data.istie, false, 'First proposal should have kept the same istie');
                         assert.equal(first_proposal_data.prestatus, '3', 'First proposal should have kept the same prestatus');
                         assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should have kept the same nbvoters');
-                        assert.equal(first_proposal_data.slashingratio.toNumber(), '100', 'First proposal should have kept the same slashingratio');
+                        assert.equal(first_proposal_data.slashingratio.toNumber(), '10000', 'First proposal should have kept the same slashingratio');
                         assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same forvotes');
                         assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should have kept the same againstvotes');
                         assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lastcuration_weight');
@@ -1382,7 +1382,7 @@ it("can revealvote against Proposal", async function () {
     let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
     console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
     console.log('new slashingratio after against vote revealing is', first_proposal_data_after.slashingratio.toString());
-    assert.equal('5', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 5 after 1 for vote of 10 Bosoms and 1 against vote of 11 Bosoms');
+    assert.equal('477', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 477 after 1 for vote of 10 Bosoms and 1 against vote of 11 Bosoms');
 
     let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account5.address);
     //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
@@ -1544,7 +1544,7 @@ it("can revealvote against Proposal", async function () {
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
                           console.log('new slashingratio is', first_proposal_data_after.slashingratio.toString());
-                          assert.equal('12', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 12 after 3 for votes of 14 Bosoms and 1 against vote of 11 Bosoms');
+                          assert.equal('1200', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 1200 after 3 for votes of 14 Bosoms and 1 against vote of 11 Bosoms');
 
                           let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account4.address);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);

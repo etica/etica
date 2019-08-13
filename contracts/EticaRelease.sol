@@ -1112,7 +1112,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
       // UPDATE PROPOSAL:
-      proposaldata.slashingratio = 100;
+      proposaldata.slashingratio = 10000;
       proposaldata.forvotes = PROPOSAL_DEFAULT_VOTE;
       proposaldata.nbvoters = 1;
       proposaldata.prestatus = ProposalStatus.Singlevoter;
@@ -1241,17 +1241,17 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
     if (_isapproved){
     _ratio_slashing = uint(((100 - TIER_ONE_THRESHOLD) * totalVotes).div(100));
-    _ratio_slashing = uint((proposaldata.againstvotes * 100).div(_ratio_slashing));  
-    proposaldata.slashingratio = uint(100 - _ratio_slashing);
+    _ratio_slashing = uint((proposaldata.againstvotes * 10000).div(_ratio_slashing));  
+    proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
     else{
     _ratio_slashing = uint((totalVotes * TIER_ONE_THRESHOLD).div(100));
-    _ratio_slashing = uint(_forvotes_numerator.div(_ratio_slashing));
-    proposaldata.slashingratio = uint(100 - _ratio_slashing);
+    _ratio_slashing = uint((proposaldata.forvotes * 10000).div(_ratio_slashing));
+    proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
 
     // Make sure the slashing reward ratio is within expected range:
-     require(proposaldata.slashingratio >=0 && proposaldata.slashingratio <= 100);
+     require(proposaldata.slashingratio >=0 && proposaldata.slashingratio <= 10000);
 
 
          // Proposal and Period new weight
@@ -1354,7 +1354,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    if(voterChoice != proposaldata.status) {
      // slash loosers: voter has voted wrongly and needs to be slashed
      uint _slashRemaining = vote.amount;
-     uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio / 100);
+     uint _extraTimeInt = uint(STAKING_DURATION * proposaldata.slashingratio / 10000);
 
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:

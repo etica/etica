@@ -13,6 +13,7 @@ console.log('');
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
 var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
+var DEFAULT_REVEALING_TIME = 0;
 var REWARD_INTERVAL = 0; // initialize global variable REWARD_INTERVAL
 
 // test suite
@@ -91,8 +92,12 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
   assert(web3.utils.fromWei(receipt, "ether" ) >= 100000, 'miner_account should have at least 100 000 ETI before starting the tests !');
   }).then(async function(){
 
+
     DEFAULT_VOTING_TIME = await EticaReleaseProtocolTestPhase2Instance.DEFAULT_VOTING_TIME(); 
     console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
+
+    DEFAULT_REVEALING_TIME = await EticaReleaseProtocolTestPhase2Instance.DEFAULT_REVEALING_TIME(); 
+    console.log('DEFAULT_REVEALING_TIME IS ', DEFAULT_REVEALING_TIME);
 
     PERIOD_CURATION_REWARD_RATIO = await EticaReleaseProtocolTestPhase2Instance.PERIOD_CURATION_REWARD_RATIO();
     console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO);
@@ -167,6 +172,7 @@ await eticatobosom(test_account4, '2000');
 await eticatobosom(test_account5, '2000');
 await eticatobosom(test_account6, '2000');
 await eticatobosom(test_account7, '2000');
+await eticatobosom(test_account8, '80');
 
 // check significant figures:
 await eticatobosom(test_account, '0.123');
@@ -176,6 +182,7 @@ await eticatobosom(test_account4, '0.9151651651665');
 await eticatobosom(test_account5, '0.565156161');
 await eticatobosom(test_account6, '0.321');
 await eticatobosom(test_account7, '0.1805');
+await eticatobosom(test_account8, '3.1805');
 
 // Next 3 stakes should fail
 await should_fail_eticatobosom(test_account7,'0');
@@ -239,59 +246,98 @@ let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED
 let IPFS6_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS7_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7, EXPECTED_FIRST_DISEASE_HASH);
 
-await revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50');
-await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100');
-await revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50');
-await revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500');
-await revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350');
-await revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80');
+
+// START COMMITING
+await commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await commitvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await commitvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await commitvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await commitvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
+
+//await should_fail_commitvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await commitvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await commitvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+await commitvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
+//await should_fail_commitvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await commitvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await commitvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+await commitvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
+//await should_fail_commitvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+// should fail to commitvote with incorrect amount for a proposal:
+await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
+
+// should fail for users to commitvote twice on same Proposal:
+/* to deal with it latter:
+await should_fail_commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await should_fail_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25', "random123");
+await should_fail_commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95', "random123");
+*/
+// END COMMITING
+
+// ------- should fail revealing vote too early ------------ //
+await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await should_fail_revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await should_fail_revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await should_fail_revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await should_fail_revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
 
 //await should_fail_revealvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
-await revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100');
-await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500');
-await revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500');
-await revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800');
+await should_fail_revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await should_fail_revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await should_fail_revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
 
-await revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5');
+await should_fail_revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
 //await should_fail_revealvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
-await revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490');
-await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600');
-await revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60');
+await should_fail_revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await should_fail_revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60', "random123");
 
-await revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5');
-await revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10');
+await should_fail_revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
 //await should_fail_revealvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
-await revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50');
-await revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60');
+await should_fail_revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+// ------- should fail revealing vote too early ------------ //
 
-// should fail to vote with incorrect amount for a proposal:
-await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000');
-await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500');
+// ------- advance time to enter revealing period: --------- //
+console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
+console.log('DEFAULT_VOTING_TIME is', DEFAULT_VOTING_TIME.toNumber());
+await advanceseconds(DEFAULT_VOTING_TIME);
 
-// should fail for usaers to vote twice on same Proposal:
-await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15');
-await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25');
-await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35');
-await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50');
-await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95');
-
-
-// CHECK PROPOSALSDATA
-
+// get proposals data:
 let _proposal1 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+assert.equal(_proposal1.nbvoters, '1', 'Proposal1 should have 1 nbvoters');
 
 let _proposal2 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+assert.equal(_proposal2.nbvoters, '1', 'Proposal2 should have 1 nbvoters');
 
 let _proposal3 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+assert.equal(_proposal3.nbvoters, '1', 'Proposal3 should have 1 nbvoters');
 
 let _proposal4 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
-assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+assert.equal(_proposal4.nbvoters, '1', 'Proposal4 should have 1 nbvoters');
 
 let _proposal5 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
@@ -300,6 +346,129 @@ let _proposal6 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6_W
 assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
 
 let _proposal7 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
+
+
+
+// (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:
+await commitvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await commitvote(test_account8, IPFS3_WITH_FIRTDISEASEHASH, true, '10', "random123");
+await commitvote(test_account8, IPFS4_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+
+// assert we are within revealing period of proposal1
+let lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal1.endtime.toNumber(), 'Block timestamp should be higher than proposal1 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal1.endtime.toNumber() + DEFAULT_REVEALING_TIME.toNumber(), 'Block timestamp should be lower or equal to _proposal1.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+console.log('lstblock.timestamp is', lstblock.timestamp);
+console.log('_proposal1.endtime.toNumber() is', _proposal1.endtime.toNumber());
+console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
+
+await revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await revealvote(test_account4, IPFS1_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
+
+
+// assert we are within revealing period of proposal2
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal2.endtime.toNumber(), 'Block timestamp should be higher than proposal2 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal2.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal2.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+//await should_fail_revealvote(test_account2, IPFS2_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await revealvote(test_account3, IPFS2_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+
+// assert we are within revealing period of proposal3
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal3.endtime.toNumber(), 'Block timestamp should be higher than proposal3 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal3.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal3.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+await revealvote(test_account2, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
+//await should_fail_revealvote(test_account3, IPFS3_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await revealvote(test_account4, IPFS3_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+
+// assert we are within revealing period of proposal4
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp should be higher than proposal4 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+await revealvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
+//await should_fail_revealvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+
+// assert we are within revealing period of proposal5
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp should be higher than proposal4 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+// should fail to vote with incorrect amount for a proposal:
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
+
+
+// assert we are within revealing period of proposal6
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal1.endtime.toNumber(), 'Block timestamp should be higher than proposal1 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal1.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal1.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal2.endtime.toNumber(), 'Block timestamp should be higher than proposal2 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal2.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal2.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal3.endtime.toNumber(), 'Block timestamp should be higher than proposal3 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal3.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal3.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal4.endtime.toNumber(), 'Block timestamp should be higher than proposal4 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+
+// should fail for users to revealvote twice on same Proposal:
+await should_fail_revealvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await should_fail_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25', "random123");
+await should_fail_revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95', "random123");
+
+
+// revealvote() of these commits should fail because the related commits were made too late:
+await should_fail_revealvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await should_fail_revealvote(test_account8, IPFS3_WITH_FIRTDISEASEHASH, true, '10', "random123");
+await should_fail_revealvote(test_account8, IPFS4_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+// CHECK PROPOSALSDATA
+
+_proposal1 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
+
+_proposal2 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
+
+_proposal3 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
+
+_proposal4 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
+
+_proposal5 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
+
+_proposal6 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
+
+_proposal7 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal7.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
 
 console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
@@ -339,33 +508,33 @@ assert.equal(_proposal7.status, '2', 'Proposal7 status should be Pending');
 
 console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '660', 'Proposal1 should have a lastcuration_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '1400', 'Proposal2 should have a lastcuration_weight of 1400');
 assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '170', 'Proposal4 should have a lastcuration_weight of 170');
 assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '660', 'Proposal1 should have a lasteditor_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 0');
 assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '170', 'Proposal4 should have a lasteditor_weight of 170');
 assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
-assert.equal(_proposal1.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
-assert.equal(_proposal2.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal1.slashingratio.toNumber(), 1579, 'Proposal1 should have a slashingratio of 0.1579');
+assert.equal(_proposal2.slashingratio.toNumber(), 4396, 'Proposal2 should have a slashingratio of 0.4396');
 assert.equal(_proposal3.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
-assert.equal(_proposal4.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
-assert.equal(_proposal5.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
-assert.equal(_proposal6.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
-assert.equal(_proposal7.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+assert.equal(_proposal4.slashingratio.toNumber(), 10000, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5.slashingratio.toNumber(), 10000, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6.slashingratio.toNumber(), 10000, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7.slashingratio.toNumber(), 10000, 'Proposal7 should have a slashingratio of 1');
 
 console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
 
@@ -418,15 +587,15 @@ console.log('_period1 is:', _period1);
 console.log('_period1.reward_curation is:', web3.utils.fromWei(_period1.reward_for_curation, "ether" ));
 console.log('_period1.reward_editor is:', web3.utils.fromWei(_period1.reward_for_editor, "ether" ));
 console.log('_period1.total_voters is:', _period1.total_voters);
-assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
-assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+assert.equal(web3.utils.fromWei(_period1.curation_sum, "ether" ), 2260); // Sum of proposals' curation_weight
+assert.equal(web3.utils.fromWei(_period1.editor_sum, "ether" ), 860); // Sum of proposals' editor_weight
 assert.equal(_period1.total_voters.toString(), "28"); // Period nb votes
 
 // Should fail to clmpropbyhash too early: 
 await should_fail_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 
 // advance time so that clmpropbyhash becomes possible: 
-await advanceminutes(DEFAULT_VOTING_TIME);
+await advanceseconds(DEFAULT_VOTING_TIME);
 
 // Should fail to revealvote too late:
 await should_fail_revealvote(test_account2, IPFS5_WITH_FIRTDISEASEHASH, true, '20');
@@ -468,14 +637,12 @@ console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4);
 console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5);
 console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
-_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
+_expected_total_reward_acc5 = Number.parseFloat(_expected_total_reward_acc5).toPrecision(9);
 
 let _effective_reward_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc5 = _effective_reward_acc5.toString();
-_effective_reward_acc5 = _effective_reward_acc5.substring(0, _effective_reward_acc5.length - 3);
+_effective_reward_acc5 = Number.parseFloat(_effective_reward_acc5).toPrecision(9);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc5, _expected_total_reward_acc5); // 122.67718490502358 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -489,13 +656,12 @@ console.log('_expected_reward_acc6_prop4 is', _expected_reward_acc6_prop_4);
 console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
 _expected_total_reward_acc6 = _expected_total_reward_acc6.toString();
-_expected_total_reward_acc6 = _expected_total_reward_acc6.substring(0, _expected_total_reward_acc6.length - 3);
+_expected_total_reward_acc6 = Number.parseFloat(_expected_total_reward_acc6).toPrecision(9);
 
 let _effective_reward_acc6 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" );
 console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc6 = _effective_reward_acc6.toString();
-_effective_reward_acc6 = _effective_reward_acc6.substring(0, _effective_reward_acc6.length - 3);
+_effective_reward_acc6 = Number.parseFloat(_effective_reward_acc6).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc6, _expected_total_reward_acc6); // 62.94838356665059 == _expected_reward_acc6_prop_4
@@ -507,14 +673,12 @@ let _expected_total_reward_acc7 =  _expected_reward_acc7_prop_4;
 console.log('_expected_reward_acc7_prop4 is', _expected_reward_acc7_prop_4);
 console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
-_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 3);
+_expected_total_reward_acc7 = Number.parseFloat(_expected_total_reward_acc7).toPrecision(9);
 
 let _effective_reward_acc7 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" );
 console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc7 = _effective_reward_acc7.toString();
-_effective_reward_acc7 = _effective_reward_acc7.substring(0, _effective_reward_acc7.length - 3);
+_effective_reward_acc7 = Number.parseFloat(_effective_reward_acc7).toPrecision(9);
 
 // acc7 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 113.906598834890 == _expected_reward_acc_7_prop_4
@@ -618,10 +782,12 @@ NEW_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(t
 // ACCOUNT 1:
 let _expected_reward_acc1_prop_1 = await get_expected_reward(test_account, IPFS1_WITH_FIRTDISEASEHASH);
 let _expected_total_reward_acc1 =  _expected_reward_acc1_prop_1;
+_expected_total_reward_acc1 = Number.parseFloat(_expected_total_reward_acc1).toPrecision(9);
 console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1);
 console.log('_expected_total_reward_acc1 is', _expected_total_reward_acc1);
 
 let _effective_reward_acc1 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" );
+_effective_reward_acc1 = Number.parseFloat(_effective_reward_acc1).toPrecision(9);
 console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_acc1);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc1, _expected_total_reward_acc1); // 13767.044628187738 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -647,15 +813,13 @@ let _expected_reward_acc2_prop_7 = await get_expected_reward(test_account2, IPFS
 let _expected_total_reward_acc2 =  _expected_reward_acc2_prop_1 + _expected_reward_acc2_prop_2 + _expected_reward_acc2_prop_3 + _expected_reward_acc2_prop_4 + _expected_reward_acc2_prop_5 + _expected_reward_acc2_prop_6 + _expected_reward_acc2_prop_7;
 // console.log('_expected_total_reward_acc2 is', _expected_total_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc2 = _expected_total_reward_acc2.toString();
-_expected_total_reward_acc2 = _expected_total_reward_acc2.substring(0, _expected_total_reward_acc2.length - 3);
+_expected_total_reward_acc2 = Number.parseFloat(_expected_total_reward_acc2).toPrecision(9);
 
 
 let _effective_reward_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
 console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc2 = _effective_reward_acc2.toString();
-_effective_reward_acc2 = _effective_reward_acc2.substring(0, _effective_reward_acc2.length - 3);
+_effective_reward_acc2 = Number.parseFloat(_effective_reward_acc2).toPrecision(9);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc2, _expected_total_reward_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -683,15 +847,13 @@ let _expected_reward_acc3_prop_7 = await get_expected_reward(test_account3, IPFS
 let _expected_total_reward_acc3 =  _expected_reward_acc3_prop_1 + _expected_reward_acc3_prop_2 + _expected_reward_acc3_prop_3 + _expected_reward_acc3_prop_4 + _expected_reward_acc3_prop_5 + _expected_reward_acc3_prop_6 + _expected_reward_acc3_prop_7;
  console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc3 = _expected_total_reward_acc3.toString();
-_expected_total_reward_acc3 = _expected_total_reward_acc3.substring(0, _expected_total_reward_acc3.length - 3);
+_expected_total_reward_acc3 = Number.parseFloat(_expected_total_reward_acc3).toPrecision(9);
 
 
 let _effective_reward_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
-console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc3 = _effective_reward_acc3.toString();
-_effective_reward_acc3 = _effective_reward_acc3.substring(0, _effective_reward_acc3.length - 3);
+_effective_reward_acc3 = Number.parseFloat(_effective_reward_acc3).toPrecision(9);
+console.log('_effective_acc3 new ETI as REWARD precision 9:', _effective_reward_acc3);
 
 // acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc3, _expected_total_reward_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -718,15 +880,13 @@ let _expected_reward_acc4_prop_7 = await get_expected_reward(test_account4, IPFS
 let _expected_total_reward_acc4 =  _expected_reward_acc4_prop_1 + _expected_reward_acc4_prop_2 + _expected_reward_acc4_prop_3 + _expected_reward_acc4_prop_4 + _expected_reward_acc4_prop_5 + _expected_reward_acc4_prop_6 + _expected_reward_acc4_prop_7;
 // console.log('_expected_total_reward_acc3 is', _expected_total_reward_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc4 = _expected_total_reward_acc4.toString();
-_expected_total_reward_acc4 = _expected_total_reward_acc4.substring(0, _expected_total_reward_acc4.length - 2);
+_expected_total_reward_acc4 = Number.parseFloat(_expected_total_reward_acc4).toPrecision(9);
 
 
 let _effective_reward_acc4 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" );
 console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_acc4);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc4 = _effective_reward_acc4.toString();
-_effective_reward_acc4 = _effective_reward_acc4.substring(0, _effective_reward_acc4.length - 2);
+_effective_reward_acc4 = Number.parseFloat(_effective_reward_acc4).toPrecision(9);
 
 // acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc4, _expected_total_reward_acc4); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -754,15 +914,13 @@ let _expected_reward_acc5_prop_7 = await get_expected_reward(test_account5, IPFS
 _expected_total_reward_acc5 =  _expected_reward_acc5_prop_1 + _expected_reward_acc5_prop_2 + _expected_reward_acc5_prop_3 + _expected_reward_acc5_prop_6 + _expected_reward_acc5_prop_7;
  console.log('_expected_total_reward_acc5 is', _expected_total_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc5 = _expected_total_reward_acc5.toString();
-_expected_total_reward_acc5 = _expected_total_reward_acc5.substring(0, _expected_total_reward_acc5.length - 2);
+_expected_total_reward_acc5 = Number.parseFloat(_expected_total_reward_acc5).toPrecision(9);
 
 
 _effective_reward_acc5 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" );
 //console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc5 = _effective_reward_acc5.toString();
-_effective_reward_acc5 = _effective_reward_acc5.substring(0, _effective_reward_acc5.length - 2);
+_effective_reward_acc5 = Number.parseFloat(_effective_reward_acc5).toPrecision(9);
 
 // acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc5, _expected_total_reward_acc5); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -789,15 +947,13 @@ let _expected_reward_acc6_prop_7 = await get_expected_reward(test_account6, IPFS
 _expected_total_reward_acc6 =  _expected_reward_acc6_prop_1 + _expected_reward_acc6_prop_2 + _expected_reward_acc6_prop_3 + _expected_reward_acc6_prop_5 + _expected_reward_acc6_prop_6 + _expected_reward_acc6_prop_7;
  console.log('_expected_total_reward_acc6 is', _expected_total_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc6 = _expected_total_reward_acc6.toString();
-_expected_total_reward_acc6 = _expected_total_reward_acc6.substring(0, _expected_total_reward_acc6.length - 2);
+_expected_total_reward_acc6 = Number.parseFloat(_expected_total_reward_acc6).toPrecision(9);
 
 
 _effective_reward_acc6 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" );
 //console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc6 = _effective_reward_acc6.toString();
-_effective_reward_acc6 = _effective_reward_acc6.substring(0, _effective_reward_acc6.length - 2);
+_effective_reward_acc6 = Number.parseFloat(_effective_reward_acc6).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc6, _expected_total_reward_acc6); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -825,15 +981,13 @@ let _expected_reward_acc7_prop_7 = await get_expected_reward(test_account7, IPFS
 _expected_total_reward_acc7 =  _expected_reward_acc7_prop_1 + _expected_reward_acc7_prop_2 + _expected_reward_acc7_prop_3 + _expected_reward_acc7_prop_5 + _expected_reward_acc7_prop_6 + _expected_reward_acc7_prop_7;
  console.log('_expected_total_reward_acc7 is', _expected_total_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_acc7 = _expected_total_reward_acc7.toString();
-_expected_total_reward_acc7 = _expected_total_reward_acc7.substring(0, _expected_total_reward_acc7.length - 2);
+_expected_total_reward_acc7 = Number.parseFloat(_expected_total_reward_acc7).toPrecision(9);
 
 
 _effective_reward_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );
 //console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_acc7 = _effective_reward_acc7.toString();
-_effective_reward_acc7 = _effective_reward_acc7.substring(0, _effective_reward_acc7.length - 3);
+_effective_reward_acc7 = Number.parseFloat(_effective_reward_acc7).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_acc7, _expected_total_reward_acc7); // 188.6335518176314 == _expected_reward_acc5_prop_4 + _expected_reward_acc5_prop_5
@@ -901,61 +1055,597 @@ assert.equal(_proposal7.status, '1', 'Proposal7 status should be Pending');
 
 console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '660', 'Proposal1 should have a lastcuration_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '1400', 'Proposal2 should have a lastcuration_weight of 1400');
 assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '170', 'Proposal4 should have a lastcuration_weight of 170');
 assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '660', 'Proposal1 should have a lasteditor_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 0');
 assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '170', 'Proposal4 should have a lasteditor_weight of 170');
 assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
 assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
-assert.equal(_proposal1.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
-assert.equal(_proposal2.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal1.slashingratio.toNumber(), 1579, 'Proposal1 should have a slashingratio of 0.1579');
+assert.equal(_proposal2.slashingratio.toNumber(), 4396, 'Proposal2 should have a slashingratio of 0.4396');
 assert.equal(_proposal3.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
-assert.equal(_proposal4.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
-assert.equal(_proposal5.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
-assert.equal(_proposal6.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
-assert.equal(_proposal7.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+assert.equal(_proposal4.slashingratio.toNumber(), 10000, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5.slashingratio.toNumber(), 10000, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6.slashingratio.toNumber(), 10000, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7.slashingratio.toNumber(), 10000, 'Proposal7 should have a slashingratio of 1');
 
 console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
 
 console.log('RECHECKING OF PROPOSALS DATA DONE WITH SUCCESS');
 // RECHECKING PROPOSALDATA DONE
 
+// RECHECKINKG PERIOD NB VOTERS
+assert.equal(_period1.total_voters.toNumber(), 28, 'Period_1 should have 28 voters');
+// RECHECKING PERIOD NB VOTERS
+
 // TESTS GET ETICA BACK:
-// Every account has made to stakes:
+// Every account has made 2 stakes:
 await stakeclmidx(test_account, 1);
 await stakeclmidx(test_account, 1);
 
-await stakeclmidx(test_account2, 1);
-await stakeclmidx(test_account2, 1);
+
+await should_fail_stakeclmidx(test_account2, 1); // test_account 2 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet 
+await stakeclmidx(test_account2, 2);
 
 await stakeclmidx(test_account3, 1);
 await stakeclmidx(test_account3, 1);
 
-await stakeclmidx(test_account4, 1);
-await stakeclmidx(test_account4, 1);
+
+let _nbstakes_account4 = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account4.address);
+console.log('_nbstakes_account4', _nbstakes_account4);
+let acc4stake1 = await getstake(test_account4, 1);
+let acc4stake2 = await getstake(test_account4, 2);
+let acc4stake3 = await getstake(test_account4, 3);
+let acc4stake4 = await getstake(test_account4, 4);
+console.log('account4 stake 1 is', acc4stake1);
+console.log('account4 stake 2 is', acc4stake2);
+console.log('account4 stake 3 is', acc4stake3);
+console.log('account4 stake 1 amount is', web3.utils.fromWei(acc4stake1.amount.toString()));
+console.log('account4 stake 2 amount is', web3.utils.fromWei(acc4stake2.amount.toString()));
+console.log('account4 stake 3 amount is', web3.utils.fromWei(acc4stake3.amount.toString()));
+console.log('account4 stake 4 amount is', web3.utils.fromWei(acc4stake4.amount.toString()));
+console.log('account4 stake 1 endTime is', acc4stake1.endTime.toString());
+console.log('account4 stake 2 endTime is', acc4stake2.endTime.toString());
+console.log('account4 stake 3 endTime is', acc4stake3.endTime.toString());
+console.log('account4 stake 4 endTime is', acc4stake4.endTime.toString());
+await should_fail_stakeclmidx(test_account4, 1); // test_account 4 should have been slashed (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
+await stakeclmidx(test_account4, 4);
 
 await stakeclmidx(test_account5, 1);
 await stakeclmidx(test_account5, 1);
 
-await stakeclmidx(test_account6, 1);
-await stakeclmidx(test_account6, 1);
+let _nbstakes_account6 = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account6.address);
+console.log('_nbstakes_account6', _nbstakes_account4);
+let acc6stake1 = await getstake(test_account6, 1);
+let acc6stake2 = await getstake(test_account6, 2);
+let acc6stake3 = await getstake(test_account6, 3);
+let acc6stake4 = await getstake(test_account6, 4);
+console.log('account6 stake 1 is', acc4stake1);
+console.log('account6 stake 2 is', acc4stake2);
+console.log('account6 stake 3 is', acc4stake3);
+console.log('account6 stake 1 amount is', web3.utils.fromWei(acc6stake1.amount.toString()));
+console.log('account6 stake 2 amount is', web3.utils.fromWei(acc6stake2.amount.toString()));
+console.log('account6 stake 3 amount is', web3.utils.fromWei(acc6stake3.amount.toString()));
+console.log('account6 stake 4 amount is', web3.utils.fromWei(acc6stake4.amount.toString()));
+console.log('account6 stake 1 endTime is', acc6stake1.endTime.toString());
+console.log('account6 stake 2 endTime is', acc6stake2.endTime.toString());
+console.log('account6 stake 3 endTime is', acc6stake3.endTime.toString());
+console.log('account6 stake 4 endTime is', acc6stake4.endTime.toString());
+await should_fail_stakeclmidx(test_account6, 1); // test_account 6 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
+await stakeclmidx(test_account6, 2);
+await stakeclmidx(test_account6, 3);
+await should_fail_stakeclmidx(test_account6, 4); // test_account 6 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
 
+let _nbstakes_account7 = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account7.address);
+console.log('_nbstakes_account7', _nbstakes_account7);
+let acc7stake1 = await getstake(test_account7, 1);
+let acc7stake2 = await getstake(test_account7, 2);
+let acc7stake3 = await getstake(test_account7, 3);
+console.log('account7 stake 1 is', acc7stake1);
+console.log('account7 stake 2 is', acc7stake2);
+console.log('account7 stake 3 is', acc7stake3);
+console.log('account7 stake 1 amount is', web3.utils.fromWei(acc7stake1.amount.toString()));
+console.log('account7 stake 2 amount is', web3.utils.fromWei(acc7stake2.amount.toString()));
+console.log('account7 stake 3 amount is', web3.utils.fromWei(acc7stake3.amount.toString()));
+console.log('account7 stake 1 endTime is', acc7stake1.endTime.toString());
+console.log('account7 stake 2 endTime is', acc7stake2.endTime.toString());
+console.log('account7 stake 3 endTime is', acc7stake3.endTime.toString());
 await stakeclmidx(test_account7, 1);
 await stakeclmidx(test_account7, 1);
+
+// should fail to claim this stake as testaccount8has blocked eticas by commiting vote on proposal too late (after it's endvote).
+// Thus was not able to revealvote of this proposal and thus could not unblocked those blocked eticas
+await should_fail_stakeclmidx(test_account8, 1);
+// should at least be able to unstake second stake as its amount is lower than the value of blocked eticas
+await stakeclmidx(test_account8, 2);
+
+// ------------ Stake Consolidation ------------- //
+
+// ------------ Stake Snap ---------------------- //
+// shoudl still fail to claim first stake:
+await should_fail_stakeclmidx(test_account8, 1);
+await should_fail_stakeclmidx(test_account8, 2);
+
+// should fail to stakesnap with incorrect amount value:
+await should_fail_stakesnap(test_account8, 1, '81');
+await should_fail_stakesnap(test_account8, 1, '80');
+await should_fail_stakesnap(test_account8, 1, '0');
+
+// should be able to stakesnap with correct value:
+await stakesnap(test_account8, 1, '75');
+
+// should now be able to claim the stake 2 of 5 ETI because the stake of 80 ETI was snapped into 1 stake of 75 ETI and 1 stake of 5 ETI:
+await stakeclmidx(test_account8, 2);
+
+
+// ------------ Stake Snap ---------------------- //
+
+  // ---------- FIRST ROW   --------------  //
+
+
+  // begin the stakes of test.account
+  await eticatobosom(test_account, '20');
+  await eticatobosom(test_account, '12');
+  await eticatobosom(test_account, '5');
+  await eticatobosom(test_account, '8');
+  await eticatobosom(test_account, '30');
+  await eticatobosom(test_account, '10');
+  await eticatobosom(test_account, '9');
+
+  let _nbstakes_before_test_account = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account.address);
+  console.log('_nbstakes_test_account before is', _nbstakes_before_test_account);
+  assert.equal(_nbstakes_before_test_account, 7, 'test_account should have 7 stakes');
+
+  let stake1 = await getstake(test_account, 1);
+  console.log('stake1 amount is', web3.utils.fromWei(stake1.amount, "ether" ));
+  console.log('stake1 startTime is', stake1.startTime.toString());
+  console.log('stake1 endTime is', stake1.endTime.toString());
+
+  let stake2 = await getstake(test_account, 2);
+  //console.log('stake2 is', stake2);
+  console.log('stake2 amount is', web3.utils.fromWei(stake2.amount, "ether" ));
+  console.log('stake2 startTime is', stake2.startTime.toString());
+  console.log('stake2 endTime is', stake2.endTime.toString());
+
+  let stake3 = await getstake(test_account, 3);
+  //console.log('stake3 is', stake3);
+  console.log('stake3 amount is', web3.utils.fromWei(stake3.amount, "ether" ));
+  console.log('stake3 startTime is', stake3.startTime.toString());
+  console.log('stake3 endTime is', stake3.endTime.toString());
+
+  let stake4 = await getstake(test_account, 4);
+  //console.log('stake4 is', stake4);
+  console.log('stake4 amount is', web3.utils.fromWei(stake4.amount, "ether" ));
+  console.log('stake4 startTime is', stake4.startTime.toString());
+  console.log('stake4 endTime is', stake4.endTime.toString());
+
+  let stake5 = await getstake(test_account, 5);
+  //console.log('stake5 is', stake5);
+  console.log('stake5 amount is', web3.utils.fromWei(stake5.amount, "ether" ));
+  console.log('stake5 startTime is', stake5.startTime.toString());
+  console.log('stake5 endTime is', stake5.endTime.toString());
+
+  let stake6 = await getstake(test_account, 6);
+  //console.log('stake6 is', stake6);
+  console.log('stake6 amount is', web3.utils.fromWei(stake6.amount, "ether" ));
+  console.log('stake6 startTime is', stake6.startTime.toString());
+  console.log('stake6 endTime is', stake6.endTime.toString());
+
+  let stake7 = await getstake(test_account, 7);
+  //console.log('stake7 is', stake7);
+  console.log('stake7 amount is', web3.utils.fromWei(stake7.amount, "ether" ));
+  console.log('stake7 startTime is', stake7.startTime.toString());
+  console.log('stake7 endTime is', stake7.endTime.toString());
+
+
+  let lastblock = await web3.eth.getBlock("latest");
+  //console.log('lastest block is ', lastblock);
+  console.log('lastblock.timestamp is ', lastblock.timestamp);
+  let _new_endTime = lastblock.timestamp + 500;
+  let _min_limit = lastblock.timestamp;
+
+  await stakescsldt(test_account, _new_endTime, _min_limit, 7);
+    /*
+  Stakes expected new Order trhough the stakescsldt function process:
+
+  First state: 1 | 2 | 3 | 4 | 5 | 6 | 7
+  
+  Second state: 7 | 2 | 3 | 4 | 5 | 6
+
+  Third state: 7 | 6 | 3 | 4 | 5
+
+  Fourth state: | 7 | 6 | 5 | 4
+
+  Fith state: 5 | 6
+
+  Sixth state: 6
+
+  Result and expected state:  6 | NewConsolidatedStake
+
+  */
+
+
+
+  let _nbstakes_after_test_account = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account.address);
+  console.log('_nbstakes_test_account after is', _nbstakes_after_test_account);
+  assert.equal(_nbstakes_after_test_account, 2, 'test_account should have 2 stakes');
+
+
+  let consolidatedstake1 = await getstake(test_account, 1);
+  //console.log('consolidatedstake1 is', consolidatedstake1);
+  console.log('consolidatedstake1 amount is', web3.utils.fromWei(consolidatedstake1.amount, "ether" ));
+  console.log('consolidatedstake1 startTime is', consolidatedstake1.startTime.toString());
+  console.log('consolidatedstake1 endTime is', consolidatedstake1.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake1.amount, "ether" ), 10, 'test_account consolidatedstake1 amount should be 10 ETI');
+  assert.equal(consolidatedstake1.endTime.toString(), stake6.endTime.toString(), 'test_account consolidatedstake1 endTime should equal stake6 endTime');
+  assert.equal(consolidatedstake1.startTime.toString(), stake6.startTime.toString(), 'test_account consolidatedstake1 startTime should equal stake6 startTime');
+
+  let consolidatedstake2 = await getstake(test_account, 2);
+  //console.log('consolidatedstake2 is', consolidatedstake2);
+  console.log('consolidatedstake2 amount is', web3.utils.fromWei(consolidatedstake2.amount, "ether" ));
+  console.log('consolidatedstake2 startTime is', consolidatedstake2.startTime.toString());
+  console.log('consolidatedstake2 endTime is', consolidatedstake2.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake2.amount, "ether" ), 84, 'test_account consolidatedstake2 amount should be 84 ETI');
+  assert.equal(consolidatedstake2.endTime.toNumber(), _new_endTime, 'test_account consolidatedstake2 endTime should equal _new_endTime');
+
+  // --- ONLY 2 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+  let consolidatedstake3 = await getstake(test_account, 3);
+  //console.log('consolidatedstake3 is', consolidatedstake3);
+  console.log('consolidatedstake3 amount is', web3.utils.fromWei(consolidatedstake3.amount, "ether" ));
+  console.log('consolidatedstake3 startTime is', consolidatedstake3.startTime.toString());
+  console.log('consolidatedstake3 endTime is', consolidatedstake3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake3.amount, "ether" ), 0, 'test_account consolidatedstake3 amount should be 0 ETI');
+
+  let consolidatedstake4 = await getstake(test_account, 4);
+  //console.log('consolidatedstake4 is', consolidatedstake4);
+  console.log('consolidatedstake4 amount is', web3.utils.fromWei(consolidatedstake4.amount, "ether" ));
+  console.log('consolidatedstake4 startTime is', consolidatedstake4.startTime.toString());
+  console.log('consolidatedstake4 endTime is', consolidatedstake4.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake4.amount, "ether" ), 0, 'test_account consolidatedstake4 amount should be 0 ETI');
+
+  let consolidatedstake5 = await getstake(test_account, 5);
+  //console.log('consolidatedstake5 is', consolidatedstake5);
+  console.log('consolidatedstake5 amount is', web3.utils.fromWei(consolidatedstake5.amount, "ether" ));
+  console.log('consolidatedstake5 startTime is', consolidatedstake5.startTime.toString());
+  console.log('consolidatedstake5 endTime is', consolidatedstake5.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake5.amount, "ether" ), 0, 'test_account consolidatedstake5 amount should be 0 ETI');
+
+  let consolidatedstake6 = await getstake(test_account, 6);
+  //console.log('consolidatedstake6 is', consolidatedstake6);
+  console.log('consolidatedstake6 amount is', web3.utils.fromWei(consolidatedstake6.amount, "ether" ));
+  console.log('consolidatedstake6 startTime is', consolidatedstake6.startTime.toString());
+  console.log('consolidatedstake6 endTime is', consolidatedstake6.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake6.amount, "ether" ), 0, 'test_account consolidatedstake6 amount should be 0 ETI');
+
+  let consolidatedstake7 = await getstake(test_account, 7);
+  //console.log('consolidatedstake7 is', consolidatedstake7);
+  console.log('consolidatedstake7 amount is', web3.utils.fromWei(consolidatedstake7.amount, "ether" ));
+  console.log('consolidatedstake7 startTime is', consolidatedstake7.startTime.toString());
+  console.log('consolidatedstake7 endTime is', consolidatedstake7.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake7.amount, "ether" ), 0, 'test_account consolidatedstake7 amount should be 0 ETI');
+
+  // --- ONLY 2 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+
+      // should fail to consolidate the stakes:
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 101); // never allow more than 100 for the loop
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 3); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 4); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 5); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 6); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 7); // test_account has only 2 stakes
+      await should_fail_to_stakescsldt(test_account, _new_endTime, _min_limit, 8); // test_account has only 2 stakes
+    
+      // -------  should FAIL TO CONSOLIDATE WITH OUT OF RANGE PARAMS --- //
+
+       // ---------- FIRST ROW   --------------  //
+
+  // ---------- SECOND ROW   --------------  //
+
+  // begin the stakes of test.account
+  await eticatobosom(test_account3, '2');
+  await eticatobosom(test_account3, '5');
+  await eticatobosom(test_account3, '9');
+  await eticatobosom(test_account3, '15');
+  await eticatobosom(test_account3, '10');
+  await eticatobosom(test_account3, '1');
+  await eticatobosom(test_account3, '3.3');
+
+  let _nbstakes_before_test_account3 = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account3.address);
+  console.log('_nbstakes_test_account3 before is', _nbstakes_before_test_account3);
+  assert.equal(_nbstakes_before_test_account3, 7, 'test_account should have 7 stakes');
+
+  let stake1_acc3 = await getstake(test_account3, 1);
+  console.log('stake1_acc3 amount is', web3.utils.fromWei(stake1_acc3.amount, "ether" ));
+  console.log('stake1_acc3 startTime is', stake1_acc3.startTime.toString());
+  console.log('stake1_acc3 endTime is', stake1_acc3.endTime.toString());
+
+  let stake2_acc3 = await getstake(test_account3, 2);
+  //console.log('stake2_acc3 is', stake2_acc3);
+  console.log('stake2_acc3 amount is', web3.utils.fromWei(stake2_acc3.amount, "ether" ));
+  console.log('stake2_acc3 startTime is', stake2_acc3.startTime.toString());
+  console.log('stake2_acc3 endTime is', stake2_acc3.endTime.toString());
+
+  let stake3_acc3 = await getstake(test_account3, 3);
+  //console.log('stake3_acc3 is', stake3_acc3);
+  console.log('stake3_acc3 amount is', web3.utils.fromWei(stake3_acc3.amount, "ether" ));
+  console.log('stake3_acc3 startTime is', stake3_acc3.startTime.toString());
+  console.log('stake3_acc3 endTime is', stake3_acc3.endTime.toString());
+
+  let stake4_acc3 = await getstake(test_account3, 4);
+  //console.log('stake4_acc3 is', stake4_acc3);
+  console.log('stake4_acc3 amount is', web3.utils.fromWei(stake4_acc3.amount, "ether" ));
+  console.log('stake4_acc3 startTime is', stake4_acc3.startTime.toString());
+  console.log('stake4_acc3 endTime is', stake4_acc3.endTime.toString());
+
+  let stake5_acc3 = await getstake(test_account3, 5);
+  //console.log('stake5_acc3 is', stake5_acc3);
+  console.log('stake5_acc3 amount is', web3.utils.fromWei(stake5_acc3.amount, "ether" ));
+  console.log('stake5_acc3 startTime is', stake5_acc3.startTime.toString());
+  console.log('stake5_acc3 endTime is', stake5_acc3.endTime.toString());
+
+  let stake6_acc3 = await getstake(test_account3, 6);
+  //console.log('stake6_acc3 is', stake6_acc3);
+  console.log('stake6_acc3 amount is', web3.utils.fromWei(stake6_acc3.amount, "ether" ));
+  console.log('stake6_acc3 startTime is', stake6_acc3.startTime.toString());
+  console.log('stake6_acc3 endTime is', stake6_acc3.endTime.toString());
+
+  let stake7_acc3 = await getstake(test_account3, 7);
+  //console.log('stake7_acc3 is', stake7_acc3);
+  console.log('stake7_acc3 amount is', web3.utils.fromWei(stake7_acc3.amount, "ether" ));
+  console.log('stake7_acc3 startTime is', stake7_acc3.startTime.toString());
+  console.log('stake7_acc3 endTime is', stake7_acc3.endTime.toString());
+
+
+  lastblock = await web3.eth.getBlock("latest");
+  //console.log('lastest block is ', lastblock);
+  console.log('lastblock.timestamp is ', lastblock.timestamp);
+  _new_endTime = lastblock.timestamp + 500;
+  _min_limit = stake1_acc3.endTime; // all 7 Stakes should be concerned;
+
+  await advanceminutes(20); // advances 20 seconds to pass at least one block so that NewConsolidatedStake has a endTime superior to 7 first stakes
+  
+  
+  // consolidates the stakes:
+  await stakescsldt(test_account3, _new_endTime, _min_limit, 2);
+    /*
+  Stakes expected new Order trhough the stakescsldt function process:
+
+  First state: 1 | 2 | 3 | 4 | 5 | 6 | 7
+  
+  Second state: 7 | 2 | 3 | 4 | 5 | 6
+
+  Third state: 7 | 6 | 3 | 4 | 5
+
+  Result and expected state:  7 | 6 | 3 | 4 | 5 | NewConsolidatedStake
+
+  */
+
+  let _nbstakes_after_test_account3 = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account3.address);
+  console.log('_nbstakes_test_account3 after is', _nbstakes_after_test_account3);
+  assert.equal(_nbstakes_after_test_account3, 6, 'test_account3 should have 6 stakes');
+
+  let consolidatedstake1_acc3 = await getstake(test_account3, 1);
+  //console.log('consolidatedstake1_acc3 is', consolidatedstake1_acc3);
+  console.log('consolidatedstake1_acc3 amount is', web3.utils.fromWei(consolidatedstake1_acc3.amount, "ether" ));
+  console.log('consolidatedstake1_acc3 startTime is', consolidatedstake1_acc3.startTime.toString());
+  console.log('consolidatedstake1_acc3 endTime is', consolidatedstake1_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake1_acc3.amount, "ether" ), web3.utils.fromWei(stake7_acc3.amount, "ether" ), 'test_account3 consolidatedstake1_acc3 amount should equal stake7 amount');
+  assert.equal(consolidatedstake1_acc3.endTime.toString(), stake7_acc3.endTime.toString(), 'test_account3 consolidatedstake1_acc3 endTime should equal stake7_acc3 endTime');
+  assert.equal(consolidatedstake1_acc3.startTime.toString(), stake7_acc3.startTime.toString(), 'test_account3 consolidatedstake1_acc3 startTime should equal stake7_acc3 startTime');
+
+  let consolidatedstake2_acc3 = await getstake(test_account3, 2);
+  //console.log('consolidatedstake2_acc3 is', consolidatedstake2_acc3);
+  console.log('consolidatedstake2_acc3 amount is', web3.utils.fromWei(consolidatedstake2_acc3.amount, "ether" ));
+  console.log('consolidatedstake2_acc3 startTime is', consolidatedstake2_acc3.startTime.toString());
+  console.log('consolidatedstake2_acc3 endTime is', consolidatedstake2_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake2_acc3.amount, "ether" ), web3.utils.fromWei(stake6_acc3.amount, "ether" ), 'test_account3 consolidatedstake2_acc3 amount should equal stake6_acc3 amount');
+  assert.equal(consolidatedstake2_acc3.endTime.toString(), stake6_acc3.endTime.toString(), 'test_account3 consolidatedstake2_acc3 endTime should equal _new_endTime');
+  assert.equal(consolidatedstake2_acc3.startTime.toString(), stake6_acc3.startTime.toString(), 'test_account3 consolidatedstake2_acc3 startTime should equal stake6_acc3 startTime');
+
+
+  let consolidatedstake3_acc3 = await getstake(test_account3, 3);
+  //console.log('consolidatedstake3_acc3 is', consolidatedstake3_acc3);
+  console.log('consolidatedstake3_acc3 amount is', web3.utils.fromWei(consolidatedstake3_acc3.amount, "ether" ));
+  console.log('consolidatedstake3_acc3 startTime is', consolidatedstake3_acc3.startTime.toString());
+  console.log('consolidatedstake3_acc3 endTime is', consolidatedstake3_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake3_acc3.amount, "ether" ), web3.utils.fromWei(stake3_acc3.amount, "ether" ), 'test_account3 consolidatedstake3_acc3 amount should equal stake3 amount');
+  assert.equal(consolidatedstake3_acc3.endTime.toString(), stake3_acc3.endTime.toString(), 'test_account3 consolidatedstake3_acc3 endTime should equal stake3_acc3 endTime');
+  assert.equal(consolidatedstake3_acc3.startTime.toString(), stake3_acc3.startTime.toString(), 'test_account3 consolidatedstake3_acc3 startTime should equal stake3_acc3 startTime');
+
+  let consolidatedstake4_acc3 = await getstake(test_account3, 4);
+  //console.log('consolidatedstake4_acc3 is', consolidatedstake4_acc3);
+  console.log('consolidatedstake4_acc3 amount is', web3.utils.fromWei(consolidatedstake4_acc3.amount, "ether" ));
+  console.log('consolidatedstake4_acc3 startTime is', consolidatedstake4_acc3.startTime.toString());
+  console.log('consolidatedstake4_acc3 endTime is', consolidatedstake4_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake4_acc3.amount, "ether" ), web3.utils.fromWei(stake4_acc3.amount, "ether" ), 'test_account3 consolidatedstake4_acc3 amount should equal stake4 amount');
+  assert.equal(consolidatedstake4_acc3.endTime.toString(), stake4_acc3.endTime.toString(), 'test_account3 consolidatedstake4_acc3 endTime should equal stake4_acc3 endTime');
+  assert.equal(consolidatedstake4_acc3.startTime.toString(), stake4_acc3.startTime.toString(), 'test_account3 consolidatedstake4_acc3 startTime should equal stake4_acc3 startTime');
+
+  let consolidatedstake5_acc3 = await getstake(test_account3, 5);
+  //console.log('consolidatedstake5_acc3 is', consolidatedstake5_acc3);
+  console.log('consolidatedstake5_acc3 amount is', web3.utils.fromWei(consolidatedstake5_acc3.amount, "ether" ));
+  console.log('consolidatedstake5_acc3 startTime is', consolidatedstake5_acc3.startTime.toString());
+  console.log('consolidatedstake5_acc3 endTime is', consolidatedstake5_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake5_acc3.amount, "ether" ), web3.utils.fromWei(stake5_acc3.amount, "ether" ), 'test_account3 consolidatedstake5_acc3 amount should equal stake5 amount');
+  assert.equal(consolidatedstake5_acc3.endTime.toString(), stake5_acc3.endTime.toString(), 'test_account3 consolidatedstake5_acc3 endTime should equal stake5_acc3 endTime');
+  assert.equal(consolidatedstake5_acc3.startTime.toString(), stake5_acc3.startTime.toString(), 'test_account3 consolidatedstake5_acc3 startTime should equal stake5_acc3 startTime');
+
+  // The Newly created and Consolidated Stake:
+  let consolidatedstake6_acc3 = await getstake(test_account3, 6);
+  //console.log('consolidatedstake6_acc3 is', consolidatedstake6_acc3);
+  console.log('consolidatedstake6_acc3 amount is', web3.utils.fromWei(consolidatedstake6_acc3.amount, "ether" ));
+  console.log('consolidatedstake6_acc3 startTime is', consolidatedstake6_acc3.startTime.toString());
+  console.log('consolidatedstake6_acc3 endTime is', consolidatedstake6_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake6_acc3.amount, "ether" ), 7, 'test_account3 consolidatedstake6_acc3 amount should be 7 ETI');
+  assert.equal(consolidatedstake6_acc3.endTime.toNumber(), _new_endTime, 'test_account3 consolidatedstake6_acc3 endTime should equal _new_endTime');
+  assert(consolidatedstake6_acc3.startTime.toNumber() >= lastblock.timestamp, 'test_account3 consolidatedstake6_acc3 starTime should be greater than or equal to latest block timestamp');
+
+
+  // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+  let consolidatedstake7_acc3 = await getstake(test_account3, 7);
+  //console.log('consolidatedstake7_acc3 is', consolidatedstake7_acc3);
+  console.log('consolidatedstake7_acc3 amount is', web3.utils.fromWei(consolidatedstake7_acc3.amount, "ether" ));
+  console.log('consolidatedstake7_acc3 startTime is', consolidatedstake7_acc3.startTime.toString());
+  console.log('consolidatedstake7_acc3 endTime is', consolidatedstake7_acc3.endTime.toString());
+  assert.equal(web3.utils.fromWei(consolidatedstake7_acc3.amount, "ether" ), 0, 'test_account3 consolidatedstake7_acc3 amount should be 0 ETI');
+
+  // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+
+    // should fail to consolidate the stakes:
+    await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 101); // never allow more than 100 for the loop
+    await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 7); // test_account3 has only 6 stakes
+    // should fail to consolidate the stakes
+
+
+    lastblock = await web3.eth.getBlock("latest");
+    //console.log('lastest block is ', lastblock);
+    console.log('lastblock.timestamp is ', lastblock.timestamp);
+  
+    _min_limit = _new_endTime; // only NewConsolidatedStake and Stake9 should be concerned
+    _new_endTime = lastblock.timestamp + 500;
+
+  
+    // creates the nineth stake:
+    await eticatobosom(test_account3, '2');
+    let stake9_acc3 = await getstake(test_account3, 7);
+    //console.log('stake9_acc3 is', stake7_acc3);
+
+
+    // should fail to consolidate the stakes:
+    await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 8); // test_account3 has only 7 stakes
+    // should fail to consolidate the stakes
+    
+
+ // consolidates the stakes:
+ await stakescsldt(test_account3, _new_endTime, _min_limit, 7);
+  /*
+  Stakes expected new Order trhough the stakescsldt function process:
+
+  First state: 7 | 6 | 3 | 4 | 5 | NewConsolidatedStake | 9
+  
+  Second state: 7 | 6 | 3 | 4 | 5 | NewConsolidatedStake | 9
+
+  Third state: 7 | 6 | 3 | 4 | 5 | NewConsolidatedStake | 9
+
+  Fourth state : 7 | 6 | 3 | 4 | 5 | NewConsolidatedStake | 9
+
+  Fifth state: 7 | 6 | 3 | 4 | 5 | NewConsolidatedStake | 9
+
+  sixth state: 7 | 6 | 3 | 4 | 5 | 9
+
+  sevnth state: 7 | 6 | 3 | 4 | 5
+
+  Result and expected state:  7 | 6 | 3 | 4 | 5 | NewConsolidatedStake2
+
+  */
+
+ console.log('stake7_acc3 amount is', web3.utils.fromWei(stake7_acc3.amount, "ether" ));
+ console.log('stake7_acc3 startTime is', stake7_acc3.startTime.toString());
+ console.log('stake7_acc3 endTime is', stake7_acc3.endTime.toString());
+
+ let _nbstakes_after_test_account3_2 = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(test_account3.address);
+ console.log('_nbstakes_test_account3_2 after is', _nbstakes_after_test_account3_2);
+ assert.equal(_nbstakes_after_test_account3_2, 6, 'test_account3 should have 6 stakes');
+
+
+ let consolidatedstake1_acc3_2 = await getstake(test_account3, 1);
+ //console.log('consolidatedstake1_acc3_2 is', consolidatedstake1_acc3_2);
+ console.log('consolidatedstake1_acc3_2 amount is', web3.utils.fromWei(consolidatedstake1_acc3_2.amount, "ether" ));
+ console.log('consolidatedstake1_acc3_2 startTime is', consolidatedstake1_acc3_2.startTime.toString());
+ console.log('consolidatedstake1_acc3_2 endTime is', consolidatedstake1_acc3_2.endTime.toString());
+ assert.equal(web3.utils.fromWei(consolidatedstake1_acc3_2.amount, "ether" ), web3.utils.fromWei(stake7_acc3.amount, "ether" ), 'test_account3 consolidatedstake1_acc3_2 amount should equal stake7 amount');
+ assert.equal(consolidatedstake1_acc3_2.endTime.toString(), stake7_acc3.endTime.toString(), 'test_account3 consolidatedstake1_acc3_2 endTime should equal stake7_acc3 endTime');
+ assert.equal(consolidatedstake1_acc3_2.startTime.toString(), stake7_acc3.startTime.toString(), 'test_account3 consolidatedstake1_acc3_2 startTime should equal stake7_acc3 startTime');
+
+ let consolidatedstake2_acc3_2 = await getstake(test_account3, 2);
+ //console.log('consolidatedstake2_acc3_2 is', consolidatedstake2_acc3_2);
+ console.log('consolidatedstake2_acc3_2 amount is', web3.utils.fromWei(consolidatedstake2_acc3_2.amount, "ether" ));
+ console.log('consolidatedstake2_acc3_2 startTime is', consolidatedstake2_acc3_2.startTime.toString());
+ console.log('consolidatedstake2_acc3_2 endTime is', consolidatedstake2_acc3_2.endTime.toString());
+ assert.equal(web3.utils.fromWei(consolidatedstake2_acc3_2.amount, "ether" ), web3.utils.fromWei(stake6_acc3.amount, "ether" ), 'test_account3 consolidatedstake2_acc3_2 amount should equal stake6_acc3 amount');
+ assert.equal(consolidatedstake2_acc3_2.endTime.toString(), stake6_acc3.endTime.toString(), 'test_account3 consolidatedstake2_acc3_2 endTime should equal _new_endTime');
+ assert.equal(consolidatedstake2_acc3_2.startTime.toString(), stake6_acc3.startTime.toString(), 'test_account3 consolidatedstake2_acc3_2 startTime should equal stake6_acc3 startTime');
+
+
+ let consolidatedstake3_acc3_2 = await getstake(test_account3, 3);
+ //console.log('consolidatedstake3_acc3_2 is', consolidatedstake3_acc3_2);
+ console.log('consolidatedstake3_acc3_2 amount is', web3.utils.fromWei(consolidatedstake3_acc3_2.amount, "ether" ));
+ console.log('consolidatedstake3_acc3_2 startTime is', consolidatedstake3_acc3_2.startTime.toString());
+ console.log('consolidatedstake3_acc3_2 endTime is', consolidatedstake3_acc3_2.endTime.toString());
+ assert.equal(web3.utils.fromWei(consolidatedstake3_acc3_2.amount, "ether" ), web3.utils.fromWei(stake3_acc3.amount, "ether" ), 'test_account3 consolidatedstake3_acc3_2 amount should equal stake3 amount');
+ assert.equal(consolidatedstake3_acc3_2.endTime.toString(), stake3_acc3.endTime.toString(), 'test_account3 consolidatedstake3_acc3_2 endTime should equal stake3_acc3 endTime');
+ assert.equal(consolidatedstake3_acc3_2.startTime.toString(), stake3_acc3.startTime.toString(), 'test_account3 consolidatedstake3_acc3_2 startTime should equal stake3_acc3 startTime');
+
+ let consolidatedstake4_acc3_2 = await getstake(test_account3, 4);
+ //console.log('consolidatedstake4_acc3_2 is', consolidatedstake4_acc3_2);
+ console.log('consolidatedstake4_acc3_2 amount is', web3.utils.fromWei(consolidatedstake4_acc3_2.amount, "ether" ));
+ console.log('consolidatedstake4_acc3_2 startTime is', consolidatedstake4_acc3_2.startTime.toString());
+ console.log('consolidatedstake4_acc3_2 endTime is', consolidatedstake4_acc3_2.endTime.toString());
+ assert.equal(web3.utils.fromWei(consolidatedstake4_acc3_2.amount, "ether" ), web3.utils.fromWei(stake4_acc3.amount, "ether" ), 'test_account3 consolidatedstake4_acc3_2 amount should equal stake4 amount');
+ assert.equal(consolidatedstake4_acc3_2.endTime.toString(), stake4_acc3.endTime.toString(), 'test_account3 consolidatedstake4_acc3_2 endTime should equal stake4_acc3 endTime');
+ assert.equal(consolidatedstake4_acc3_2.startTime.toString(), stake4_acc3.startTime.toString(), 'test_account3 consolidatedstake4_acc3_2 startTime should equal stake4_acc3 startTime');
+
+ let consolidatedstake5_acc3_2 = await getstake(test_account3, 5);
+ //console.log('consolidatedstake5_acc3_2 is', consolidatedstake5_acc3_2);
+ console.log('consolidatedstake5_acc3_2 amount is', web3.utils.fromWei(consolidatedstake5_acc3_2.amount, "ether" ));
+ console.log('consolidatedstake5_acc3_2 startTime is', consolidatedstake5_acc3_2.startTime.toString());
+ console.log('consolidatedstake5_acc3_2 endTime is', consolidatedstake5_acc3_2.endTime.toString());
+ assert.equal(web3.utils.fromWei(consolidatedstake5_acc3_2.amount, "ether" ), web3.utils.fromWei(stake5_acc3.amount, "ether" ), 'test_account3 consolidatedstake5_acc3_2 amount should equal stake5 amount');
+ assert.equal(consolidatedstake5_acc3_2.endTime.toString(), stake5_acc3.endTime.toString(), 'test_account3 consolidatedstake5_acc3_2 endTime should equal stake5_acc3 endTime');
+ assert.equal(consolidatedstake5_acc3_2.startTime.toString(), stake5_acc3.startTime.toString(), 'test_account3 consolidatedstake5_acc3_2 startTime should equal stake5_acc3 startTime');
+
+
+   // The Newly created and Consolidated Stake:
+   let consolidatedstake6_acc3_2 = await getstake(test_account3, 6);
+   //console.log('consolidatedstake6_acc3 is', consolidatedstake6_acc3);
+   console.log('consolidatedstake6_acc3_2 amount is', web3.utils.fromWei(consolidatedstake6_acc3_2.amount, "ether" ));
+   console.log('consolidatedstake6_acc3_2 startTime is', consolidatedstake6_acc3_2.startTime.toString());
+   console.log('consolidatedstake6_acc3_2 endTime is', consolidatedstake6_acc3_2.endTime.toString());
+   assert.equal(web3.utils.fromWei(consolidatedstake6_acc3_2.amount, "ether" ), 9, 'test_account3 consolidatedstake6_acc3_2 amount should be 9 ETI');
+   assert.equal(consolidatedstake6_acc3_2.endTime.toNumber(), _new_endTime, 'test_account3 consolidatedstake6_acc3_2 endTime should equal _new_endTime');
+   assert(consolidatedstake6_acc3_2.startTime.toNumber() >= lastblock.timestamp, 'test_account3 consolidatedstake6_acc3_2 starTime should be greater than or equal to latest block timestamp');
+ 
+ 
+   // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+   let consolidatedstake7_acc3_2 = await getstake(test_account3, 7);
+   //console.log('consolidatedstake7_acc3_2 is', consolidatedstake7_acc3_2);
+   console.log('consolidatedstake7_acc3_2 amount is', web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ));
+   console.log('consolidatedstake7_acc3_2 startTime is', consolidatedstake7_acc3_2.startTime.toString());
+   console.log('consolidatedstake7_acc3_2 endTime is', consolidatedstake7_acc3_2.endTime.toString());
+   assert.equal(web3.utils.fromWei(consolidatedstake7_acc3_2.amount, "ether" ), 0, 'test_account3 consolidatedstake7_acc3_2 amount should be 0 ETI');
+ // --- ONLY 6 STAKES SHOULD REMAIN THE REST MUST HAVE BEEN DELETED ---- //
+
+// -- TEST 2 YEAR LIMIT OF _endTime -- //
+     // should fail to consolidate the stakes:
+     await should_fail_to_stakescsldt(test_account3, _new_endTime, _min_limit, 8); // test_account3 has only 7 stakes
+     let _more_than_2_years = lastblock.timestamp + 63075000; // 31536000 seconds = 1 year ==> 31536000 * 2 = 63 072 000 = 2 years
+     await should_fail_to_stakescsldt(test_account3, _more_than_2_years, _min_limit, 6); // cannot consolidate with _endTime over 2 years
+     // should fail to consolidate the stakes
+
+      // consolidating just under 2 years should work:
+      let _just_under_2_years = _more_than_2_years - 4000; // 31536000 seconds = 2 years
+      await stakescsldt(test_account3, _just_under_2_years, _min_limit, 6);
+// -- TEST 2 YEAR LIMIT OF _endTime -- //      
+
+       // ---------- SECOND ROW   --------------  //
+
+
+
+// ------------ Stake Consolidation -------------- //
 
 
 // ----------------------  Make same tests for next Period ----------------------------- //
@@ -963,7 +1653,7 @@ await stakeclmidx(test_account7, 1);
 console.log('<--------------------------- ENTERING TESTS OF NEXT PERIOD I ---------------------------------- >');
 
 // advance time so that clmpropbyhash becomes possible: 
-await advanceminutes(REWARD_INTERVAL);
+await advanceseconds(REWARD_INTERVAL);
 
 // --------------------- Making same tests but for next Period -----------------------------:
 
@@ -975,6 +1665,7 @@ await advanceminutes(REWARD_INTERVAL);
   await eticatobosom(test_account5, '2000');
   await eticatobosom(test_account6, '2000');
   await eticatobosom(test_account7, '2000');
+  await eticatobosom(test_account8, '80');
   
   // check significant figures:
   await eticatobosom(test_account, '0.123');
@@ -984,6 +1675,7 @@ await advanceminutes(REWARD_INTERVAL);
   await eticatobosom(test_account5, '0.565156161');
   await eticatobosom(test_account6, '0.321');
   await eticatobosom(test_account7, '0.1805');
+  await eticatobosom(test_account8, '3.1805');
 
 let IPFS1B = randomipfs();
 let IPFS2B = randomipfs();
@@ -1039,67 +1731,229 @@ let IPFS5B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5B, EXPECT
 let IPFS6B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6B, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS7B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7B, EXPECTED_FIRST_DISEASE_HASH);
 
-await revealvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '50');
-await revealvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, true, '100');
-await revealvote(test_account4, IPFS1B_WITH_FIRTDISEASEHASH, false, '50');
-await revealvote(test_account5, IPFS1B_WITH_FIRTDISEASEHASH, true, '500');
-await revealvote(test_account6, IPFS1B_WITH_FIRTDISEASEHASH, false, '350');
-await revealvote(test_account7, IPFS1B_WITH_FIRTDISEASEHASH, false, '80');
+
+// START COMMITING
+await commitvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await commitvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await commitvote(test_account4, IPFS1B_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await commitvote(test_account5, IPFS1B_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await commitvote(test_account6, IPFS1B_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await commitvote(test_account7, IPFS1B_WITH_FIRTDISEASEHASH, false, '80', "random123");
+
+//await should_fail_commitvote(test_account2, IPFS2B_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await commitvote(test_account3, IPFS2B_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await commitvote(test_account4, IPFS2B_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await commitvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await commitvote(test_account6, IPFS2B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS2B_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+await commitvote(test_account2, IPFS3B_WITH_FIRTDISEASEHASH, true, '5', "random123");
+//await should_fail_commitvote(test_account3, IPFS3B_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await commitvote(test_account4, IPFS3B_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await commitvote(test_account5, IPFS3B_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await commitvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS3B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+await commitvote(test_account2, IPFS4B_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '10', "random123");
+//await should_fail_commitvote(test_account4, IPFS4B_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await commitvote(test_account5, IPFS4B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await commitvote(test_account6, IPFS4B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await commitvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+// should fail to commitvote with incorrect amount for a proposal:
+await should_fail_commitvote(test_account, IPFS4B_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_commitvote(test_account, IPFS4B_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_commitvote(test_account, IPFS4B_WITH_FIRTDISEASEHASH, true, '0', "random123");
+
+// should fail for users to commitvote twice on same Proposal:
+/* to deal with it latter:
+await should_fail_commitvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await should_fail_commitvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, false, '25', "random123");
+await should_fail_commitvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_commitvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_commitvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '95', "random123");
+*/
+// END COMMITING
+
+// ------- should fail revealing vote too early ------------ //
+await should_fail_revealvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await should_fail_revealvote(test_account4, IPFS1B_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await should_fail_revealvote(test_account5, IPFS1B_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await should_fail_revealvote(test_account6, IPFS1B_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await should_fail_revealvote(test_account7, IPFS1B_WITH_FIRTDISEASEHASH, false, '80', "random123");
 
 //await should_fail_revealvote(test_account2, IPFS2B_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
-await revealvote(test_account3, IPFS2B_WITH_FIRTDISEASEHASH, false, '100');
-await revealvote(test_account4, IPFS2B_WITH_FIRTDISEASEHASH, true, '500');
-await revealvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, false, '500');
-await revealvote(test_account6, IPFS2B_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS2B_WITH_FIRTDISEASEHASH, false, '800');
+await should_fail_revealvote(test_account3, IPFS2B_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await should_fail_revealvote(test_account4, IPFS2B_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await should_fail_revealvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await should_fail_revealvote(test_account6, IPFS2B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS2B_WITH_FIRTDISEASEHASH, false, '800', "random123");
 
-await revealvote(test_account2, IPFS3B_WITH_FIRTDISEASEHASH, true, '5');
+await should_fail_revealvote(test_account2, IPFS3B_WITH_FIRTDISEASEHASH, true, '5', "random123");
 //await should_fail_revealvote(test_account3, IPFS3B_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
-await revealvote(test_account4, IPFS3B_WITH_FIRTDISEASEHASH, true, '490');
-await revealvote(test_account5, IPFS3B_WITH_FIRTDISEASEHASH, false, '600');
-await revealvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS3B_WITH_FIRTDISEASEHASH, true, '60');
+await should_fail_revealvote(test_account4, IPFS3B_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await should_fail_revealvote(test_account5, IPFS3B_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await should_fail_revealvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS3B_WITH_FIRTDISEASEHASH, true, '60', "random123");
 
-await revealvote(test_account2, IPFS4B_WITH_FIRTDISEASEHASH, true, '5');
-await revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '10');
+await should_fail_revealvote(test_account2, IPFS4B_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await should_fail_revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '10', "random123");
 //await should_fail_revealvote(test_account4, IPFS4B_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
-await revealvote(test_account5, IPFS4B_WITH_FIRTDISEASEHASH, true, '50');
-await revealvote(test_account6, IPFS4B_WITH_FIRTDISEASEHASH, true, '35');
-await revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '60');
+await should_fail_revealvote(test_account5, IPFS4B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account6, IPFS4B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+// ------- should fail revealing vote too early ------------ //
 
+// ------- advance time to enter revealing period: --------- //
+console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
+console.log('DEFAULT_VOTING_TIME is', DEFAULT_VOTING_TIME.toNumber());
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+// get proposals data:
+let _proposal1B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal1B.nbvoters, '1', 'Proposal1B should have 1 nbvoters');
+
+let _proposal2B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal2B.nbvoters, '1', 'Proposal2B should have 1 nbvoters');
+
+let _proposal3B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal3B.nbvoters, '1', 'Proposal3B should have 1 nbvoters');
+
+let _proposal4B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal4B.nbvoters, '1', 'Proposal4B should have 1 nbvoters');
+
+let _proposal5B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal5B.nbvoters, '1', 'Proposal5B should have 1 nbvoters');
+
+let _proposal6B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal6B.nbvoters, '1', 'Proposal6B should have 1 nbvoters');
+
+let _proposal7B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7B_WITH_FIRTDISEASEHASH);
+assert.equal(_proposal7B.nbvoters, '1', 'Proposal7B should have 1 nbvoters');
+
+
+
+// (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:
+await commitvote(test_account8, IPFS2B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await commitvote(test_account8, IPFS3B_WITH_FIRTDISEASEHASH, true, '10', "random123");
+await commitvote(test_account8, IPFS4B_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+
+// assert we are within revealing period of proposal1
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal1B.endtime.toNumber(), 'Block timestamp should be higher than proposal1B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal1B.endtime.toNumber() + DEFAULT_REVEALING_TIME.toNumber(), 'Block timestamp should be lower or equal to _proposal1B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+console.log('lstblock.timestamp is', lstblock.timestamp);
+console.log('_proposal1.endtime.toNumber() is', _proposal1.endtime.toNumber());
+console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
+
+await revealvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await revealvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, true, '100', "random123");
+await revealvote(test_account4, IPFS1B_WITH_FIRTDISEASEHASH, false, '50', "random123");
+await revealvote(test_account5, IPFS1B_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await revealvote(test_account6, IPFS1B_WITH_FIRTDISEASEHASH, false, '350', "random123");
+await revealvote(test_account7, IPFS1B_WITH_FIRTDISEASEHASH, false, '80', "random123");
+
+
+// assert we are within revealing period of proposal2
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal2B.endtime.toNumber(), 'Block timestamp should be higher than proposal2B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal2B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal2B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+//await should_fail_revealvote(test_account2, IPFS2B_WITH_FIRTDISEASEHASH, true, '5'); // should fail vote twice on same proposal
+await revealvote(test_account3, IPFS2B_WITH_FIRTDISEASEHASH, false, '100', "random123");
+await revealvote(test_account4, IPFS2B_WITH_FIRTDISEASEHASH, true, '500', "random123");
+await revealvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, false, '500', "random123");
+await revealvote(test_account6, IPFS2B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS2B_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+
+// assert we are within revealing period of proposal3
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal3B.endtime.toNumber(), 'Block timestamp should be higher than proposal3B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal3B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal3B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+await revealvote(test_account2, IPFS3B_WITH_FIRTDISEASEHASH, true, '5', "random123");
+//await should_fail_revealvote(test_account3, IPFS3B_WITH_FIRTDISEASEHASH, false, '100');  // should fail vote twice on same proposal
+await revealvote(test_account4, IPFS3B_WITH_FIRTDISEASEHASH, true, '490', "random123");
+await revealvote(test_account5, IPFS3B_WITH_FIRTDISEASEHASH, false, '600', "random123");
+await revealvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS3B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+
+// assert we are within revealing period of proposal4
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal4B.endtime.toNumber(), 'Block timestamp should be higher than proposal4B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+await revealvote(test_account2, IPFS4B_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '10', "random123");
+//await should_fail_revealvote(test_account4, IPFS4B_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
+await revealvote(test_account5, IPFS4B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await revealvote(test_account6, IPFS4B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+
+// assert we are within revealing period of proposal5
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal4B.endtime.toNumber(), 'Block timestamp should be higher than proposal4B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
 // should fail to vote with incorrect amount for a proposal:
-await should_fail_revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '500000');
-await should_fail_revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '-500');
+await should_fail_revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '500000', "random123");
+await should_fail_revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '-500', "random123");
+await should_fail_revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '0', "random123");
 
-// should fail for usaers to vote twice on same Proposal:
-await should_fail_revealvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '15');
-await should_fail_revealvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, false, '25');
-await should_fail_revealvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, true, '35');
-await should_fail_revealvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '50');
-await should_fail_revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '95');
+
+// assert we are within revealing period of proposal6
+lstblock = await web3.eth.getBlock("latest");
+assert(lstblock.timestamp > _proposal1B.endtime.toNumber(), 'Block timestamp should be higher than proposal1 endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal1B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal1.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal2B.endtime.toNumber(), 'Block timestamp should be higher than proposal2B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal2B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal2B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal3B.endtime.toNumber(), 'Block timestamp should be higher than proposal3B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal3B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal3B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+assert(lstblock.timestamp > _proposal4B.endtime.toNumber(), 'Block timestamp should be higher than proposal4B endTime before testing REVEALVOTE');
+assert(lstblock.timestamp <= _proposal4B.endtime.toNumber() + DEFAULT_REVEALING_TIME, 'Block timestamp should be lower or equal to _proposal4B.endTime + DEFAULT_REVEALING_TIME before testing REVEALVOTE');
+
+
+// should fail for users to revealvote twice on same Proposal:
+await should_fail_revealvote(test_account2, IPFS1B_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await should_fail_revealvote(test_account3, IPFS1B_WITH_FIRTDISEASEHASH, false, '25', "random123");
+await should_fail_revealvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, true, '35', "random123");
+await should_fail_revealvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '50', "random123");
+await should_fail_revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '95', "random123");
+
+
+// revealvote() of these commits should fail because the related commits were made too late:
+await should_fail_revealvote(test_account8, IPFS2B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await should_fail_revealvote(test_account8, IPFS3B_WITH_FIRTDISEASEHASH, true, '10', "random123");
+await should_fail_revealvote(test_account8, IPFS4B_WITH_FIRTDISEASEHASH, false, '5', "random123");
 
 
 // CHECK PROPOSALSDATA
 
-let _proposal1B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1B_WITH_FIRTDISEASEHASH);
+_proposal1B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal1B.nbvoters, '7', 'Proposal1 should have 7 nbvoters');
 
-let _proposal2B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2B_WITH_FIRTDISEASEHASH);
+_proposal2B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS2B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal2B.nbvoters, '6', 'Proposal2 should have 6 nbvoters');
 
-let _proposal3B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3B_WITH_FIRTDISEASEHASH);
+_proposal3B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS3B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal3B.nbvoters, '6', 'Proposal3 should have 6 nbvoters');
 
-let _proposal4B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4B_WITH_FIRTDISEASEHASH);
+_proposal4B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS4B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal4B.nbvoters, '6', 'Proposal4 should have 6 nbvoters');
 
-let _proposal5B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5B_WITH_FIRTDISEASEHASH);
+_proposal5B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS5B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal5B.nbvoters, '1', 'Proposal5 should have 1 nbvoters');
 
-let _proposal6B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6B_WITH_FIRTDISEASEHASH);
+_proposal6B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS6B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal6B.nbvoters, '1', 'Proposal6 should have 1 nbvoters');
 
-let _proposal7B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7B_WITH_FIRTDISEASEHASH);
+_proposal7B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal7B.nbvoters, '1', 'Proposal7 should have 1 nbvoters');
 
 console.log('----------------->   PROPOSALS NBVOTERS CHECKED  <-----------------');
@@ -1139,33 +1993,33 @@ assert.equal(_proposal7B.status, '2', 'Proposal7 status should be Pending');
 
 console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1B.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2B.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
-assert.equal(web3.utils.fromWei(_proposal3B.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4B.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
-assert.equal(web3.utils.fromWei(_proposal5B.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal6B.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal7B.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '660', 'Proposal1 should have a lastcuration_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '1400', 'Proposal2 should have a lastcuration_weight of 1400');
+assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '170', 'Proposal4 should have a lastcuration_weight of 170');
+assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1B.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2B.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
-assert.equal(web3.utils.fromWei(_proposal3B.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4B.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
-assert.equal(web3.utils.fromWei(_proposal5B.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal6B.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal7B.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '660', 'Proposal1 should have a lasteditor_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '170', 'Proposal4 should have a lasteditor_weight of 170');
+assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
-assert.equal(_proposal1B.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
-assert.equal(_proposal2B.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal1B.slashingratio.toNumber(), 1579, 'Proposal1 should have a slashingratio of 0.1579');
+assert.equal(_proposal2B.slashingratio.toNumber(), 4396, 'Proposal2 should have a slashingratio of 0.4396');
 assert.equal(_proposal3B.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
-assert.equal(_proposal4B.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
-assert.equal(_proposal5B.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
-assert.equal(_proposal6B.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
-assert.equal(_proposal7B.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+assert.equal(_proposal4B.slashingratio.toNumber(), 10000, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5B.slashingratio.toNumber(), 10000, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6B.slashingratio.toNumber(), 10000, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7B.slashingratio.toNumber(), 10000, 'Proposal7 should have a slashingratio of 1');
 
 console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
 
@@ -1218,15 +2072,15 @@ console.log('_period1B is:', _period1B);
 console.log('_period1B.reward_curation is:', web3.utils.fromWei(_period1B.reward_for_curation, "ether" ));
 console.log('_period1B.reward_editor is:', web3.utils.fromWei(_period1B.reward_for_editor, "ether" ));
 console.log('_period1B.total_voters is:', _period1B.total_voters.toString());
-assert.equal(web3.utils.fromWei(_period1B.curation_sum, "ether" ), 14070); // Sum of proposals' curation_weight
-assert.equal(web3.utils.fromWei(_period1B.editor_sum, "ether" ), 5670); // Sum of proposals' editor_weight
+assert.equal(web3.utils.fromWei(_period1B.curation_sum, "ether" ), 2260); // Sum of proposals' curation_weight
+assert.equal(web3.utils.fromWei(_period1B.editor_sum, "ether" ), 860); // Sum of proposals' editor_weight
 assert.equal(_period1B.total_voters.toString(), "28"); // Period nb votes
 
 // Should fail to clmpropbyhash too early: 
 await should_fail_clmpropbyhash(test_account, IPFS1B_WITH_FIRTDISEASEHASH);
 
 // advance time so that clmpropbyhash becomes possible: 
-await advanceminutes(DEFAULT_VOTING_TIME);
+await advanceseconds(DEFAULT_VOTING_TIME);
 console.log('waiting DEFAULT_TIME_VOTING seconds so that clmbyhash becomes possible');
 
 // Should fail to revealvote too late:
@@ -1269,14 +2123,12 @@ console.log('_expected_reward_acc5_prop4 is', _expected_reward_acc5_prop_4B);
 console.log('_expected_reward_acc5_prop5 is', _expected_reward_acc5_prop_5B);
 console.log('_expected_total_reward_B_acc5 is', _expected_total_reward_B_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.toString();
-_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.substring(0, _expected_total_reward_B_acc5.length - 3);
+_expected_total_reward_B_acc5 = Number.parseFloat(_expected_total_reward_B_acc5).toPrecision(9);
 
 let _effective_reward_B_acc5 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_5, "ether" );
 console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_B_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc5 = _effective_reward_B_acc5.toString();
-_effective_reward_B_acc5 = _effective_reward_B_acc5.substring(0, _effective_reward_B_acc5.length - 3);
+_effective_reward_B_acc5 = Number.parseFloat(_effective_reward_B_acc5).toPrecision(9);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc5, _expected_total_reward_B_acc5); // 122.67718490502358 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1289,14 +2141,12 @@ let _expected_total_reward_B_acc6 =  _expected_reward_acc6_prop_4B;
 console.log('_expected_reward_acc6_prop4 is', _expected_reward_acc6_prop_4B);
 console.log('_expected_total_reward_B_acc6 is', _expected_total_reward_B_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.toString();
-_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.substring(0, _expected_total_reward_B_acc6.length - 3);
+_expected_total_reward_B_acc6 = Number.parseFloat(_expected_total_reward_B_acc6).toPrecision(9);
 
 let _effective_reward_B_acc6 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_6, "ether" );
 console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_B_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc6 = _effective_reward_B_acc6.toString();
-_effective_reward_B_acc6 = _effective_reward_B_acc6.substring(0, _effective_reward_B_acc6.length - 3);
+_effective_reward_B_acc6 = Number.parseFloat(_effective_reward_B_acc6).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc6, _expected_total_reward_B_acc6); // 62.94838356665059 == _expected_reward_acc6_prop_4B
@@ -1308,14 +2158,12 @@ let _expected_total_reward_B_acc7 =  _expected_reward_acc7_prop_4B;
 console.log('_expected_reward_acc7_prop4 is', _expected_reward_acc7_prop_4B);
 console.log('_expected_total_reward_B_acc7 is', _expected_total_reward_B_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.toString();
-_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.substring(0, _expected_total_reward_B_acc7.length - 3);
+_expected_total_reward_B_acc7 = Number.parseFloat(_expected_total_reward_B_acc7).toPrecision(9);
 
 let _effective_reward_B_acc7 = web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(OLD_BALANCE_ACCOUNT_7, "ether" );
 console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_B_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc7 = _effective_reward_B_acc7.toString();
-_effective_reward_B_acc7 = _effective_reward_B_acc7.substring(0, _effective_reward_B_acc7.length - 3);
+_effective_reward_B_acc7 = Number.parseFloat(_effective_reward_B_acc7).toPrecision(9);
 
 // acc7 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc7, _expected_total_reward_B_acc7); // 113.906598834890 == _expected_reward_acc_7_prop_4B
@@ -1419,10 +2267,12 @@ NEW_BALANCE_ACCOUNT_8 = await EticaReleaseProtocolTestPhase2Instance.balanceOf(t
 // ACCOUNT 1:
 let _expected_reward_acc1_prop_1B = await get_expected_reward(test_account, IPFS1B_WITH_FIRTDISEASEHASH);
 let _expected_total_reward_B_acc1 =  _expected_reward_acc1_prop_1B;
+_expected_total_reward_B_acc1 = Number.parseFloat(_expected_total_reward_B_acc1).toPrecision(9);
 console.log('_expected_reward_acc1_prop1 is', _expected_reward_acc1_prop_1B);
 console.log('_expected_total_reward_B_acc1 is', _expected_total_reward_B_acc1);
 
 let _effective_reward_B_acc1 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT, "ether" );
+_effective_reward_B_acc1 = Number.parseFloat(_effective_reward_B_acc1).toPrecision(9);
 console.log('_effective_acc1 new ETI as REWARD:', _effective_reward_B_acc1);
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc1, _expected_total_reward_B_acc1); // 13767.044628187738 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1448,15 +2298,13 @@ let _expected_reward_acc2_prop_7B = await get_expected_reward(test_account2, IPF
 let _expected_total_reward_B_acc2 =  _expected_reward_acc2_prop_1B + _expected_reward_acc2_prop_2B + _expected_reward_acc2_prop_3B + _expected_reward_acc2_prop_4B + _expected_reward_acc2_prop_5B + _expected_reward_acc2_prop_6B + _expected_reward_acc2_prop_7B;
 // console.log('_expected_total_reward_B_acc2 is', _expected_total_reward_B_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc2 = _expected_total_reward_B_acc2.toString();
-_expected_total_reward_B_acc2 = _expected_total_reward_B_acc2.substring(0, _expected_total_reward_B_acc2.length - 3);
+_expected_total_reward_B_acc2 = Number.parseFloat(_expected_total_reward_B_acc2).toPrecision(9);
 
 
 let _effective_reward_B_acc2 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_2, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_2, "ether" );
 console.log('_effective_acc2 new ETI as REWARD:', _effective_reward_B_acc2);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc2 = _effective_reward_B_acc2.toString();
-_effective_reward_B_acc2 = _effective_reward_B_acc2.substring(0, _effective_reward_B_acc2.length - 3);
+_effective_reward_B_acc2 = Number.parseFloat(_effective_reward_B_acc2).toPrecision(9);
 
 // acc5 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc2, _expected_total_reward_B_acc2); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1484,15 +2332,13 @@ let _expected_reward_acc3_prop_7B = await get_expected_reward(test_account3, IPF
 let _expected_total_reward_B_acc3 =  _expected_reward_acc3_prop_1B + _expected_reward_acc3_prop_2B + _expected_reward_acc3_prop_3B + _expected_reward_acc3_prop_4B + _expected_reward_acc3_prop_5B + _expected_reward_acc3_prop_6B + _expected_reward_acc3_prop_7B;
  console.log('_expected_total_reward_B_acc3 is', _expected_total_reward_B_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc3 = _expected_total_reward_B_acc3.toString();
-_expected_total_reward_B_acc3 = _expected_total_reward_B_acc3.substring(0, _expected_total_reward_B_acc3.length - 3);
+_expected_total_reward_B_acc3 = Number.parseFloat(_expected_total_reward_B_acc3).toPrecision(9);
 
 
 let _effective_reward_B_acc3 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_3, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_3, "ether" );
 console.log('_effective_acc3 new ETI as REWARD:', _effective_reward_B_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc3 = _effective_reward_B_acc3.toString();
-_effective_reward_B_acc3 = _effective_reward_B_acc3.substring(0, _effective_reward_B_acc3.length - 3);
+_effective_reward_B_acc3 = Number.parseFloat(_effective_reward_B_acc3).toPrecision(9);
 
 // acc3 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc3, _expected_total_reward_B_acc3); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1519,15 +2365,13 @@ let _expected_reward_acc4_prop_7B = await get_expected_reward(test_account4, IPF
 let _expected_total_reward_B_acc4 =  _expected_reward_acc4_prop_1B + _expected_reward_acc4_prop_2B + _expected_reward_acc4_prop_3B + _expected_reward_acc4_prop_4B + _expected_reward_acc4_prop_5B + _expected_reward_acc4_prop_6B + _expected_reward_acc4_prop_7B;
 // console.log('_expected_total_reward_B_acc3 is', _expected_total_reward_B_acc3);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc4 = _expected_total_reward_B_acc4.toString();
-_expected_total_reward_B_acc4 = _expected_total_reward_B_acc4.substring(0, _expected_total_reward_B_acc4.length - 2);
+_expected_total_reward_B_acc4 = Number.parseFloat(_expected_total_reward_B_acc4).toPrecision(9);
 
 
 let _effective_reward_B_acc4 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_4, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_4, "ether" );
 console.log('_effective_acc4 new ETI as REWARD:', _effective_reward_B_acc4);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc4 = _effective_reward_B_acc4.toString();
-_effective_reward_B_acc4 = _effective_reward_B_acc4.substring(0, _effective_reward_B_acc4.length - 3);
+_effective_reward_B_acc4 = Number.parseFloat(_effective_reward_B_acc4).toPrecision(9);
 
 // acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc4, _expected_total_reward_B_acc4); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1555,15 +2399,13 @@ let _expected_reward_acc5_prop_7B = await get_expected_reward(test_account5, IPF
 _expected_total_reward_B_acc5 =  _expected_reward_acc5_prop_1B + _expected_reward_acc5_prop_2B + _expected_reward_acc5_prop_3B + _expected_reward_acc5_prop_6B + _expected_reward_acc5_prop_7B;
  console.log('_expected_total_reward_B_acc5 is', _expected_total_reward_B_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.toString();
-_expected_total_reward_B_acc5 = _expected_total_reward_B_acc5.substring(0, _expected_total_reward_B_acc5.length - 3);
+_expected_total_reward_B_acc5 = Number.parseFloat(_expected_total_reward_B_acc5).toPrecision(9);
 
 
 _effective_reward_B_acc5 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_5, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_5, "ether" );
 //console.log('_effective_acc5 new ETI as REWARD:', _effective_reward_B_acc5);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc5 = _effective_reward_B_acc5.toString();
-_effective_reward_B_acc5 = _effective_reward_B_acc5.substring(0, _effective_reward_B_acc5.length - 2);
+_effective_reward_B_acc5 = Number.parseFloat(_effective_reward_B_acc5).toPrecision(9);
 
 // acc4 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc5, _expected_total_reward_B_acc5); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1590,15 +2432,13 @@ let _expected_reward_acc6_prop_7B = await get_expected_reward(test_account6, IPF
 _expected_total_reward_B_acc6 =  _expected_reward_acc6_prop_1B + _expected_reward_acc6_prop_2B + _expected_reward_acc6_prop_3B + _expected_reward_acc6_prop_5B + _expected_reward_acc6_prop_6B + _expected_reward_acc6_prop_7B;
  console.log('_expected_total_reward_B_acc6 is', _expected_total_reward_B_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.toString();
-_expected_total_reward_B_acc6 = _expected_total_reward_B_acc6.substring(0, _expected_total_reward_B_acc6.length - 2);
+_expected_total_reward_B_acc6 = Number.parseFloat(_expected_total_reward_B_acc6).toPrecision(9);
 
 
 _effective_reward_B_acc6 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_6, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_6, "ether" );
 //console.log('_effective_acc6 new ETI as REWARD:', _effective_reward_B_acc6);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc6 = _effective_reward_B_acc6.toString();
-_effective_reward_B_acc6 = _effective_reward_B_acc6.substring(0, _effective_reward_B_acc6.length - 2);
+_effective_reward_B_acc6 = Number.parseFloat(_effective_reward_B_acc6).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc6, _expected_total_reward_B_acc6); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1626,15 +2466,13 @@ let _expected_reward_acc7_prop_7B = await get_expected_reward(test_account7, IPF
 _expected_total_reward_B_acc7 =  _expected_reward_acc7_prop_1B + _expected_reward_acc7_prop_2B + _expected_reward_acc7_prop_3B + _expected_reward_acc7_prop_5B + _expected_reward_acc7_prop_6B + _expected_reward_acc7_prop_7B;
  console.log('_expected_total_reward_B_acc7 is', _expected_total_reward_B_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.toString();
-_expected_total_reward_B_acc7 = _expected_total_reward_B_acc7.substring(0, _expected_total_reward_B_acc7.length - 3);
+_expected_total_reward_B_acc7 = Number.parseFloat(_expected_total_reward_B_acc7).toPrecision(9);
 
 
 _effective_reward_B_acc7 = web3.utils.fromWei(NEW_BALANCE_ACCOUNT_7, "ether" ) - web3.utils.fromWei(MID_BALANCE_ACCOUNT_7, "ether" );
 //console.log('_effective_acc7 new ETI as REWARD:', _effective_reward_B_acc7);
 // ---> because of significant figure issues we remove last 2 figures:
-_effective_reward_B_acc7 = _effective_reward_B_acc7.toString();
-_effective_reward_B_acc7 = _effective_reward_B_acc7.substring(0, _effective_reward_B_acc7.length - 3);
+_effective_reward_B_acc7 = Number.parseFloat(_effective_reward_B_acc7).toPrecision(9);
 
 // acc6 should have gotten exactly the expected REWARD calculated by get_expected_reward() :
 assert.equal( _effective_reward_B_acc7, _expected_total_reward_B_acc7); // 188.6335518176314 == _expected_reward_acc5_prop_4B + _expected_reward_acc5_prop_5B
@@ -1702,33 +2540,33 @@ assert.equal(_proposal7B.status, '1', 'Proposal7 status should be Pending');
 
 console.log('----------------->   PROPOSALS STATUS CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1B.lastcuration_weight, "ether" ), '4620', 'Proposal1 should have a lastcuration_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2B.lastcuration_weight, "ether" ), '8400', 'Proposal2 should have a lastcuration_weight of 8400');
-assert.equal(web3.utils.fromWei(_proposal3B.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4B.lastcuration_weight, "ether" ), '1020', 'Proposal4 should have a lastcuration_weight of 1020');
-assert.equal(web3.utils.fromWei(_proposal5B.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal6B.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal7B.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal1.lastcuration_weight, "ether" ), '660', 'Proposal1 should have a lastcuration_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lastcuration_weight, "ether" ), '1400', 'Proposal2 should have a lastcuration_weight of 1400');
+assert.equal(web3.utils.fromWei(_proposal3.lastcuration_weight, "ether" ), '0', 'Proposal3 should have a lastcuration_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lastcuration_weight, "ether" ), '170', 'Proposal4 should have a lastcuration_weight of 170');
+assert.equal(web3.utils.fromWei(_proposal5.lastcuration_weight, "ether" ), '10', 'Proposal5 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lastcuration_weight, "ether" ), '10', 'Proposal6 should have a lastcuration_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lastcuration_weight, "ether" ), '10', 'Proposal7 should have a lastcuration_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTCURATIONWEIGHT CHECKED  <-----------------');
 
-assert.equal(web3.utils.fromWei(_proposal1B.lasteditor_weight, "ether" ), '4620', 'Proposal1 should have a lasteditor_weight of 4620');
-assert.equal(web3.utils.fromWei(_proposal2B.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 8400');
-assert.equal(web3.utils.fromWei(_proposal3B.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
-assert.equal(web3.utils.fromWei(_proposal4B.lasteditor_weight, "ether" ), '1020', 'Proposal4 should have a lasteditor_weight of 1020');
-assert.equal(web3.utils.fromWei(_proposal5B.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal6B.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
-assert.equal(web3.utils.fromWei(_proposal7B.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal1.lasteditor_weight, "ether" ), '660', 'Proposal1 should have a lasteditor_weight of 660');
+assert.equal(web3.utils.fromWei(_proposal2.lasteditor_weight, "ether" ), '0', 'Proposal2 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal3.lasteditor_weight, "ether" ), '0', 'Proposal3 should have a lasteditor_weight of 0');
+assert.equal(web3.utils.fromWei(_proposal4.lasteditor_weight, "ether" ), '170', 'Proposal4 should have a lasteditor_weight of 170');
+assert.equal(web3.utils.fromWei(_proposal5.lasteditor_weight, "ether" ), '10', 'Proposal5 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal6.lasteditor_weight, "ether" ), '10', 'Proposal6 should have a lasteditor_weight of 10');
+assert.equal(web3.utils.fromWei(_proposal7.lasteditor_weight, "ether" ), '10', 'Proposal7 should have a lasteditor_weight of 10');
 
 console.log('----------------->   PROPOSALS LASTEDITORWEIGHT CHECKED  <-----------------');
 
-assert.equal(_proposal1B.slashingratio.toNumber(), 15, 'Proposal1 should have a slashingratio of 0.15');
-assert.equal(_proposal2B.slashingratio.toNumber(), 43, 'Proposal2 should have a slashingratio of 0.43');
+assert.equal(_proposal1B.slashingratio.toNumber(), 1579, 'Proposal1 should have a slashingratio of 0.1579');
+assert.equal(_proposal2B.slashingratio.toNumber(), 4396, 'Proposal2 should have a slashingratio of 0.4396');
 assert.equal(_proposal3B.slashingratio.toNumber(), 0, 'Proposal3 should have a slashingratio of 0');
-assert.equal(_proposal4B.slashingratio.toNumber(), 100, 'Proposal4 should have a slashingratio of 1');
-assert.equal(_proposal5B.slashingratio.toNumber(), 100, 'Proposal5 should have a slashingratio of 1');
-assert.equal(_proposal6B.slashingratio.toNumber(), 100, 'Proposal6 should have a slashingratio of 1');
-assert.equal(_proposal7B.slashingratio.toNumber(), 100, 'Proposal7 should have a slashingratio of 1');
+assert.equal(_proposal4B.slashingratio.toNumber(), 10000, 'Proposal4 should have a slashingratio of 1');
+assert.equal(_proposal5B.slashingratio.toNumber(), 10000, 'Proposal5 should have a slashingratio of 1');
+assert.equal(_proposal6B.slashingratio.toNumber(), 10000, 'Proposal6 should have a slashingratio of 1');
+assert.equal(_proposal7B.slashingratio.toNumber(), 10000, 'Proposal7 should have a slashingratio of 1');
 
 console.log('----------------->   PROPOSALS SLASHINGRATIO CHECKED  <-----------------');
 
@@ -1745,25 +2583,8 @@ console.log('RECHECKING OF PERIOD TOTAL_VOTERS DONE WITH SUCCESS');
 await stakeclmidx(test_account, 1);
 await stakeclmidx(test_account, 1);
 
-await stakeclmidx(test_account2, 1);
-await stakeclmidx(test_account2, 1);
-
-await stakeclmidx(test_account3, 1);
-await stakeclmidx(test_account3, 1);
-
-await stakeclmidx(test_account4, 1);
-await stakeclmidx(test_account4, 1);
-
-await stakeclmidx(test_account5, 1);
-await stakeclmidx(test_account5, 1);
-
-await stakeclmidx(test_account6, 1);
-await stakeclmidx(test_account6, 1);
-
-await stakeclmidx(test_account7, 1);
-await stakeclmidx(test_account7, 1);
-
-
+await should_fail_stakeclmidx(test_account2, 1);
+await stakeclmidx(test_account2, 2);
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS OF PHASE 2 ---------------------------');
 
@@ -1826,6 +2647,33 @@ await stakeclmidx(test_account7, 1);
    }
 
 
+   async function stakescsldt(useraccount, endTime, min_limit, maxidx){
+
+    console.log('---> Consolidating stakes. New endTime is', endTime, '.');
+    return EticaReleaseProtocolTestPhase2Instance.stakescsldt(useraccount.address,  endTime, min_limit, maxidx, {from: useraccount.address}).then(async function(receipt){
+    console.log('---> The consolidation of', endTime, ' endTime', 'was successfull');
+
+      }).catch(async function(error){
+        console.log('An error has occured !', error);
+      })
+   }
+
+   async function should_fail_to_stakescsldt(useraccount, endTime, min_limit, maxidx){
+
+    console.log('---> Should fail to consolidate with out of range params:  --> endTime:', endTime, '--> min_limit is:: ', min_limit, '--> maxidx is:', maxidx);
+    await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.stakescsldt(useraccount.address,  endTime, min_limit, maxidx, {from: useraccount.address}));
+    console.log('---> As expected failed to consolidate with out of range params: --> endTime:', endTime, '--> min_limit is:: ', min_limit, '--> maxidx is:', maxidx);
+   
+  }
+
+   async function getstake(_from_account, _idx){
+
+    let _thestake = await EticaReleaseProtocolTestPhase2Instance.stakes(_from_account.address,_idx);
+    return _thestake;
+
+   }
+
+
    async function should_fail_eticatobosom(useraccount, amount){
 
     console.log('---> Staking Eticas for Bosoms. Stake amount is', amount, 'ETI. User is ', useraccount.address);
@@ -1853,10 +2701,10 @@ await stakeclmidx(test_account7, 1);
     }
 
          // propose should fail:
-         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _amount) {
+         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary) {
      
           console.log('should fail this revealvote');
-          await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}));
+          await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}));
           console.log('as expected failed to make this revealvote');
       
         }
@@ -1869,41 +2717,43 @@ await stakeclmidx(test_account7, 1);
 
         }
 
-   async function advanceseconds(duration) {
-
-   let numberlblocks = uint(duration / 15);
-
-   console.log('numberlblocks is', numberlblocks);
-
-     for(var i=0;i<numberlbocks;i+=1){
-
-
-/*  await web3.currentProvider.send({
-     jsonrpc: '2.0',
-     method: 'evm_increaseTime',
-     params: [15], // each blocks ads 30 seconds
-     id: id,
-   }, err1 => {
-     if (err1) return
-   })*/
-
-   await web3.currentProvider.send({
-       jsonrpc: '2.0',
-       method: 'evm_mine',
-       id: id+1,
-     }, (err2, res) => {
-       return
-     })
-
-
-     }
-
-   }
-
    async function advanceminutes(duration) {
 
     let id = Date.now();
      let numberlblocks = duration * 4; // 4 is because 60 / 15 == 4
+
+     // console.log('numberlblocks is', numberlblocks);
+     console.log('---------------  SLEEPING FOR ABOUT ', duration.toString(), ' SECONDS (press ctrl + c if it takes too long)  ------------');
+
+       for(var i=0;i<numberlblocks;i+=1){
+
+
+    await web3.currentProvider.send({
+       jsonrpc: '2.0',
+       method: 'evm_increaseTime',
+       params: [15], // each blocks ads 30 seconds
+       id: id,
+     }, err1 => {
+       if (err1) return
+     })
+
+     await web3.currentProvider.send({
+         jsonrpc: '2.0',
+         method: 'evm_mine',
+         id: i+1,
+       }, (err2, res) => {
+         return
+       })
+
+
+       }
+
+   }
+
+   async function advanceseconds(duration) {
+
+    let id = Date.now();
+     let numberlblocks = duration / 15; // 1 block every 15 seconds
 
      // console.log('numberlblocks is', numberlblocks);
      console.log('---------------  SLEEPING FOR ABOUT ', duration.toString(), ' SECONDS (press ctrl + c if it takes too long)  ------------');
@@ -1978,7 +2828,9 @@ await stakeclmidx(test_account7, 1);
   
    }
 
-   function get_expected_votehash(_proposed_release_hash, _approved, _msgsender, _vary) {
+     // get expected hash as it will be calculated by solidity in contract code:
+  // example: should return 0xa9b5a7156f9cd0076e0f093589e02d881392cc80806843b30a1bacf2efc810bb for couple {QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t, 0xf6d8716087544b8fe1a306611913078dd677450d90295497e433503483ffea6e}
+  function get_expected_votehash(_proposed_release_hash, _approved, _msgsender, _vary) {
     var encoded = abi.rawEncode([ "bytes32", "bool", "address", "string"], [ _proposed_release_hash, _approved, _msgsender, _vary ]);
     var result_hash = web3.utils.keccak256(encoded);
     console.log('get_expected_votehash() result is ', result_hash);
@@ -2012,14 +2864,9 @@ await stakeclmidx(test_account7, 1);
 
     let _period = await EticaReleaseProtocolTestPhase2Instance.periods(_proposal.period_id);
     //console.log('period is', _period);
-    let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" ) * _proposaldatas.nbvoters.toNumber();
+    let _expected_curation_reward_num = web3.utils.fromWei(_vote.amount, "ether" );
     let _expected_curation_reward_ratio = _expected_curation_reward_num / _period.curation_sum;
     let _expected_curation_reward = _expected_curation_reward_ratio * _period.reward_for_curation;
-
-    console.log('_period_for_curation is', web3.utils.fromWei(_period.reward_for_curation, "ether" ));
-    console.log('_period_for_editor is', web3.utils.fromWei(_period.reward_for_editor, "ether" ));
-    console.log('_expected_curation_reward_ratio is', _expected_curation_reward_ratio);
-    console.log('_expected_curation_reward is', _expected_curation_reward);
 
     let _expected_editor_reward = 0; // initialtiaze var
 
@@ -2030,7 +2877,7 @@ await stakeclmidx(test_account7, 1);
     _expected_editor_reward = _expected_editor_reward_ratio * _period.reward_for_editor;
     }
     
-    console.log('_expected_editor_reward', _expected_editor_reward);
+    
 
     let _expected_reward = _expected_curation_reward + _expected_editor_reward;
 
@@ -2097,7 +2944,7 @@ await stakeclmidx(test_account7, 1);
     assert.equal(first_proposal_data.istie, false, 'First proposal should exist with right istie');
     assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
     assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should exist with right nbvoters');
-    assert.equal(first_proposal_data.slashingratio.toNumber(), '100', 'First proposal should exist with right slashingratio');
+    assert.equal(first_proposal_data.slashingratio.toNumber(), '10000', 'First proposal should exist with right slashingratio');
     assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right forvotes');
     assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
     assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lastcuration_weight');
@@ -2161,29 +3008,29 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
 })
  }
 
- async function commitvote(_from_account, _proposed_release_hash, _choice, _amount){
-  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+
+ async function commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
+  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
   console.log('expected_votehash is', expected_votehash);
-  return EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
+  return EticaReleaseProtocolTestPhase2Instance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
 
   console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }
 
 // vote commit should fail:
-async function should_fail_commitvote(_from_account, _proposed_release_hash, _choice, _amount) {
+async function should_fail_commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary) {
 console.log('should fail this commitvote');
-let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address);
+let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
 console.log('expected_votehash is', expected_votehash);
-await truffleAssert.fails(EticaReleaseProtocolTestInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}));
+await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}));
 console.log('as expected failed to make this commitvote');
         }
 
+ async function revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
+  return EticaReleaseProtocolTestPhase2Instance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}).then(async function(response){
 
- async function revealvote(_from_account, _proposed_release_hash, _choice, _amount){
-  return EticaReleaseProtocolTestPhase2Instance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), {from: _from_account.address}).then(async function(response){
-
-  console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }
 
@@ -2213,6 +3060,47 @@ console.log('as expected failed to make this commitvote');
 
   });
 
+ }
+
+ async function should_fail_stakeclmidx(_index, _from_account){
+  console.log('should fail this stakeclmidx()'); 
+  await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.stakeclmidx(_index, {from: _from_account.address}));
+  console.log('as expected failed to make this stakeclmidx()');
+ }
+
+
+ async function stakesnap(_from_account, _index, _snapamount){
+  let _nbstakes_before_from_account = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(_from_account.address);
+  //console.log('_nbstakes_before_from_account.toString() is', _nbstakes_before_from_account.toString());
+  let _from_accountstakebefore = await EticaReleaseProtocolTestPhase2Instance.stakes(_from_account.address, _index);
+  //console.log('_from_accountstakebefore is', _from_accountstakebefore);
+  //console.log('_from_accountstakebefore amount is', web3.utils.fromWei(_from_accountstakebefore.amount, "ether"));
+  
+  return EticaReleaseProtocolTestPhase2Instance.stakesnap(_index, web3.utils.toWei(_snapamount, 'ether'), {from: _from_account.address}).then(async function(resp){
+    assert(true);
+    let _nbstakes_after_from_account = await EticaReleaseProtocolTestPhase2Instance.stakesCounters(_from_account.address);
+    //console.log('_nbstakes_after_from_account.toString() is', _nbstakes_after_from_account.toString());
+    let _from_accountstakeafter = await EticaReleaseProtocolTestPhase2Instance.stakes(_from_account.address, _index);
+    let _newstake = await EticaReleaseProtocolTestPhase2Instance.stakes(_from_account.address, _nbstakes_after_from_account.toNumber());
+    //console.log('new stake is', _newstake);
+    //console.log('new stake amount is', web3.utils.fromWei(_newstake.amount, "ether"));
+
+    assert.equal(_nbstakes_after_from_account.toString(), _nbstakes_before_from_account.add(web3.utils.toBN('1')).toString(), '_from_account should have 1 more stake');
+    assert.equal( web3.utils.fromWei(_from_accountstakeafter.amount, "ether"), _snapamount, 'the stake amount should have been updated to snapamount value!');
+    //console.log('_from_accountstakeafter.amount is', web3.utils.fromWei(_from_accountstakeafter.amount, "ether"));
+    assert.equal(_newstake.amount.toString(),_from_accountstakebefore.amount.sub(web3.utils.toBN(web3.utils.toWei(_snapamount, 'ether'))).toString() );
+    
+    console.log('........................... Snapped the STAKE with success ! ....................... ');
+
+  });
+
+ }
+
+
+ async function should_fail_stakesnap(_from_account, _index, _snapamount){
+  console.log('should fail this stakesnap()'); 
+  await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.stakesnap(_index, web3.utils.toWei(_snapamount, 'ether'), {from: _from_account.address}));
+  console.log('as expected failed to make this stakesnap()');
  }
 
  });

@@ -474,8 +474,8 @@ uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to
 
 
 uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
-uint SEVERITY_LEVEL = 2; // level of severity of the protocol, the higher the more slash to wrong voters
-uint PROPOSERS_INCREASER = 2;
+uint SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
+uint PROPOSERS_INCREASER = 3;
 
 struct Period{
     uint id;

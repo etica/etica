@@ -1154,11 +1154,45 @@ await stakeclmidx(test_account4, 4);
 await stakeclmidx(test_account5, 1);
 await stakeclmidx(test_account5, 1);
 
+let _nbstakes_account6 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account6.address);
+console.log('_nbstakes_account6', _nbstakes_account4);
+let acc6stake1 = await getstake(test_account6, 1);
+let acc6stake2 = await getstake(test_account6, 2);
+let acc6stake3 = await getstake(test_account6, 3);
+let acc6stake4 = await getstake(test_account6, 4);
+console.log('account6 stake 1 is', acc4stake1);
+console.log('account6 stake 2 is', acc4stake2);
+console.log('account6 stake 3 is', acc4stake3);
+console.log('account6 stake 1 amount is', web3.utils.fromWei(acc6stake1.amount.toString()));
+console.log('account6 stake 2 amount is', web3.utils.fromWei(acc6stake2.amount.toString()));
+console.log('account6 stake 3 amount is', web3.utils.fromWei(acc6stake3.amount.toString()));
+console.log('account6 stake 4 amount is', web3.utils.fromWei(acc6stake4.amount.toString()));
+console.log('account6 stake 1 endTime is', acc6stake1.endTime.toString());
+console.log('account6 stake 2 endTime is', acc6stake2.endTime.toString());
+console.log('account6 stake 3 endTime is', acc6stake3.endTime.toString());
+console.log('account6 stake 4 endTime is', acc6stake4.endTime.toString());
 await should_fail_stakeclmidx(test_account6, 1); // test_account 6 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
-await stakeclmidx(test_account6, 4);
+await stakeclmidx(test_account6, 2);
+await stakeclmidx(test_account6, 3);
+await should_fail_stakeclmidx(test_account6, 4); // test_account 6 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
 
-await stakeclmidx(test_account7, 1);
-await stakeclmidx(test_account7, 1);
+
+let _nbstakes_account7 = await EticaReleaseProtocolTestInstance.stakesCounters(test_account7.address);
+console.log('_nbstakes_account7', _nbstakes_account7);
+let acc7stake1 = await getstake(test_account7, 1);
+let acc7stake2 = await getstake(test_account7, 2);
+let acc7stake3 = await getstake(test_account7, 3);
+console.log('account7 stake 1 is', acc7stake1);
+console.log('account7 stake 2 is', acc7stake2);
+console.log('account7 stake 3 is', acc7stake3);
+console.log('account7 stake 1 amount is', web3.utils.fromWei(acc7stake1.amount.toString()));
+console.log('account7 stake 2 amount is', web3.utils.fromWei(acc7stake2.amount.toString()));
+console.log('account7 stake 3 amount is', web3.utils.fromWei(acc7stake3.amount.toString()));
+console.log('account7 stake 1 endTime is', acc7stake1.endTime.toString());
+console.log('account7 stake 2 endTime is', acc7stake2.endTime.toString());
+console.log('account7 stake 3 endTime is', acc7stake3.endTime.toString());
+await stakeclmidx(test_account7, 1); // test_account 7 should have been slashed for at least (4 minutes * 4 * 3 = 1266 seconds) and could not be able to claim this stake yet
+await stakeclmidx(test_account7, 1); 
 
 // should fail to claim this stake as testaccount8has blocked eticas by commiting vote on proposal too late (after it's endvote).
 // Thus was not able to revealvote of this proposal and thus could not unblocked those blocked eticas

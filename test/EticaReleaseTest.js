@@ -224,12 +224,12 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
   //console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
   //console.log('test_account ETI balance after:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
 }).then(async function(){
-  console.log('transfering 5 ETI from miner_account to test_account2');
+  console.log('transfering 8 ETI from miner_account to test_account2');
   let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
   let test_account2balancebefore = await EticaReleaseInstance.balanceOf(test_account2.address);
   //console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
   //console.log('test_account2 ETI balance before:', web3.utils.fromWei(test_account2balancebefore, "ether" ));
-  return EticaReleaseInstance.transfer(test_account2.address,  web3.utils.toBN(5000000000000000000), {from: miner_account.address});
+  return EticaReleaseInstance.transfer(test_account2.address,  web3.utils.toBN(8000000000000000000), {from: miner_account.address});
 
 }).then(async function(){
   let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
@@ -259,7 +259,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
     assert.equal(web3.utils.fromWei(test_accountbosomsafter, "ether" ), "10", 'test_account should have 10 Bosoms!');
     assert.equal(web3.utils.fromWei(test_accountbalancebefore, "ether" ) - web3.utils.fromWei(test_accountbalanceafter, "ether" ), "10", 'test_account should have 10 Eticas less!');
 
-    return EticaReleaseInstance.eticatobosoms(test_account2.address,  web3.utils.toBN(2000000000000000000), {from: test_account2.address}).then(async function(receipt){
+    return EticaReleaseInstance.eticatobosoms(test_account2.address,  web3.utils.toBN(6000000000000000000), {from: test_account2.address}).then(async function(receipt){
 
     console.log('.................................  CAN STAKE ETI for BOSOMS  ....................... ');
     console.log('---------------------------------- END OF TEST with SUCCESS ----------------------------');
@@ -734,17 +734,17 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     // check Proposal's DATA:
                     assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
-                    assert.equal(first_proposal_data.istie, false, 'First proposal should exist with right istie');
+                    assert.equal(first_proposal_data.istie, true, 'First proposal should exist with right istie');
                     assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
-                    assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should exist with right nbvoters');
-                    assert.equal(first_proposal_data.slashingratio.toNumber(), '10000', 'First proposal should exist with right slashingratio');
-                    assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right forvotes');
+                    assert.equal(first_proposal_data.nbvoters, '0', 'First proposal should exist with right nbvoters');
+                    assert.equal(first_proposal_data.slashingratio.toNumber(), '0', 'First proposal should exist with right slashingratio');
+                    assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), '0', 'First proposal should exist with right forvotes');
                     assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
-                    assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lastcuration_weight');
-                    assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should exist with right lasteditor_weight');
+                    assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), '0', 'First proposal should exist with right lastcuration_weight');
+                    assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), '0', 'First proposal should exist with right lasteditor_weight');
 
                     let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                    assert.equal(first_period.total_voters.toNumber(), 1, 'First period should have 1 voter');
+                    assert.equal(first_period.total_voters.toNumber(), 0, 'First period should have 0 voter');
 
                     // ------------ WARNING
                     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
@@ -803,14 +803,14 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                         // check Proposal's DATA:
                         assert.equal(first_proposal_data.status, '2', 'First proposal should have kept the same status');
-                        assert.equal(first_proposal_data.istie, false, 'First proposal should have kept the same istie');
+                        assert.equal(first_proposal_data.istie, true, 'First proposal should have kept the same istie');
                         assert.equal(first_proposal_data.prestatus, '3', 'First proposal should have kept the same prestatus');
-                        assert.equal(first_proposal_data.nbvoters, '1', 'First proposal should have kept the same nbvoters');
-                        assert.equal(first_proposal_data.slashingratio.toNumber(), '10000', 'First proposal should have kept the same slashingratio');
-                        assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same forvotes');
+                        assert.equal(first_proposal_data.nbvoters, '0', 'First proposal should have kept the same nbvoters');
+                        assert.equal(first_proposal_data.slashingratio.toNumber(), '0', 'First proposal should have kept the same slashingratio');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), '0', 'First proposal should have kept the same forvotes');
                         assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should have kept the same againstvotes');
-                        assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lastcuration_weight');
-                        assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), PROPOSAL_DEFAULT_VOTE, 'First proposal should have kept the same lasteditor_weight');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), '0', 'First proposal should have kept the same lastcuration_weight');
+                        assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), '0', 'First proposal should have kept the same lasteditor_weight');
                         // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH) has not changed
 
                         // ------------ WARNING
@@ -853,8 +853,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         //console.log('test_account2 Bosoms before revealvote IS:', web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ));
 
                         let expected_votehash = get_expected_votehash(first_proposal.proposed_release_hash, true, test_account2.address, "random123");
+                        assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 4, 'test_account2 should have enough Bosoms before CALLING commitvote FUNCTION');
 
-                        return EticaReleaseInstance.commitvote(web3.utils.toWei('1', 'ether'), expected_votehash, {from: test_account2.address}).then(async function(response){
+                        return EticaReleaseInstance.commitvote(web3.utils.toWei('4', 'ether'), expected_votehash, {from: test_account2.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
@@ -862,11 +863,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                           let first_proposal_test_account_2_commit_after = await EticaReleaseInstance.commits(test_account2.address, expected_votehash);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
 
-                          assert.equal(web3.utils.fromWei(first_proposal_test_account_2_commit_after.amount, "ether" ), "1", 'test_account2 should have been able to commit for 1 Bosom!');
+                          assert.equal(web3.utils.fromWei(first_proposal_test_account_2_commit_after.amount, "ether" ), "4", 'test_account2 should have been able to commit for 4 Bosoms!');
 
                           let test_account_2_bosomsafter = await EticaReleaseInstance.bosoms(test_account2.address);
 
-                          assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');
+                          assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "4", 'test_account2 should have 4 Bosoms less!');
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
                           //assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
@@ -912,7 +913,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                       let first_proposal_test_account_2_commit_before = await EticaReleaseInstance.commits(test_account2.address, expected_votehash);
                       console.log('THE commit.amount for FIRST PROPOSAL of testaccount2 BEFORE commitvote IS:', web3.utils.fromWei(first_proposal_test_account_2_commit_before.amount, "ether" ));
                       
-                      assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 2, 'test_account2 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
+                      assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 2, 'test_account2 should have enough Bosoms before CALLING commitvote FUNCTION (because revealvote function should fail but not for this reason)');
 
                       return EticaReleaseInstance.commitvote(web3.utils.toWei('2', 'ether'), expected_votehash, {from: test_account2.address}).then(assert.fail)
                       .catch(async function(error){
@@ -967,7 +968,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                 //console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
                 //console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_account_3_bosomsafter, "ether" ));
                 assert.equal(web3.utils.fromWei(test_account_3_bosomsafter, "ether" ), "5", 'test_account3 should have 5 Bosoms!');
-                assert.equal(web3.utils.fromWei(test_account_3_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_3_balanceafter, "ether" ), "5", 'test_account should have 5 Eticas less!');
+                assert.equal(web3.utils.fromWei(test_account_3_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_3_balanceafter, "ether" ), "5", 'test_account3 should have 5 Eticas less!');
 
                 console.log('.....................   CAN GET MORE ETI AND STAKE THEM for more BOSOMS  ....................... ');
                 console.log('---------------------------------- END OF TASK with SUCCESS ----------------------------');
@@ -1007,7 +1008,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                               //console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
                               //console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_account_4_bosomsafter, "ether" ));
                               assert.equal(web3.utils.fromWei(test_account_4_bosomsafter, "ether" ), "5", 'test_account4 should have 5 Bosoms!');
-                              assert.equal(web3.utils.fromWei(test_account_4_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_4_balanceafter, "ether" ), "5", 'test_account should have 5 Eticas less!');
+                              assert.equal(web3.utils.fromWei(test_account_4_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_4_balanceafter, "ether" ), "5", 'test_account4 should have 5 Eticas less!');
               
                               console.log('.....................   CAN GET MORE ETI AND STAKE THEM for more BOSOMS  ....................... ');
                               console.log('---------------------------------- END OF TASK with SUCCESS ----------------------------');
@@ -1026,11 +1027,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                               //console.log('test_account ETI balance before transfer:', web3.utils.fromWei(test_account_5_balancebefore, "ether" ));
                               //console.log('test_account Bosoms balance before transfer:', web3.utils.fromWei(test_account_5_bosomsbefore, "ether" ));
               
-                              console.log('transfering 3 ETI from miner_account to test_account5');
+                              console.log('transfering 4 ETI from miner_account to test_account5');
                               let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
                               console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
-                              assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 11, 'miner_account should have enough ETI before CALLING TRANSFER FUNCTION but unfortunatly it has not mined enough ETI, please try to relanch tests you will be more lucky next time!');
-                              return EticaReleaseInstance.transfer(test_account5.address,  web3.utils.toBN(11000000000000000000), {from: miner_account.address}).then(async function(receipt){
+                              assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 4, 'miner_account should have enough ETI before CALLING TRANSFER FUNCTION but unfortunatly it has not mined enough ETI, please try to relanch tests you will be more lucky next time!');
+                              return EticaReleaseInstance.transfer(test_account5.address,  web3.utils.toBN(4000000000000000000), {from: miner_account.address}).then(async function(receipt){
               
                                 let test_account_5_balancebefore_newstaking = await EticaReleaseInstance.balanceOf(test_account5.address);
                                 let test_account_5_bosomsbefore_newstaking = await EticaReleaseInstance.bosomsOf(test_account5.address);
@@ -1038,16 +1039,16 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                                 //console.log('test_account Bosoms balance before new staking:', web3.utils.fromWei(test_account_5_bosomsbefore_newstaking, "ether" ));
               
                                 assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore, "ether" ), web3.utils.fromWei(test_account_5_bosomsbefore_newstaking, "ether" ), 'test_account5 should have same amount of Bosoms!');
-                                assert.equal(web3.utils.fromWei(test_account_5_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_5_balancebefore, "ether" ), "11", 'test_account5 should have 11 Eticas more!');
+                                assert.equal(web3.utils.fromWei(test_account_5_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_5_balancebefore, "ether" ), "4", 'test_account5 should have 4 Eticas more!');
               
                               // try staking 3 ETI:
-                                return EticaReleaseInstance.eticatobosoms(test_account5.address,  web3.utils.toBN(11000000000000000000), {from: test_account5.address}).then(async function(receipt){
+                                return EticaReleaseInstance.eticatobosoms(test_account5.address,  web3.utils.toBN(4000000000000000000), {from: test_account5.address}).then(async function(receipt){
                               let test_account_5_balanceafter = await EticaReleaseInstance.balanceOf(test_account5.address);
                               let test_account_5_bosomsafter = await EticaReleaseInstance.bosomsOf(test_account5.address);
                               //console.log('test_account ETI balance after new staking:', web3.utils.fromWei(test_accountbalanceafter, "ether" ));
                               //console.log('test_account Bosoms balance after new staking:', web3.utils.fromWei(test_account_5_bosomsafter, "ether" ));
-                              assert.equal(web3.utils.fromWei(test_account_5_bosomsafter, "ether" ), "11", 'test_account5 should have 11 Bosoms!');
-                              assert.equal(web3.utils.fromWei(test_account_5_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_5_balanceafter, "ether" ), "11", 'test_account should have 11 Eticas less!');
+                              assert.equal(web3.utils.fromWei(test_account_5_bosomsafter, "ether" ), "4", 'test_account5 should have 4 Bosoms!');
+                              assert.equal(web3.utils.fromWei(test_account_5_balancebefore_newstaking, "ether" ) - web3.utils.fromWei(test_account_5_balanceafter, "ether" ), "4", 'test_account should have 4 Eticas less!');
               
                               console.log('.....................   CAN GET MORE ETI AND STAKE THEM for more BOSOMS  ....................... ');
                               console.log('---------------------------------- END OF TASK with SUCCESS ----------------------------');
@@ -1084,7 +1085,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                         let expected_votehash = get_expected_votehash(first_proposal.proposed_release_hash, false, test_account5.address, "random123");
 
-                        return EticaReleaseInstance.commitvote(web3.utils.toWei('11', 'ether'), expected_votehash, {from: test_account5.address}).then(async function(response){
+                        return EticaReleaseInstance.commitvote(web3.utils.toWei('4', 'ether'), expected_votehash, {from: test_account5.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           //console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
@@ -1092,11 +1093,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                           let first_proposal_test_account_5_commit_after = await EticaReleaseInstance.commits(test_account5.address, expected_votehash);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
 
-                          assert.equal(web3.utils.fromWei(first_proposal_test_account_5_commit_after.amount, "ether" ), "11", 'test_account5 should have been able to commit for 11 Bosoms!');
+                          assert.equal(web3.utils.fromWei(first_proposal_test_account_5_commit_after.amount, "ether" ), "4", 'test_account5 should have been able to commit for 4 Bosoms!');
 
                           let test_account_5_bosomsafter = await EticaReleaseInstance.bosoms(test_account5.address);
 
-                          assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "11", 'test_account5 should have 11 Bosom less!');
+                          assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "4", 'test_account5 should have 4 Bosom less!');
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
                           //assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
@@ -1132,7 +1133,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-            assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 2, 'test_account2 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
+            //assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 3, 'test_account2 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
 
             let lstblock = await web3.eth.getBlock("latest");
             //console.log('last block s timestamp is', lstblock.timestamp);
@@ -1143,7 +1144,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             assert(lstblock.timestamp <= first_proposal_data_after.endtime + 60, 'Block timestamp should be lower than revealing time end before testing REVEALVOTE TOO SOON');
 
            // try to VOTE for proposal, should fail:
-           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('4', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
                 let test_account_2_balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
@@ -1327,7 +1328,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                           assert.equal(web3.utils.fromWei(miner_account_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(miner_account_bosomsafter.toString(), "ether" ), "1", 'miner_account should have 1 Bosom less!');*/
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                          assert.equal(first_period.total_voters.toNumber(), 1, 'First period should have only default_vote of firstproposal at this stage');
+                          assert.equal(first_period.total_voters.toNumber(), 0, 'First period should not have any vote at this stage');
 
 
                         // ------------ WARNING
@@ -1377,17 +1378,17 @@ it("can revealvote against Proposal", async function () {
   assert(lstblock.timestamp <= first_proposal_data_after.endtime + 60, 'Block timestamp should be lower than first proposal end OF REVEALING votes before testing CAN STILL REVEALVOTE against');
   assert(lstblock.timestamp > first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal end of VOTE COMMITTING OF before testing CAN REVEALVOTE against');
 
-  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, web3.utils.toWei('11', 'ether'), "random123", {from: test_account5.address}).then(async function(response){
+  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, web3.utils.toWei('4', 'ether'), "random123", {from: test_account5.address}).then(async function(response){
 
     let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
     console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
     console.log('new slashingratio after against vote revealing is', first_proposal_data_after.slashingratio.toString());
-    assert.equal('477', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 477 after 1 for vote of 10 Bosoms and 1 against vote of 11 Bosoms');
+    assert.equal('10000', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 10000 after 0 for vote and 1 against vote of 4 Bosoms');
 
     let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account5.address);
     //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
 
-    assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "11", 'test_account5 should have been able to revealvote for 11 Bosom!');
+    assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "4", 'test_account5 should have been able to revealvote for 4 Bosoms!');
 
     let test_account_5_bosomsafter = await EticaReleaseInstance.bosoms(test_account5.address);
 
@@ -1431,24 +1432,24 @@ it("can revealvote against Proposal", async function () {
                         let test_account_2_bosomsbefore = await EticaReleaseInstance.bosoms(test_account2.address);
                         //console.log('test_account Bosoms before revealvote IS:', web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ));
 
-                        return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account2.address}).then(async function(response){
+                        return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('4', 'ether'), "random123", {from: test_account2.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
                           console.log('new slashingratio is', first_proposal_data_after.slashingratio.toString());
-                          assert.equal('0', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 0 after 2 for votes of 11 Bosoms and 1 against vote of 11 Bosoms');
+                          assert.equal('0', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 0 after 1 for vote of 4 Bosoms and 1 against vote of 4 Bosoms');
 
                           let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account2.address);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
 
-                          assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account2 should have been able to vote for 1 Bosom!');
+                          assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "4", 'test_account2 should have been able to vote for 4 Bosoms!');
 
                           /*let test_account_2_bosomsafter = await EticaReleaseInstance.bosoms(test_account2.address);
 
                           assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');*/
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                          assert.equal(first_period.total_voters.toNumber(), 3, 'First period should have 3 voters');
+                          assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
 
 
                         // ------------ WARNING
@@ -1482,7 +1483,6 @@ it("can revealvote against Proposal", async function () {
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-            assert(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) >= 2, 'test_account2 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
 
             let lstblock = await web3.eth.getBlock("latest");
             //console.log('last block s timestamp is', lstblock.timestamp);
@@ -1494,7 +1494,7 @@ it("can revealvote against Proposal", async function () {
             assert(lstblock.timestamp >= first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal endvote before testing CANNOT REVEAL VOTE TWICE ON SAME PROPOSAL');
 
            // try to VOTE for proposal, should fail:
-           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('2', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('4', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
                 let test_account_2_balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
@@ -1504,8 +1504,8 @@ it("can revealvote against Proposal", async function () {
                 //console.log('test_account3 ETI balance after:', web3.utils.fromWei(test_account_3_balanceafter, "ether" ));
                 //console.log('test_account3 Stake after:', test_account_3_stakeafter);
                 //console.log('test_account3 Vote is:', first_proposal_vote_after);
-                assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter, "ether" ), "0", 'test_account should not have less Bosoms!');
-                assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "1", 'test_account2 should not have been able to vote twice for smae proposal. So the vote amount should not have changed !');
+                assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter, "ether" ), "0", 'test_account2 should not have less Bosoms!');
+                assert.equal(web3.utils.fromWei(first_proposal_vote_after.amount, "ether" ), "4", 'test_account2 should not have been able to revealvote twice for same proposal. So the vote amount should not have changed !');
 
                 console.log('........................... VOTING TWICE ON SAME PROPOSAL is not possible ....................... ');
                 console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
@@ -1544,7 +1544,7 @@ it("can revealvote against Proposal", async function () {
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
                           console.log('new slashingratio is', first_proposal_data_after.slashingratio.toString());
-                          assert.equal('1200', first_proposal_data_after.slashingratio.toString(), 'the proposal slashingratio should be 1200 after 3 for votes of 14 Bosoms and 1 against vote of 11 Bosoms');
+                          assert.equal(first_proposal_data_after.slashingratio.toString(), '2728', 'the proposal slashingratio should be 4000 after 2 for votes of 7 Bosoms and 1 against vote of 4 Bosoms');
 
                           let first_proposal_vote_after = await EticaReleaseInstance.votes(first_proposal.proposed_release_hash, test_account4.address);
                           //console.log('THE FIRST PROPOSAL VOTE AFTER revealvote IS:', first_proposal_vote_after);
@@ -1556,7 +1556,7 @@ it("can revealvote against Proposal", async function () {
                           assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');*/
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                          assert.equal(first_period.total_voters.toNumber(), 4, 'First period should have 4 voters');
+                          assert.equal(first_period.total_voters.toNumber(), 3, 'First period should have 3 voters');
 
 
                         // ------------ WARNING
@@ -1591,7 +1591,7 @@ it("can revealvote against Proposal", async function () {
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-            assert(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ) >= 1, 'test_account3 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
+            //assert(web3.utils.fromWei(test_account_3_bosomsbefore, "ether" ) >= 1, 'test_account3 should have enough Bosoms before CALLING revealvote FUNCTION (because revealvote function should fail but not for this reason)');
 
             let lstblock = await web3.eth.getBlock("latest");
             //console.log('last block s timestamp is', lstblock.timestamp);

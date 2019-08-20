@@ -1395,8 +1395,17 @@ it("can revealvote against Proposal", async function () {
     // revealing votes should not impact bosoms balance (instead commitvote() does):
     assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "0", 'test_account5 should have same amount of Bosoms!');
 
+    let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
+    assert.equal(first_period.total_voters.toNumber(), 1, 'First period should have 1 voters');
+    assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
+    assert.equal(first_period.againstprops.toNumber(), 1, 'First period should have 1 againstprops');
 
-  console.log('................................  CAN VOTE AGAINST A PROPOSAL  ....................... ');
+    let first_proposal_last_status = await EticaReleaseInstance.proplststatus(first_period.id, first_proposal.proposed_release_hash);
+    assert.equal(first_proposal_last_status.toString(), 0, 'First proposal last status should have been updated to Rejected (0)');
+
+
+
+  console.log('................................  CAN REVEALVOTE AGAINST A PROPOSAL  ....................... ');
   console.log('---------------------------------- END OF TEST with SUCCESS ----------------------------');
   });
 
@@ -1450,6 +1459,11 @@ it("can revealvote against Proposal", async function () {
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
                           assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
+                          assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
+                          assert.equal(first_period.againstprops.toNumber(), 1, 'First period should have 1 againstprops');
+                      
+                          let first_proposal_last_status = await EticaReleaseInstance.proplststatus(first_period.id, first_proposal.proposed_release_hash);
+                          assert.equal(first_proposal_last_status.toString(), 0, 'First proposal last status should have been updated to Rejected (0)');
 
 
                         // ------------ WARNING
@@ -1557,13 +1571,18 @@ it("can revealvote against Proposal", async function () {
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
                           assert.equal(first_period.total_voters.toNumber(), 3, 'First period should have 3 voters');
+                          assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
+                          assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
+                      
+                          let first_proposal_last_status = await EticaReleaseInstance.proplststatus(first_period.id, first_proposal.proposed_release_hash);
+                          assert.equal(first_proposal_last_status.toString(), 1, 'First proposal last status should have been updated to Accepted (1)');
 
 
                         // ------------ WARNING
                         // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
                         // ------------ WARNING
 
-                        console.log('................................  CAN VOTE FOR A PROPOSAL  ....................... ');
+                        console.log('................................  CAN REVEALVOTE FOR A PROPOSAL  ....................... ');
                         console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
                         });
 

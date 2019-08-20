@@ -1238,7 +1238,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      bool _istie = false;
      uint totalVotes = proposaldata.forvotes + proposaldata.againstvotes;
      uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
-     uint _againstvotesdiff_numerator = (proposaldata.againstvotes - proposaldata.forvotes) * 100; // ((proposaldata.againstvotes - newproposal_forvotes) / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
      uint _ratio_slashing = 0;
 
      if ((_forvotes_numerator / totalVotes) >= TIER_ONE_THRESHOLD){

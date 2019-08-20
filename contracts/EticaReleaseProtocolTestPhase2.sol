@@ -699,7 +699,7 @@ function newPeriod() internal {
     0x0, //_reward_for_curation
     0x0, //_reward_for_editor
     0x0, // _forprops
-    0x0, //_againstprops
+    0x0 //_againstprops
   );
 
   // an interval cannot have 2 Periods

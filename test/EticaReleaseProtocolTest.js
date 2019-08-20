@@ -78,7 +78,7 @@ var EXPECTED_FIRST_DISEASE_HASH = get_expected_keccak256_hash(FIRST_DISEASE_NAME
 
 var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in the protocol
 
-  it("testing ETICA PROTOCOL:", async function () {
+  it("testing ETICA PROTOCOL PHASE 1:", async function () {
     console.log('------------------------------------- Starting TESTS OF ETICA PROTOCOL ---------------------------');
 
   // wait long enough so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of this file assume enough ETI and don't deal with mining tests
@@ -1675,7 +1675,7 @@ await stakeclmidx(test_account8, 2);
 // ------------ Stake Consolidation -------------- //
 
 
-  console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS ---------------------------');
+  console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS of PHASE 1 ---------------------------');
 
   })
 

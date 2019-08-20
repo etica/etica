@@ -1056,7 +1056,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        //  Proposal Data:
        ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
        proposaldata.status = ProposalStatus.Pending;
-       proposaldata.istie = false;
+       proposaldata.istie = true;
        proposaldata.prestatus = ProposalStatus.Pending;
        proposaldata.nbvoters = 0;
        proposaldata.slashingratio = 0;
@@ -1128,17 +1128,17 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
       // UPDATE PROPOSAL:
-      proposaldata.slashingratio = 10000;
-      proposaldata.forvotes = PROPOSAL_DEFAULT_VOTE;
-      proposaldata.nbvoters = 1;
+      //proposaldata.slashingratio = 10000; defaultvote is not taking into account for curation and editor weight anymore
+      // proposaldata.forvotes = PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
+      // proposaldata.nbvoters = 1; defaultvote is not taking into account for curation and editor weight anymore
       proposaldata.prestatus = ProposalStatus.Singlevoter;
-      proposaldata.lastcuration_weight = PROPOSAL_DEFAULT_VOTE;
-      proposaldata.lasteditor_weight = PROPOSAL_DEFAULT_VOTE;
+      //proposaldata.lastcuration_weight = PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
+      //proposaldata.lasteditor_weight = PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
 
       // UPDATE PERIOD:
-      period.curation_sum = period.curation_sum + PROPOSAL_DEFAULT_VOTE;
-      period.editor_sum = period.editor_sum + PROPOSAL_DEFAULT_VOTE;
-      period.total_voters += 1;
+      //period.curation_sum = period.curation_sum + PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
+      //period.editor_sum = period.editor_sum + PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
+      //period.total_voters += 1; defaultvote is not taking into account for curation and editor weight anymore
 
  }
 
@@ -1344,7 +1344,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
   if (proposaldata.status == ProposalStatus.Pending) {
 
   // SET proposal new status
-  if (proposaldata.prestatus == ProposalStatus.Accepted || proposaldata.prestatus == ProposalStatus.Singlevoter) {
+  if (proposaldata.prestatus == ProposalStatus.Accepted) {
             proposaldata.status = ProposalStatus.Accepted;
   }
   else {
@@ -1353,7 +1353,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
   proposaldata.finalized_time = block.timestamp;
 
-  // NEW STATUS AFTER FIRST VOTE DONE
+  // NEW STATUS AFTER FIRST CLAIM DONE
 
   }
 
@@ -1414,7 +1414,10 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
    // check beforte diving by 0
    require(period.curation_sum > 0); // period curation sum pb !
+   // get curation reward only if voter is not the proposer:
+   if (!vote.is_editor){
    _reward_amount += (vote.amount * period.reward_for_curation) / (period.curation_sum);
+   }
 
        // if voter is editor and proposal accepted:
     if (vote.is_editor && proposaldata.status == ProposalStatus.Accepted){

@@ -472,6 +472,8 @@ uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to
 uint APPROVAL_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
 uint SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
+uint PROTOCOL_RATIO_TARGET = 8000; // 80 means the Protocol has a goal of 80.00% proposals approved and 20.00% proposals rejected
+
 
 struct Period{
     uint id;
@@ -481,6 +483,7 @@ struct Period{
     uint total_voters; // Total nb of voters in this period
     uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
     uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
+    uint approval_ratio; // approved vs rejected ratio of period's proposals (8000 means 80.00 of periods's proposals are approved)
 }
 
   struct Stake{

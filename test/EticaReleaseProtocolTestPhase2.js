@@ -326,6 +326,15 @@ console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
 console.log('DEFAULT_VOTING_TIME is', DEFAULT_VOTING_TIME.toNumber());
 await advanceseconds(DEFAULT_VOTING_TIME);
 
+// Retrieve General Information of Proposals:
+let _general_proposal1 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
+let _general_proposal2 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
+let _general_proposal3 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
+let _general_proposal4 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
+let _general_proposal5 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
+let _general_proposal6 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6_WITH_FIRTDISEASEHASH);
+let _general_proposal7 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
+
 // get proposals data:
 let _proposal1 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal1.nbvoters, '0', 'Proposal1 should have 0 nbvoters');
@@ -355,7 +364,27 @@ await commitvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random1
 await commitvote(test_account8, IPFS3_WITH_FIRTDISEASEHASH, true, '10', "random123");
 await commitvote(test_account8, IPFS4_WITH_FIRTDISEASEHASH, false, '5', "random123");
 
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+let first_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1.period_id);
+assert.equal(first_period.total_voters.toNumber(), 0, 'First period should have 0 voter');
+assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
+assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
 
+let proposal1_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS1_WITH_FIRTDISEASEHASH);
+let proposal2_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS2_WITH_FIRTDISEASEHASH);
+let proposal3_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS3_WITH_FIRTDISEASEHASH);
+let proposal4_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS4_WITH_FIRTDISEASEHASH);
+let proposal5_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS5_WITH_FIRTDISEASEHASH);
+let proposal6_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS6_WITH_FIRTDISEASEHASH);
+let proposal7_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS7_WITH_FIRTDISEASEHASH);
+assert.equal(proposal1_last_status.toString(), 3, 'proposal1 last status should have been updated to Singlevoter (3)');
+assert.equal(proposal2_last_status.toString(), 3, 'proposal2 last status should have been updated to Singlevoter (3)');
+assert.equal(proposal3_last_status.toString(), 3, 'proposal3 last status should have been updated to Singlevoter (3)');
+assert.equal(proposal4_last_status.toString(), 3, 'proposal4 last status should have been updated to Singlevoter (3)');
+assert.equal(proposal5_last_status.toString(), 3, 'proposal5 last status should have been updated to Singlevoter (3)');
+assert.equal(proposal6_last_status.toString(), 3, 'proposal6 last status should have been updated to Singlevoter (3)');
+assert.equal(proposal7_last_status.toString(), 3, 'proposal7 last status should have been updated to Singlevoter (3)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 // assert we are within revealing period of proposal1
 let lstblock = await web3.eth.getBlock("latest");
@@ -372,6 +401,17 @@ await revealvote(test_account5, IPFS1_WITH_FIRTDISEASEHASH, true, '500', "random
 await revealvote(test_account6, IPFS1_WITH_FIRTDISEASEHASH, false, '350', "random123");
 await revealvote(test_account7, IPFS1_WITH_FIRTDISEASEHASH, false, '80', "random123");
 
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+first_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1.period_id);
+assert.equal(first_period.total_voters.toNumber(), 6, 'First period should have 6 voters');
+assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
+assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
+
+proposal1_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS1_WITH_FIRTDISEASEHASH);
+assert.equal(proposal1_last_status.toString(), 1, 'proposal1 last status should have been updated to Accepted (1)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
+
 
 // assert we are within revealing period of proposal2
 lstblock = await web3.eth.getBlock("latest");
@@ -383,6 +423,18 @@ await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '500', "random
 await revealvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, false, '500', "random123");
 await revealvote(test_account6, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await revealvote(test_account7, IPFS2_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+first_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1.period_id);
+assert.equal(first_period.total_voters.toNumber(), 11, 'First period should have 11 voters');
+assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
+assert.equal(first_period.againstprops.toNumber(), 1, 'First period should have 1 againstprops');
+
+proposal2_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS2_WITH_FIRTDISEASEHASH);
+assert.equal(proposal2_last_status.toString(), 0, 'proposal2 last status should have been updated to Rejected (0)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
+
 
 
 // assert we are within revealing period of proposal3
@@ -396,6 +448,16 @@ await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, false, '600', "rando
 await revealvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await revealvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '70', "random123");
 
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+first_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1.period_id);
+assert.equal(first_period.total_voters.toNumber(), 16, 'First period should have 16 voters');
+assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
+assert.equal(first_period.againstprops.toNumber(), 2, 'First period should have 2 againstprops');
+
+proposal3_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS3_WITH_FIRTDISEASEHASH);
+assert.equal(proposal3_last_status.toString(), 0, 'proposal3 last status should have been updated to Rejected (0)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
 
 // assert we are within revealing period of proposal4
 lstblock = await web3.eth.getBlock("latest");
@@ -407,6 +469,17 @@ await revealvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random1
 await revealvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
 await revealvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await revealvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+first_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1.period_id);
+assert.equal(first_period.total_voters.toNumber(), 21, 'First period should have 21 voters');
+assert.equal(first_period.forprops.toNumber(), 2, 'First period should have 2 forprops');
+assert.equal(first_period.againstprops.toNumber(), 2, 'First period should have 2 againstprops');
+
+proposal4_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(first_period.id, IPFS4_WITH_FIRTDISEASEHASH);
+assert.equal(proposal4_last_status.toString(), 1, 'proposal4 last status should have been updated to Accepted (1)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
 
 
 // assert we are within revealing period of proposal5
@@ -566,13 +639,13 @@ assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 1010)
 
 
 // Retrieve General Information of Proposals:
-let _general_proposal1 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
-let _general_proposal2 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
-let _general_proposal3 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
-let _general_proposal4 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
-let _general_proposal5 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
-let _general_proposal6 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6_WITH_FIRTDISEASEHASH);
-let _general_proposal7 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
+_general_proposal1 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
+_general_proposal2 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
+_general_proposal3 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
+_general_proposal4 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
+_general_proposal5 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
+_general_proposal6 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6_WITH_FIRTDISEASEHASH);
+_general_proposal7 = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7_WITH_FIRTDISEASEHASH);
 
 // assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
 console.log('_general_proposal1.period_id is', _general_proposal1.period_id.toString());
@@ -1811,6 +1884,15 @@ console.log('DEFAULT_REVEALING_TIME is', DEFAULT_REVEALING_TIME.toNumber());
 console.log('DEFAULT_VOTING_TIME is', DEFAULT_VOTING_TIME.toNumber());
 await advanceseconds(DEFAULT_VOTING_TIME);
 
+// Retrieve General Information of Proposals:
+let _general_proposal1B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1B_WITH_FIRTDISEASEHASH);
+let _general_proposal2B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2B_WITH_FIRTDISEASEHASH);
+let _general_proposal3B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3B_WITH_FIRTDISEASEHASH);
+let _general_proposal4B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4B_WITH_FIRTDISEASEHASH);
+let _general_proposal5B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5B_WITH_FIRTDISEASEHASH);
+let _general_proposal6B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6B_WITH_FIRTDISEASEHASH);
+let _general_proposal7B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7B_WITH_FIRTDISEASEHASH);
+
 // get proposals data:
 let _proposal1B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS1B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal1B.nbvoters, '0', 'Proposal1B should have 0 nbvoters');
@@ -1841,6 +1923,28 @@ await commitvote(test_account8, IPFS3B_WITH_FIRTDISEASEHASH, true, '10', "random
 await commitvote(test_account8, IPFS4B_WITH_FIRTDISEASEHASH, false, '5', "random123");
 
 
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+let second_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1B.period_id);
+assert.equal(second_period.total_voters.toNumber(), 0, 'Second period should have 0 voter');
+assert.equal(second_period.forprops.toNumber(), 0, 'Second period should have 0 forprops');
+assert.equal(second_period.againstprops.toNumber(), 0, 'Second period should have 0 againstprops');
+
+let proposal1B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS1B_WITH_FIRTDISEASEHASH);
+let proposal2B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS2B_WITH_FIRTDISEASEHASH);
+let proposal3B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS3B_WITH_FIRTDISEASEHASH);
+let proposal4B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS4B_WITH_FIRTDISEASEHASH);
+let proposal5B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS5B_WITH_FIRTDISEASEHASH);
+let proposal6B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS6B_WITH_FIRTDISEASEHASH);
+let proposal7B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS7B_WITH_FIRTDISEASEHASH);
+assert.equal(proposal1B_last_status.toString(), 3, 'proposal1B last status should have been updated to Singlevoter (3)');
+assert.equal(proposal2B_last_status.toString(), 3, 'proposal2B last status should have been updated to Singlevoter (3)');
+assert.equal(proposal3B_last_status.toString(), 3, 'proposal3B last status should have been updated to Singlevoter (3)');
+assert.equal(proposal4B_last_status.toString(), 3, 'proposal4B last status should have been updated to Singlevoter (3)');
+assert.equal(proposal5B_last_status.toString(), 3, 'proposal5B last status should have been updated to Singlevoter (3)');
+assert.equal(proposal6B_last_status.toString(), 3, 'proposal6B last status should have been updated to Singlevoter (3)');
+assert.equal(proposal7B_last_status.toString(), 3, 'proposal7B last status should have been updated to Singlevoter (3)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
 
 // assert we are within revealing period of proposal1
 lstblock = await web3.eth.getBlock("latest");
@@ -1857,6 +1961,16 @@ await revealvote(test_account5, IPFS1B_WITH_FIRTDISEASEHASH, true, '500', "rando
 await revealvote(test_account6, IPFS1B_WITH_FIRTDISEASEHASH, false, '350', "random123");
 await revealvote(test_account7, IPFS1B_WITH_FIRTDISEASEHASH, false, '80', "random123");
 
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+second_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1B.period_id);
+assert.equal(second_period.total_voters.toNumber(), 6, 'Second period should have 6 voters');
+assert.equal(second_period.forprops.toNumber(), 1, 'Second period should have 1 forprops');
+assert.equal(second_period.againstprops.toNumber(), 0, 'Second period should have 0 againstprops');
+
+proposal1B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS1B_WITH_FIRTDISEASEHASH);
+assert.equal(proposal1B_last_status.toString(), 1, 'proposal1B last status should have been updated to Accepted (1)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
 
 // assert we are within revealing period of proposal2
 lstblock = await web3.eth.getBlock("latest");
@@ -1868,6 +1982,16 @@ await revealvote(test_account4, IPFS2B_WITH_FIRTDISEASEHASH, true, '500', "rando
 await revealvote(test_account5, IPFS2B_WITH_FIRTDISEASEHASH, false, '500', "random123");
 await revealvote(test_account6, IPFS2B_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await revealvote(test_account7, IPFS2B_WITH_FIRTDISEASEHASH, false, '800', "random123");
+
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+second_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1B.period_id);
+assert.equal(second_period.total_voters.toNumber(), 11, 'Second period should have 11 voters');
+assert.equal(second_period.forprops.toNumber(), 1, 'Second period should have 1 forprops');
+assert.equal(second_period.againstprops.toNumber(), 1, 'Second period should have 1 againstprops');
+
+proposal2B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS2B_WITH_FIRTDISEASEHASH);
+assert.equal(proposal2B_last_status.toString(), 0, 'proposal2B last status should have been updated to Rejected (0)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 
 // assert we are within revealing period of proposal3
@@ -1881,6 +2005,17 @@ await revealvote(test_account5, IPFS3B_WITH_FIRTDISEASEHASH, false, '600', "rand
 await revealvote(test_account6, IPFS3B_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await revealvote(test_account7, IPFS3B_WITH_FIRTDISEASEHASH, true, '70', "random123");
 
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+second_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1B.period_id);
+assert.equal(second_period.total_voters.toNumber(), 16, 'Second period should have 16 voters');
+assert.equal(second_period.forprops.toNumber(), 1, 'Second period should have 1 forprops');
+assert.equal(second_period.againstprops.toNumber(), 2, 'Second period should have 2 againstprops');
+
+proposal3B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS3B_WITH_FIRTDISEASEHASH);
+assert.equal(proposal3B_last_status.toString(), 0, 'proposal3B last status should have been updated to Rejected (0)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
+
 
 // assert we are within revealing period of proposal4
 lstblock = await web3.eth.getBlock("latest");
@@ -1892,6 +2027,18 @@ await revealvote(test_account3, IPFS4B_WITH_FIRTDISEASEHASH, true, '10', "random
 await revealvote(test_account5, IPFS4B_WITH_FIRTDISEASEHASH, true, '50', "random123");
 await revealvote(test_account6, IPFS4B_WITH_FIRTDISEASEHASH, true, '35', "random123");
 await revealvote(test_account7, IPFS4B_WITH_FIRTDISEASEHASH, true, '60', "random123");
+
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM:
+second_period = await EticaReleaseProtocolTestPhase2Instance.periods(_general_proposal1B.period_id);
+assert.equal(second_period.total_voters.toNumber(), 21, 'Second period should have 21 voters');
+assert.equal(second_period.forprops.toNumber(), 2, 'Second period should have 2 forprops');
+assert.equal(second_period.againstprops.toNumber(), 2, 'Second period should have 2 againstprops');
+
+proposal4B_last_status = await EticaReleaseProtocolTestPhase2Instance.proplststatus(second_period.id, IPFS4B_WITH_FIRTDISEASEHASH);
+assert.equal(proposal4B_last_status.toString(), 1, 'proposal4B last status should have been updated to Accepted (1)');
+// CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
+
+
 
 
 // assert we are within revealing period of proposal5
@@ -2051,13 +2198,13 @@ assert.equal(web3.utils.fromWei(NEW_BLOCKED_ETI_TEST_ACCOUNT_7, "ether" ), 1010)
 
 
 // Retrieve General Information of Proposals:
-let _general_proposal1B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1B_WITH_FIRTDISEASEHASH);
-let _general_proposal2B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2B_WITH_FIRTDISEASEHASH);
-let _general_proposal3B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3B_WITH_FIRTDISEASEHASH);
-let _general_proposal4B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4B_WITH_FIRTDISEASEHASH);
-let _general_proposal5B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5B_WITH_FIRTDISEASEHASH);
-let _general_proposal6B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6B_WITH_FIRTDISEASEHASH);
-let _general_proposal7B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7B_WITH_FIRTDISEASEHASH);
+_general_proposal1B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS1B_WITH_FIRTDISEASEHASH);
+_general_proposal2B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS2B_WITH_FIRTDISEASEHASH);
+_general_proposal3B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS3B_WITH_FIRTDISEASEHASH);
+_general_proposal4B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS4B_WITH_FIRTDISEASEHASH);
+_general_proposal5B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS5B_WITH_FIRTDISEASEHASH);
+_general_proposal6B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS6B_WITH_FIRTDISEASEHASH);
+_general_proposal7B = await EticaReleaseProtocolTestPhase2Instance.proposals(IPFS7B_WITH_FIRTDISEASEHASH);
 
 // assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
 console.log('_general_proposal1B.period_id is', _general_proposal1B.period_id.toString());

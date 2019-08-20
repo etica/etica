@@ -578,6 +578,8 @@ uint public PeriodsIssuedCounter;
 mapping(uint => uint) public IntervalsPeriods; // keeps track of which intervals have already a period
 uint public IntervalsPeriodsCounter;
 
+mapping(uint => mapping(bytes32 => ProposalStatus)) public proplststatus; // keeps track of proposals last status for Period forprops and againstprops calculation
+
 
 mapping(uint => Disease) public diseases; // keeps track of which intervals have already a period
 uint public diseasesCounter;
@@ -1075,6 +1077,9 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
+  // set proplststatus to Singlevoter, it is updated to Accepted or Rejected at each revealvote
+  proplststatus[IntervalsPeriods[_current_interval]][_proposed_release_hash] = ProposalStatus.Singlevoter;
+
 
     emit NewProposal(_proposed_release_hash);
 
@@ -1089,6 +1094,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
    //check if the proposal exists and that we get the right proposal:
    Proposal storage proposal = proposals[_proposed_release_hash];
    require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
+
 
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     // Verify voting is still in progress
@@ -1190,7 +1196,6 @@ uint _old_proposal_curationweight = proposaldata.lastcuration_weight;
 uint _old_proposal_editorweight = proposaldata.lasteditor_weight;
 
 
-
 // get Period of Proposal:
 Period storage period = periods[proposal.period_id];
 
@@ -1281,6 +1286,35 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          }
 
+         // updates period forvotes and againstvotes system
+        if(proplststatus[period.id][proposal.proposed_release_hash] == ProposalStatus.Singlevoter){
+          proplststatus[period.id][proposal.proposed_release_hash] = proposaldata.prestatus;
+          if(proposaldata.prestatus == ProposalStatus.Accepted){
+            period.forprops += 1;
+          }
+          else {
+            period.againstprops += 1;
+          }
+        }
+        
+        // in this case the proposal becomes rejected after being accepted or becomes accepted after being rejected:
+        else if(proplststatus[period.id][proposal.proposed_release_hash] != proposaldata.prestatus){
+        proplststatus[period.id][proposal.proposed_release_hash] = proposaldata.prestatus;
+         
+         if(proposaldata.prestatus == ProposalStatus.Accepted){
+          period.againstprops -= 1;
+          period.forprops += 1;
+         }
+         // in this case proposal is Rejected:
+         else {
+          period.forprops -= 1;
+          period.againstprops += 1;
+         }
+
+        }
+        // updates period forvotes and againstvotes system
+         
+         
          period.total_voters += 1;
 
   }

@@ -167,10 +167,6 @@ contract EticaToken is ERC20Interface{
       supply = 21000001 * (10**18); // initial supply equals 21000001 ETI
       balances[address(this)] = balances[address(this)].add(1000000 * (10**18)); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
       balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC].add(100000 * (10**18)); // 100 000 ETI to miner_account replace address with your miner_account address
-      
-
-      // Loads the 19 900 001 ETI (21 000 000 - 1 100 000) to random wallet (here test_account8 of ganache):
-      balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E] = balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E].add(10000000 * (10**18)); // 10 000 000 ETI to random account1
 
 
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
@@ -582,6 +578,8 @@ mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have
 uint public PeriodsIssuedCounter;
 mapping(uint => uint) public IntervalsPeriods; // keeps track of which intervals have already a period
 uint public IntervalsPeriodsCounter;
+
+mapping(uint => mapping(bytes32 => ProposalStatus)) public proplststatus; // keeps track of proposals last status for Period forprops and againstprops calculation
 
 
 mapping(uint => Disease) public diseases; // keeps track of which intervals have already a period
@@ -1080,6 +1078,9 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
+  // set proplststatus to Singlevoter, it is updated to Accepted or Rejected at each revealvote
+  proplststatus[IntervalsPeriods[_current_interval]][_proposed_release_hash] = ProposalStatus.Singlevoter;
+
 
     emit NewProposal(_proposed_release_hash);
 
@@ -1180,7 +1181,6 @@ require(commits[msg.sender][_votehash].amount > 0);
 //check if the proposal exists and that we get the right proposal:
 Proposal storage proposal = proposals[_proposed_release_hash];
 require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
-
 
 
 ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
@@ -1287,6 +1287,35 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          }
 
+         // updates period forvotes and againstvotes system
+        if(proplststatus[period.id][proposal.proposed_release_hash] == ProposalStatus.Singlevoter){
+          proplststatus[period.id][proposal.proposed_release_hash] = proposaldata.prestatus;
+          if(proposaldata.prestatus == ProposalStatus.Accepted){
+            period.forprops += 1;
+          }
+          else {
+            period.againstprops += 1;
+          }
+        }
+        
+        // in this case the proposal becomes rejected after being accepted or becomes accepted after being rejected:
+        else if(proplststatus[period.id][proposal.proposed_release_hash] != proposaldata.prestatus){
+        proplststatus[period.id][proposal.proposed_release_hash] = proposaldata.prestatus;
+         
+         if(proposaldata.prestatus == ProposalStatus.Accepted){
+          period.againstprops -= 1;
+          period.forprops += 1;
+         }
+         // in this case proposal is Rejected:
+         else {
+          period.forprops -= 1;
+          period.againstprops += 1;
+         }
+
+        }
+        // updates period forvotes and againstvotes system
+         
+         
          period.total_voters += 1;
 
   }

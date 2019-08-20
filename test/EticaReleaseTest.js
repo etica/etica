@@ -745,6 +745,11 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
                     assert.equal(first_period.total_voters.toNumber(), 0, 'First period should have 0 voter');
+                    assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
+                    assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
+                
+                    let first_proposal_last_status = await EticaReleaseInstance.proplststatus(first_period.id, first_proposal.proposed_release_hash);
+                    assert.equal(first_proposal_last_status.toString(), 3, 'First proposal last status should have been updated to Singlevoter (3)');
 
                     // ------------ WARNING
                     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered

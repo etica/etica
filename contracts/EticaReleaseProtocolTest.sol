@@ -1084,12 +1084,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
    Proposal storage proposal = proposals[_proposed_release_hash];
    require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
-   // voterIsProposer can be used for the Linking Reward attribution:
-   bool voterIsProposer = false;
-   if (msg.sender == proposal.proposer) {
-   voterIsProposer = true;
-   }
-
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     // Verify voting is still in progress
     require( block.timestamp < proposaldata.endtime);
@@ -1115,7 +1109,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
     Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
     vote.proposal_hash = proposal.proposed_release_hash;
     vote.approve = true;
-    vote.is_editor = voterIsProposer;
+    vote.is_editor = true;
     vote.amount = PROPOSAL_DEFAULT_VOTE;
     vote.voter = msg.sender;
     vote.timestamp = block.timestamp;
@@ -1175,11 +1169,6 @@ require(commits[msg.sender][_votehash].amount > 0);
 Proposal storage proposal = proposals[_proposed_release_hash];
 require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
 
- bool voterIsProposer = false;
- if (msg.sender == proposal.proposer) {
- voterIsProposer = true;
- }
-
 
 ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
@@ -1194,18 +1183,11 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 uint _old_proposal_curationweight = proposaldata.lastcuration_weight;
 uint _old_proposal_editorweight = proposaldata.lasteditor_weight;
 
- /* // Consume bosom:
- require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
- bosoms[msg.sender] = bosoms[msg.sender].sub(_amount); */
 
 
 // get Period of Proposal:
 Period storage period = periods[proposal.period_id];
 
-/*
- // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
- blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
-*/
 
 // Check that vote does not already exist
 // only allow one vote for each {raw_release_hash, voter} combinasion
@@ -1217,7 +1199,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
  Vote storage vote = votes[proposal.proposed_release_hash][msg.sender];
  vote.proposal_hash = proposal.proposed_release_hash;
  vote.approve = _approved;
- vote.is_editor = voterIsProposer;
+ vote.is_editor = false;
  vote.amount = commits[msg.sender][_votehash].amount;
  vote.voter = msg.sender;
  vote.timestamp = block.timestamp;

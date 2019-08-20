@@ -469,7 +469,7 @@ uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amoun
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
-uint TIER_ONE_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
+uint APPROVAL_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
 uint SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
 
@@ -1218,9 +1218,9 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
      uint _ratio_slashing = 0;
 
-     if ((_forvotes_numerator / totalVotes) >= TIER_ONE_THRESHOLD){
+     if ((_forvotes_numerator / totalVotes) >= APPROVAL_THRESHOLD){
     _isapproved = true;
-    if ((_forvotes_numerator / totalVotes) == TIER_ONE_THRESHOLD){
+    if ((_forvotes_numerator / totalVotes) == APPROVAL_THRESHOLD){
         _istie = true;
     }
     }
@@ -1228,12 +1228,12 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
     proposaldata.istie = _istie;
 
     if (_isapproved){
-    _ratio_slashing = uint(((100 - TIER_ONE_THRESHOLD) * totalVotes).div(100));
+    _ratio_slashing = uint(((100 - APPROVAL_THRESHOLD) * totalVotes).div(100));
     _ratio_slashing = uint((proposaldata.againstvotes * 10000).div(_ratio_slashing));  
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
     else{
-    _ratio_slashing = uint((totalVotes * TIER_ONE_THRESHOLD).div(100));
+    _ratio_slashing = uint((totalVotes * APPROVAL_THRESHOLD).div(100));
     _ratio_slashing = uint((proposaldata.forvotes * 10000).div(_ratio_slashing));
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }

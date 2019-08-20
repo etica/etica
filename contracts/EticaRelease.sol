@@ -483,7 +483,8 @@ struct Period{
     uint total_voters; // Total nb of voters in this period
     uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
     uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
-    uint approval_ratio; // approved vs rejected ratio of period's proposals (8000 means 80.00 of periods's proposals are approved)
+    uint forprops; // number of accepted proposals in this period
+    uint againstprops; // number of rejected proposals in this period
 }
 
   struct Stake{
@@ -687,7 +688,9 @@ function newPeriod() internal {
     0x0, //_editor_sum
     0x0, //_total_voters;
     0x0, //_reward_for_curation
-    0x0 //_reward_for_editor
+    0x0, //_reward_for_editor
+    0x0, // _forprops
+    0x0 //_againstprops
   );
 
   // an interval cannot have 2 Periods

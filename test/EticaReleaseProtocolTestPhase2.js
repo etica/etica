@@ -1725,7 +1725,7 @@ await stakeclmidx(test_account8, 2);
 
 console.log('<--------------------------- ENTERING TESTS OF NEXT PERIOD I ---------------------------------- >');
 
-// advance time so that clmpropbyhash becomes possible: 
+// advance time so that we enter next period: 
 await advanceseconds(REWARD_INTERVAL);
 
 // --------------------- Making same tests but for next Period -----------------------------:
@@ -2732,6 +2732,121 @@ await stakeclmidx(test_account, 1);
 
 await should_fail_stakeclmidx(test_account2, 1);
 await stakeclmidx(test_account2, 2);
+
+
+
+// ----------------------  Make tests for Dynamic APPROVAL THRESHOLD ----------------------------- //
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: III  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1C = randomipfs();
+let IPFS2C = randomipfs();
+let IPFS3C = randomipfs();
+let IPFS4C = randomipfs();
+let IPFS5C = randomipfs();
+let IPFS6C = randomipfs();
+let IPFS7C = randomipfs();
+let IPFS8C = randomipfs();
+
+let IPFS1C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1C, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2C, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3C, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4C, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5C, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS6C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6C, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS7C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7C, EXPECTED_FIRST_DISEASE_HASH);
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period III should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestPhase2Instance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '50', 'APPROVAL_THRESHOLD SHOULD BE 50');
+
+await commitvote(test_account3, IPFS1C_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2C_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1C_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2C_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: IV  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIV.forprops and period.againstprops OF period III:
+
+let IPFS1D = randomipfs();
+let IPFS2D = randomipfs();
+let IPFS3D = randomipfs();
+
+let IPFS1D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1D, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2D, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3D, EXPECTED_FIRST_DISEASE_HASH);
+
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+
+await commitvote(test_account3, IPFS2D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS3D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS2D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS3D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: V  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1E = randomipfs();
+let IPFS2E = randomipfs();
+let IPFS3E = randomipfs();
+
+let IPFS1E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1E, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2E, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3E, EXPECTED_FIRST_DISEASE_HASH);
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period V should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestPhase2Instance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD V IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '75', 'APPROVAL_THRESHOLD SHOULD BE 75');
+
+await commitvote(test_account3, IPFS2E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS2E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// ----------------------  Make tests for Dynamic APPROVAL THRESHOLD done ----------------------------- //
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS OF PHASE 2 ---------------------------');
 

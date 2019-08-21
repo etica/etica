@@ -473,10 +473,11 @@ uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amoun
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
-uint APPROVAL_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
-uint SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
-uint PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
-uint PROTOCOL_RATIO_TARGET = 8000; // 80 means the Protocol has a goal of 80.00% proposals approved and 20.00% proposals rejected
+uint public APPROVAL_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
+uint public PERIODS_PER_THRESHOLD = 2; // number of Periods before readjusting APPROVAL_THRESHOLD
+uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
+uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
+uint public PROTOCOL_RATIO_TARGET = 8000; // 80 means the Protocol has a goal of 80.00% proposals approved and 20.00% proposals rejected
 
 
 struct Period{
@@ -672,8 +673,7 @@ return true;
 
 }
 
-// --- WARNING this function should be internal, will be called by propose proposal function and by constructor for first call
-// let public for testing only
+
 // create a period
 function newPeriod() internal {
 
@@ -706,7 +706,59 @@ function newPeriod() internal {
   // issue ETI for this Period Reward
   issue(periodsCounter);
 
+
+  //readjust APPROVAL_THRESHOLD every PERIODS_PER_THRESHOLD periods:
+  if((periodsCounter - 1) % PERIODS_PER_THRESHOLD == 0 && periodsCounter > 1)
+  {
+    readjustThreshold();
+  }
+
   emit CreatedPeriod(periodsCounter, _interval);
+}
+
+function readjustThreshold() internal {
+
+uint _meanapproval = 0;
+// calculate the mean approval rate (forprops / againstprops) of last PERIODS_PER_THRESHOLD Periods:
+for(uint _periodidx = periodsCounter - PERIODS_PER_THRESHOLD; _periodidx <= periodsCounter - 1;  _periodidx++){
+  if(periods[_periodidx].againstprops == 0){
+   _meanapproval = _meanapproval + 10000;
+  }
+  else{
+   _meanapproval += uint(periods[_periodidx].forprops * 10000 / (periods[_periodidx].forprops + periods[_periodidx].againstprops));
+  }
+  
+}
+
+_meanapproval = uint(_meanapproval / PERIODS_PER_THRESHOLD);
+
+// increase or decrease APPROVAL_THRESHOLD based on comparason between meanapproval and PROTOCOL_RATIO_TARGET:
+
+         // if there were not enough approvals:
+         if( _meanapproval < PROTOCOL_RATIO_TARGET )
+         {
+           uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval)).div(20000);
+
+           // require lower APPROVAL_THRESHOLD for next period:
+           APPROVAL_THRESHOLD -= uint((APPROVAL_THRESHOLD - 45) * shortage_approvals_rate);   // decrease by up to 50 % of (APPROVAL_THRESHOLD - 45)
+         }else{
+           uint excess_approvals_rate = uint((_meanapproval - PROTOCOL_RATIO_TARGET) * 5 * 10000 / 20000);
+
+           // require higher APPROVAL_THRESHOLD for next period:
+           APPROVAL_THRESHOLD += uint((100 - APPROVAL_THRESHOLD) * excess_approvals_rate / 10000);   // increase by up to 50 % of (100 - APPROVAL_THRESHOLD)
+         }
+
+
+         if(APPROVAL_THRESHOLD < 45) // high discouragement to vote against proposals
+         {
+           APPROVAL_THRESHOLD = 45;
+         }
+
+         if(APPROVAL_THRESHOLD > 99) // high discouragement to vote for proposals
+         {
+           APPROVAL_THRESHOLD = 99;
+         }
+
 }
 
 // -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //

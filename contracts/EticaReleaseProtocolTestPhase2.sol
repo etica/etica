@@ -170,6 +170,7 @@ contract EticaToken is ERC20Interface{
       // Loads the 19 900 001 ETI (21 000 000 - 1 100 000) to random wallet (here test_account8 of ganache):
       balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E] = balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E].add(10000000 * (10**18)); // 10 000 000 ETI to random account1
 
+
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
       /* Phase 1:
@@ -479,7 +480,7 @@ uint public APPROVAL_THRESHOLD = 50; // threshold for proposal to be accepted. 5
 uint public PERIODS_PER_THRESHOLD = 2; // number of Periods before readjusting APPROVAL_THRESHOLD
 uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
-uint public PROTOCOL_RATIO_TARGET = 8000; // 80 means the Protocol has a goal of 80.00% proposals approved and 20.00% proposals rejected
+uint public PROTOCOL_RATIO_TARGET = 8000; // 8000 means the Protocol has a goal of 80.00% proposals approved and 20.00% proposals rejected
 
 
 struct Period{
@@ -604,8 +605,6 @@ mapping(address => uint) public bosoms;
 mapping(address => mapping(uint => Stake)) public stakes;
 mapping(address => uint) public stakesCounters; // keeps track of how many stakes for each user
 mapping(address => uint) public stakesAmount; // keeps track of total amount of stakes for each user
-// stakes ----> slashing function will need to loop trough stakes. Can create issues for claiming votes:
-// The function stakescsldt() has been created to gather stakes when user has to much stakes.
 
 // Blocked ETI amount, user has votes with this amount in process and can't retrieve this amount before the system knows if the user has to be slahed
 mapping(address => uint) public blockedeticas;
@@ -781,7 +780,7 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
 
 
 
-// ----  Get bosoms and add Stake ------  //
+// ----  Get bosoms  ------  //
 
 //bosomget(): Get bosoms and add Stake. Only contract is able to call this function:
 function bosomget (address _staker, uint _amount) internal {
@@ -793,6 +792,9 @@ bosoms[_staker] = bosoms[_staker].add(newBosoms);
 
 }
 
+// ----  Get bosoms  ------  //
+
+// ----  add Stake ------  //
 
 function addStake(address _staker, uint _amount) internal returns (bool success) {
 
@@ -838,7 +840,9 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
     return true;
 }
 
+// ----  add Stake ------  //
 
+// ----  split Stake ------  //
 
 function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
 
@@ -857,7 +861,7 @@ function splitStake(address _staker, uint _amount, uint _startTime, uint _endTim
     return true;
 }
 
-// ----  Get bosoms and add Stake ------  //
+// ----  split Stake ------  //
 
 
 // ----  Redeem a Stake ------  //
@@ -889,6 +893,10 @@ function stakeclmidx (uint _stakeidx) public {
 
 }
 
+// ----  Redeem a Stake ------  //
+
+// ----  Remove a Stake ------  //
+
 function _deletestake(address _staker,uint _index) internal {
   // we check that the stake exists
   require(_index > 0 && _index <= stakesCounters[_staker]);
@@ -911,12 +919,13 @@ function _deletestake(address _staker,uint _index) internal {
 
 }
 
-// ----  Redeem a Stake ------  //
+// ----  Remove a Stake ------  //
 
 
 // ----- Stakes consolidation  ----- //
 
-// this function is necessary to make sure stakesclm() call is possible even if user has made too many stakes 
+// slashing function needs to loop trough stakes. Can create issues for claiming votes:
+// The function stakescsldt() has been created to consolidate (gather) stakes when user has too much stakes
 function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
 
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
@@ -1177,17 +1186,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
       // UPDATE PROPOSAL:
-      //proposaldata.slashingratio = 10000; defaultvote is not taking into account for curation and editor weight anymore
-      // proposaldata.forvotes = PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
-      // proposaldata.nbvoters = 1; defaultvote is not taking into account for curation and editor weight anymore
       proposaldata.prestatus = ProposalStatus.Singlevoter;
-      //proposaldata.lastcuration_weight = PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
-      //proposaldata.lasteditor_weight = PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
-
-      // UPDATE PERIOD:
-      //period.curation_sum = period.curation_sum + PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
-      //period.editor_sum = period.editor_sum + PROPOSAL_DEFAULT_VOTE; defaultvote is not taking into account for curation and editor weight anymore
-      //period.total_voters += 1; defaultvote is not taking into account for curation and editor weight anymore
 
  }
 

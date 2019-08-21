@@ -370,9 +370,6 @@ let first_period = await EticaReleaseProtocolTestInstance.periods(_general_propo
 assert.equal(first_period.total_voters.toNumber(), 0, 'First period should have 0 voter');
 assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
 assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
-
-let proposal1_last_status = await EticaReleaseProtocolTestInstance.proplststatus(first_period.id, IPFS1_WITH_FIRTDISEASEHASH);
-assert.equal(first_proposal_last_status.toString(), 3, 'First proposal last status should have been updated to Singlevoter (3)');
 // CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 
@@ -397,9 +394,6 @@ first_period = await EticaReleaseProtocolTestInstance.periods(_general_proposal1
 assert.equal(first_period.total_voters.toNumber(), 6, 'First period should have 6 voters');
 assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
 assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
-
-proposal1_last_status = await EticaReleaseProtocolTestInstance.proplststatus(first_period.id, IPFS1_WITH_FIRTDISEASEHASH);
-assert.equal(proposal1_last_status.toString(), 1, 'proposal1 last status should have been updated to Accepted (1)');
 // CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 
@@ -420,9 +414,6 @@ first_period = await EticaReleaseProtocolTestInstance.periods(_general_proposal1
 assert.equal(first_period.total_voters.toNumber(), 11, 'First period should have 11 voters');
 assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
 assert.equal(first_period.againstprops.toNumber(), 1, 'First period should have 1 againstprops');
-
-let proposal2_last_status = await EticaReleaseProtocolTestInstance.proplststatus(first_period.id, IPFS2_WITH_FIRTDISEASEHASH);
-assert.equal(proposal2_last_status.toString(), 0, 'proposal2 last status should have been updated to Rejected (0)');
 // CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 
@@ -444,9 +435,6 @@ first_period = await EticaReleaseProtocolTestInstance.periods(_general_proposal1
 assert.equal(first_period.total_voters.toNumber(), 16, 'First period should have 16 voters');
 assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
 assert.equal(first_period.againstprops.toNumber(), 2, 'First period should have 2 againstprops');
-
-let proposal3_last_status = await EticaReleaseProtocolTestInstance.proplststatus(first_period.id, IPFS3_WITH_FIRTDISEASEHASH);
-assert.equal(proposal3_last_status.toString(), 0, 'proposal3 last status should have been updated to Rejected (0)');
 // CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 
@@ -466,9 +454,6 @@ first_period = await EticaReleaseProtocolTestInstance.periods(_general_proposal1
 assert.equal(first_period.total_voters.toNumber(), 21, 'First period should have 21 voters');
 assert.equal(first_period.forprops.toNumber(), 2, 'First period should have 2 forprops');
 assert.equal(first_period.againstprops.toNumber(), 2, 'First period should have 2 againstprops');
-
-let proposal4_last_status = await EticaReleaseProtocolTestInstance.proplststatus(first_period.id, IPFS4_WITH_FIRTDISEASEHASH);
-assert.equal(proposal4_last_status.toString(), 1, 'proposal4 last status should have been updated to Accepted (1)');
 // CHECKING PERIOD FORPROPS AGAINSTPROPS SYSTEM DONE
 
 

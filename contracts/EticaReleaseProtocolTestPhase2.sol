@@ -167,7 +167,8 @@ contract EticaToken is ERC20Interface{
       supply = 21000001 * (10**18); // initial supply equals 21000001 ETI
       balances[address(this)] = balances[address(this)].add(1000000 * (10**18)); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
       balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC].add(100000 * (10**18)); // 100 000 ETI to miner_account replace address with your miner_account address
-
+      // Loads the 19 900 001 ETI (21 000 000 - 1 100 000) to random wallet (here test_account8 of ganache):
+      balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E] = balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E].add(10000000 * (10**18)); // 10 000 000 ETI to random account1
 
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       

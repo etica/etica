@@ -727,20 +727,20 @@ for(uint _periodidx = periodsCounter - PERIODS_PER_THRESHOLD; _periodidx <= peri
 
 _meanapproval = uint(_meanapproval / PERIODS_PER_THRESHOLD);
 
-// increase or decrease APPROVAL_THRESHOLD based on comparason between meanapproval and PROTOCOL_RATIO_TARGET:
+// increase or decrease APPROVAL_THRESHOLD based on comparason between _meanapproval and PROTOCOL_RATIO_TARGET:
 
          // if there were not enough approvals:
          if( _meanapproval < PROTOCOL_RATIO_TARGET )
          {
-           uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval)).div(20000);
+           uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval));
 
            // require lower APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD -= uint((APPROVAL_THRESHOLD - 45) * shortage_approvals_rate);   // decrease by up to 50 % of (APPROVAL_THRESHOLD - 45)
+           APPROVAL_THRESHOLD -= uint(((APPROVAL_THRESHOLD - 45) * shortage_approvals_rate).div(10000));   // decrease by up to 50 % of (APPROVAL_THRESHOLD - 45)
          }else{
-           uint excess_approvals_rate = uint((_meanapproval - PROTOCOL_RATIO_TARGET) * 5 * 10000 / 20000);
+           uint excess_approvals_rate = uint((_meanapproval - PROTOCOL_RATIO_TARGET) * 175); // multiple by 1.75: multiply by 175 at this line and then will divid by 100 so / 10000 becomes / 1000000
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD += uint((100 - APPROVAL_THRESHOLD) * excess_approvals_rate / 10000);   // increase by up to 50 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD += uint((100 - APPROVAL_THRESHOLD) * excess_approvals_rate / 1000000);   // increase by up to 50 % of (100 - APPROVAL_THRESHOLD)
          }
 
 

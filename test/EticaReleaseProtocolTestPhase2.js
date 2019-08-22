@@ -2713,7 +2713,7 @@ await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malari
 // New Period III should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestPhase2Instance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD IS ', APPROVAL_THRESHOLD.toString());
-assert.equal(APPROVAL_THRESHOLD, '50', 'APPROVAL_THRESHOLD SHOULD BE 50');
+assert.equal(APPROVAL_THRESHOLD, '49', 'APPROVAL_THRESHOLD SHOULD BE 49');
 
 await commitvote(test_account3, IPFS1C_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account4, IPFS2C_WITH_FIRTDISEASEHASH, true, '5', "random123");
@@ -2781,7 +2781,7 @@ await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malari
 // New Period V should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestPhase2Instance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD for PERIOD V IS ', APPROVAL_THRESHOLD.toString());
-assert.equal(APPROVAL_THRESHOLD, '75', 'APPROVAL_THRESHOLD SHOULD BE 75');
+assert.equal(APPROVAL_THRESHOLD, '66', 'APPROVAL_THRESHOLD SHOULD BE 66');
 
 await commitvote(test_account3, IPFS2E_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, false, '5', "random123");

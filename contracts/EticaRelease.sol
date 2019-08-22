@@ -94,8 +94,8 @@ contract EticaToken is ERC20Interface{
     uint public inflationrate; // fixed inflation rate of phase2 (after Etica supply has reached 21 Million ETI)
     uint public  periodrewardtemp; // Amount of ETI issued per period during phase1 (before Etica supply has reached 21 Million ETI)
 
-    uint public PERIOD_CURATION_REWARD_RATIO = 20; // 20% of period reward will be used as curation reward
-    uint public PERIOD_EDITOR_REWARD_RATIO = 80; // 80% of period reward will be used as editor reward
+    uint public PERIOD_CURATION_REWARD_RATIO = 38196601125; // 38.196601125% of period reward will be used as curation reward
+    uint public PERIOD_EDITOR_REWARD_RATIO = 61803398875; // 61.803398875% of period reward will be used as editor reward
 
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
@@ -649,8 +649,8 @@ else {
 }
 
 // update Period Reward:
-period.reward_for_curation = uint((_periodsupply * PERIOD_CURATION_REWARD_RATIO) / 100);
-period.reward_for_editor = uint((_periodsupply * PERIOD_EDITOR_REWARD_RATIO) / 100);
+period.reward_for_curation = uint((_periodsupply * PERIOD_CURATION_REWARD_RATIO).div(10**(11)));
+period.reward_for_editor = uint((_periodsupply * PERIOD_EDITOR_REWARD_RATIO).div(10**(11)));
 
 
 supply = supply + _periodsupply;

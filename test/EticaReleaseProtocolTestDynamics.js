@@ -203,6 +203,13 @@ let IPFS3_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3, EXPECTED
 let IPFS4_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED_FIRST_DISEASE_HASH);
 
+
+let _general_proposal1 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
+let _general_proposal2 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
+let _general_proposal3 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
+let _general_proposal4 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
+let _general_proposal5 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
+
 await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
 let indexfromhash = await EticaReleaseProtocolTestDynamicsInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseProtocolTestDynamicsInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
@@ -226,6 +233,12 @@ await advanceseconds(DEFAULT_VOTING_TIME);
 await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await revealvote(test_account5, IPFS3_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+let _period1  = await EticaReleaseProtocolTestDynamicsInstance.periods(_general_proposal1.period_id);
+console.log('_period1 is:', _period1);
+console.log('_period1.reward_curation is:', web3.utils.fromWei(_period1.reward_for_curation, "ether" ));
+console.log('_period1.reward_editor is:', web3.utils.fromWei(_period1.reward_for_editor, "ether" ));
+
 
 // -->PERIOD I should have a 100% approval ratio
 

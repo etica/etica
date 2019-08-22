@@ -98,10 +98,13 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
     console.log('DEFAULT_REVEALING_TIME IS ', DEFAULT_REVEALING_TIME);
 
     PERIOD_CURATION_REWARD_RATIO = await EticaReleaseProtocolTestInstance.PERIOD_CURATION_REWARD_RATIO();
-    console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO);
+    console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO.toString());
 
     PERIOD_EDITOR_REWARD_RATIO = await EticaReleaseProtocolTestInstance.PERIOD_EDITOR_REWARD_RATIO();
-    console.log('PERIOD_EDITOR_REWARD_RATIO IS ', PERIOD_EDITOR_REWARD_RATIO);
+    console.log('PERIOD_EDITOR_REWARD_RATIO IS ', PERIOD_EDITOR_REWARD_RATIO.toString());
+
+    TOTALSUPPLY = await EticaReleaseProtocolTestInstance.totalSupply();
+    console.log('TOTALSUPPLY IS ', TOTALSUPPLY.toString());
 
   // TRANSFERS FROM MINER ACCOUNT:
   await transferto(test_account);
@@ -234,6 +237,8 @@ await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 5 Malari
 await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 6 Malaria", "Description 6", IPFS6, IPFS7, "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 7 Malaria", "Description 7", IPFS7, "", IPFS8, "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 
+TOTALSUPPLY = await EticaReleaseProtocolTestInstance.totalSupply();
+console.log('New TOTALSUPPLY IS', TOTALSUPPLY.toString());
 // should fail to duplicate a proposal whose raw_release_hash and disease_hash have already been stored into the system:
 await should_fail_propose(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 8 Malaria", "Description 8", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 

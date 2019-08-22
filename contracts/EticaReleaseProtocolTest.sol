@@ -473,7 +473,7 @@ uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amoun
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 
 
-uint public APPROVAL_THRESHOLD = 50; // threshold for proposal to be accepted. 50 means 50 %, 60 would mean 60%
+uint public APPROVAL_THRESHOLD = 5000; // threshold for proposal to be accepted. 5000 means 50.00 %, 6000 would mean 60.00%
 uint public PERIODS_PER_THRESHOLD = 2; // number of Periods before readjusting APPROVAL_THRESHOLD
 uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
@@ -735,23 +735,23 @@ _meanapproval = uint(_meanapproval / PERIODS_PER_THRESHOLD);
            uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval));
 
            // require lower APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD -= uint(((APPROVAL_THRESHOLD - 45) * shortage_approvals_rate).div(10000));   // decrease by up to 50 % of (APPROVAL_THRESHOLD - 45)
+           APPROVAL_THRESHOLD -= uint(((APPROVAL_THRESHOLD - 4500) * shortage_approvals_rate).div(10000));   // decrease by up to 50 % of (APPROVAL_THRESHOLD - 45)
          }else{
            uint excess_approvals_rate = uint((_meanapproval - PROTOCOL_RATIO_TARGET) * 175); // multiple by 1.75: multiply by 175 at this line and then will divid by 100 so / 10000 becomes / 1000000
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD += uint((100 - APPROVAL_THRESHOLD) * excess_approvals_rate / 1000000);   // increase by up to 50 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD += uint((10000 - APPROVAL_THRESHOLD) * excess_approvals_rate / 1000000);   // increase by up to 50 % of (100 - APPROVAL_THRESHOLD)
          }
 
 
-         if(APPROVAL_THRESHOLD < 45) // high discouragement to vote against proposals
+         if(APPROVAL_THRESHOLD < 4500) // high discouragement to vote against proposals
          {
-           APPROVAL_THRESHOLD = 45;
+           APPROVAL_THRESHOLD = 4500;
          }
 
-         if(APPROVAL_THRESHOLD > 99) // high discouragement to vote for proposals
+         if(APPROVAL_THRESHOLD > 9900) // high discouragement to vote for proposals
          {
-           APPROVAL_THRESHOLD = 99;
+           APPROVAL_THRESHOLD = 9900;
          }
 
 }
@@ -1274,7 +1274,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      bool _isapproved = false;
      bool _istie = false;
      uint totalVotes = proposaldata.forvotes + proposaldata.againstvotes;
-     uint _forvotes_numerator = proposaldata.forvotes * 100; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 100 to store it as uint
+     uint _forvotes_numerator = proposaldata.forvotes * 10000; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 10000 to store it as uint
      uint _ratio_slashing = 0;
 
      if ((_forvotes_numerator / totalVotes) > APPROVAL_THRESHOLD){
@@ -1287,12 +1287,12 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
     proposaldata.istie = _istie;
 
     if (_isapproved){
-    _ratio_slashing = uint(((100 - APPROVAL_THRESHOLD) * totalVotes).div(100));
+    _ratio_slashing = uint(((10000 - APPROVAL_THRESHOLD) * totalVotes).div(10000));
     _ratio_slashing = uint((proposaldata.againstvotes * 10000).div(_ratio_slashing));  
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
     else{
-    _ratio_slashing = uint((totalVotes * APPROVAL_THRESHOLD).div(100));
+    _ratio_slashing = uint((totalVotes * APPROVAL_THRESHOLD).div(10000));
     _ratio_slashing = uint((proposaldata.forvotes * 10000).div(_ratio_slashing));
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }

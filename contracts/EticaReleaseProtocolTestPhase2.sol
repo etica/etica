@@ -1195,6 +1195,19 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
  }
 
 
+   function updatecost() public {
+
+// update disease and proposal cost each 52 periods:
+//if(periodsCounter % 52 == 0 && periodsCounter > 1){
+uint _new_disease_cost = supply.mul(47619046).div(10**13); // disease cost is 0.00047619046% of supply
+uint _new_proposal_vote = supply.mul(47619046).div(10**14); // default vote amount is 0.000047619046% of supply
+
+PROPOSAL_DEFAULT_VOTE = _new_proposal_vote;
+DISEASE_CREATION_AMOUNT = _new_disease_cost;
+
+ }
+
+
  function commitvote(uint _amount, bytes32 _votehash) public {
 
 require(_amount > 0);

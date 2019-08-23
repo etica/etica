@@ -1729,6 +1729,25 @@ await stakeclmidx(test_account8, 2);
 
 
 // ------------ Stake Consolidation -------------- //
+PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestInstance.PROPOSAL_DEFAULT_VOTE(); 
+console.log('PROPOSAL_DEFAULT_VOTE ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
+
+DISEASE_CREATION_AMOUNT = await EticaReleaseProtocolTestInstance.DISEASE_CREATION_AMOUNT(); 
+console.log('OLD DISEASE_CREATION_AMOUNT IS ', web3.utils.fromWei(DISEASE_CREATION_AMOUNT, "ether" )); 
+
+SUPPPLY = await EticaReleaseProtocolTestInstance.totalSupply(); 
+console.log('OLD SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
+
+  await updatecost(test_account3);
+
+  PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestInstance.PROPOSAL_DEFAULT_VOTE(); 
+  console.log('NEW PROPOSAL_DEFAULT_VOTE IS ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
+  
+  DISEASE_CREATION_AMOUNT = await EticaReleaseProtocolTestInstance.DISEASE_CREATION_AMOUNT(); 
+  console.log('NEW DISEASE_CREATION_AMOUNT IS ', web3.utils.fromWei(DISEASE_CREATION_AMOUNT, "ether" )); 
+  
+  SUPPPLY = await EticaReleaseProtocolTestInstance.totalSupply(); 
+  console.log('NEW SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
 
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS of PHASE 1 ---------------------------');
@@ -1736,6 +1755,17 @@ await stakeclmidx(test_account8, 2);
   })
 
   });
+
+  async function updatecost(useraccount){
+
+    console.log('---> UPDATING COSTS');
+    return EticaReleaseProtocolTestInstance.updatecost({from: useraccount.address}).then(async function(receipt){
+    console.log('---> The cost update of DISEASE AND PROPOSAL AMOUNT CREATION was successfull');
+
+      }).catch(async function(error){
+        console.log('An error has occured !', error);
+      })
+   }
 
 
   async function printBalances(accounts) {

@@ -1192,8 +1192,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 // update disease and proposal cost each 52 periods:
 //if(periodsCounter % 52 == 0 && periodsCounter > 1){
-uint _new_disease_cost = supply.mul(476190461).div(10**15); // disease cost should be 0.000000476190461% of supply
-uint _new_proposal_vote = supply.mul(476190461).div(10**15); // default vote amount 0.000000476190461% of supply
+uint _new_disease_cost = supply.mul(47619046).div(10**13); // disease cost is 0.00047619046% of supply
+uint _new_proposal_vote = supply.mul(47619046).div(10**14); // default vote amount is 0.000047619046% of supply
 
 PROPOSAL_DEFAULT_VOTE = _new_proposal_vote;
 DISEASE_CREATION_AMOUNT = _new_disease_cost;

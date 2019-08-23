@@ -203,12 +203,9 @@ let IPFS3_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3, EXPECTED
 let IPFS4_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED_FIRST_DISEASE_HASH);
 
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD I IS ', PERIODS_COUNTER.toString());
 
-let _general_proposal1 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
-let _general_proposal2 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
-let _general_proposal3 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
-let _general_proposal4 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
-let _general_proposal5 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
 
 await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
 let indexfromhash = await EticaReleaseProtocolTestDynamicsInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
@@ -217,6 +214,17 @@ let hashfromname = await EticaReleaseProtocolTestDynamicsInstance.getdiseasehash
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 2", IPFS3, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+
+let _general_proposal1 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
+let _general_proposal2 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS2_WITH_FIRTDISEASEHASH);
+let _general_proposal3 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS3_WITH_FIRTDISEASEHASH);
+let _general_proposal4 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS4_WITH_FIRTDISEASEHASH);
+let _general_proposal5 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS5_WITH_FIRTDISEASEHASH);
+
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('NEW PERIODS_COUNTER PERIOD I IS ', PERIODS_COUNTER.toString());
 
 // Period I should have APPROVAL_THRESHOLD SET TO INITIAL THRESHOLD OF 50 SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -309,23 +317,20 @@ let IPFS7C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7C, EXPECT
 
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 
-// New Period III APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+// New Period III should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD IS ', APPROVAL_THRESHOLD.toString());
-assert.equal(APPROVAL_THRESHOLD, '6750', 'APPROVAL_THRESHOLD SHOULD BE 67.50%');
+assert.equal(APPROVAL_THRESHOLD, '5000', 'APPROVAL_THRESHOLD SHOULD STILL BE 50.00%');
 
 await commitvote(test_account3, IPFS1C_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account4, IPFS2C_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await commitvote(test_account5, IPFS3C_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 // advance time to enter revealing Period:
 await advanceseconds(DEFAULT_VOTING_TIME);
 
 await revealvote(test_account3, IPFS1C_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await revealvote(test_account4, IPFS2C_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await revealvote(test_account5, IPFS3C_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 
 
@@ -341,24 +346,39 @@ await advanceseconds(REWARD_INTERVAL);
 let IPFS1D = randomipfs();
 let IPFS2D = randomipfs();
 let IPFS3D = randomipfs();
+let IPFS4D = randomipfs();
+let IPFS5D = randomipfs();
+let IPFS6D = randomipfs();
 
 let IPFS1D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1D, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS2D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2D, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS3D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3D, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4D, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5D, EXPECTED_FIRST_DISEASE_HASH);
 
-await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS4D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD IV IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5000', 'APPROVAL_THRESHOLD SHOULD STILL BE 50.00%');
 
+await commitvote(test_account3, IPFS1D_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account3, IPFS2D_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account4, IPFS3D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account3, IPFS4D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account5, IPFS5D_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 // advance time to enter revealing Period:
 await advanceseconds(DEFAULT_VOTING_TIME);
-
+await revealvote(test_account3, IPFS1D_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await revealvote(test_account3, IPFS2D_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await revealvote(test_account4, IPFS3D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account3, IPFS4D_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account5, IPFS5D_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 
 
@@ -372,28 +392,89 @@ await advanceseconds(REWARD_INTERVAL);
 let IPFS1E = randomipfs();
 let IPFS2E = randomipfs();
 let IPFS3E = randomipfs();
+let IPFS4E = randomipfs();
+let IPFS5E = randomipfs();
+let IPFS6E = randomipfs();
 
 let IPFS1E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS2E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS3E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3E, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4E, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5E, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS6E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6E, EXPECTED_FIRST_DISEASE_HASH);
 
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS4E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS6E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('NEW PERIODS_COUNTER PERIOD V IS ', PERIODS_COUNTER.toString());
 // New Period V should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD for PERIOD V IS ', APPROVAL_THRESHOLD.toString());
-assert.equal(APPROVAL_THRESHOLD, '7887', 'APPROVAL_THRESHOLD SHOULD BE 78.87%');
+assert.equal(APPROVAL_THRESHOLD, '5000', 'APPROVAL_THRESHOLD SHOULD STILL BE 50.00%');
 
+await commitvote(test_account2, IPFS1E_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account3, IPFS2E_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await commitvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account5, IPFS4E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account6, IPFS5E_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 // advance time to enter revealing Period:
 await advanceseconds(DEFAULT_VOTING_TIME);
 
+await revealvote(test_account2, IPFS1E_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await revealvote(test_account3, IPFS2E_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await revealvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS3E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account5, IPFS4E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account6, IPFS5E_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: VI  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1F = randomipfs();
+let IPFS2F = randomipfs();
+let IPFS3F = randomipfs();
+let IPFS4F = randomipfs();
+let IPFS5F = randomipfs();
+
+let IPFS1F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1F, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2F, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3F, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4F, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5F, EXPECTED_FIRST_DISEASE_HASH);
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS4F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period VI should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD VI IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD STILL BE 63.75%');
+
+await commitvote(test_account3, IPFS2F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS3F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account5, IPFS4F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS2F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS3F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account5, IPFS4F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 // ----------------------  Make tests for Dynamic APPROVAL THRESHOLD done ----------------------------- //
 

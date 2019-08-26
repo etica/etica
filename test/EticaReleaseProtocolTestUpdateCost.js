@@ -79,7 +79,7 @@ var EXPECTED_FIRST_DISEASE_HASH = get_expected_keccak256_hash(FIRST_DISEASE_NAME
 
 var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in the protocol
 
-  it("testing ETICA PROTOCOL DYNAMICS:", async function () {
+  it("testing ETICA PROTOCOL UPDATECOST:", async function () {
     console.log('------------------------------------- Starting TESTS OF ETICA PROTOCOL DYNAMICS ---------------------------');
 
     return EticaReleaseProtocolTestUpdateCost.deployed().then(function(instance){
@@ -262,7 +262,7 @@ assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been cr
   console.log('NEW SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
 
 
-  console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS OF DYNAMICS ---------------------------');
+  console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS OF UPDATECOST ---------------------------');
 
   })
 

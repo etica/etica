@@ -91,6 +91,22 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
       }).then(async function(){
 
 
+    DEFAULT_VOTING_TIME = await EticaReleaseProtocolTestUpdateCostInstance.DEFAULT_VOTING_TIME(); 
+    console.log('DEFAULT_VOTING_TIME IS ', DEFAULT_VOTING_TIME);
+
+    DEFAULT_REVEALING_TIME = await EticaReleaseProtocolTestUpdateCostInstance.DEFAULT_REVEALING_TIME(); 
+    console.log('DEFAULT_REVEALING_TIME IS ', DEFAULT_REVEALING_TIME);
+
+    PERIOD_CURATION_REWARD_RATIO = await EticaReleaseProtocolTestUpdateCostInstance.PERIOD_CURATION_REWARD_RATIO();
+    console.log('PERIOD_CURATION_REWARD_RATIO IS ', PERIOD_CURATION_REWARD_RATIO);
+
+    PERIOD_EDITOR_REWARD_RATIO = await EticaReleaseProtocolTestUpdateCostInstance.PERIOD_EDITOR_REWARD_RATIO();
+    console.log('PERIOD_EDITOR_REWARD_RATIO IS ', PERIOD_EDITOR_REWARD_RATIO);
+
+    REWARD_INTERVAL = await EticaReleaseProtocolTestUpdateCostInstance.REWARD_INTERVAL();
+    console.log('REWARD_INTERVAL IS ', REWARD_INTERVAL);
+
+
 // TRANSFERS FROM MINER ACCOUNT:
 await transferto(test_account);
 await transferto(test_account2);
@@ -229,6 +245,10 @@ console.log('OLD DISEASE_CREATION_AMOUNT IS ', web3.utils.fromWei(DISEASE_CREATI
 
 SUPPPLY = await EticaReleaseProtocolTestUpdateCostInstance.totalSupply(); 
 console.log('OLD SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestUpdateCostInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD 469 IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
   await should_fail_to_updatecost(test_account3, PERIODS_COUNTER.toString());
 

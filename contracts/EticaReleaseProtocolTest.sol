@@ -1195,16 +1195,14 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
  function updatecost() public {
 
 // only start to increase PROPOSAL AND DISEASE COSTS once we are in phase2
-if (supply >= 21000000 * 10**(decimals)){
+require(supply >= 21000000 * 10**(decimals));
 // update disease and proposal cost each 52 periods to take into account inflation:
-if(periodsCounter % 52 == 0){
+require(periodsCounter % 52 == 0);
 uint _new_disease_cost = supply.mul(47619046).div(10**13); // disease cost is 0.00047619046% of supply
 uint _new_proposal_vote = supply.mul(47619046).div(10**14); // default vote amount is 0.000047619046% of supply
 
 PROPOSAL_DEFAULT_VOTE = _new_proposal_vote;
 DISEASE_CREATION_AMOUNT = _new_disease_cost;
-}
-}
 
  }
 

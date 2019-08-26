@@ -2707,6 +2707,10 @@ let IPFS5C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5C, EXPECT
 let IPFS6C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6C, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS7C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7C, EXPECTED_FIRST_DISEASE_HASH);
 
+let PERIODS_COUNTER = await EticaReleaseProtocolTestPhase2Instance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD III IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '2', 'Next tests assume ONLY 2 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2C, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 
@@ -2747,6 +2751,11 @@ let IPFS2D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2D, EXPECT
 let IPFS3D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3D, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS4D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4D, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5D, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestPhase2Instance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD IV IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '3', 'Next tests assume ONLY 3 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
 
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2D, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
@@ -2791,6 +2800,10 @@ let IPFS3E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3E, EXPECT
 let IPFS4E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS6E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6E, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestPhase2Instance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD V IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '4', 'Next tests assume ONLY 4 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2E, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
@@ -2839,6 +2852,10 @@ let IPFS3F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3F, EXPECT
 let IPFS4F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4F, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5F, EXPECTED_FIRST_DISEASE_HASH);
 
+PERIODS_COUNTER = await EticaReleaseProtocolTestPhase2Instance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD VI IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '5', 'Next tests assume ONLY 5 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
@@ -2865,12 +2882,46 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random1
 
 // ----------------------  Make tests for Dynamic APPROVAL THRESHOLD done ----------------------------- //
 
+
+
+PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestPhase2Instance.PROPOSAL_DEFAULT_VOTE(); 
+console.log('PROPOSAL_DEFAULT_VOTE ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
+
+DISEASE_CREATION_AMOUNT = await EticaReleaseProtocolTestPhase2Instance.DISEASE_CREATION_AMOUNT(); 
+console.log('OLD DISEASE_CREATION_AMOUNT IS ', web3.utils.fromWei(DISEASE_CREATION_AMOUNT, "ether" )); 
+
+SUPPPLY = await EticaReleaseProtocolTestPhase2Instance.totalSupply(); 
+console.log('OLD SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
+
+  await updatecost(test_account3);
+
+  PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestPhase2Instance.PROPOSAL_DEFAULT_VOTE(); 
+  console.log('NEW PROPOSAL_DEFAULT_VOTE IS ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
+  
+  DISEASE_CREATION_AMOUNT = await EticaReleaseProtocolTestPhase2Instance.DISEASE_CREATION_AMOUNT(); 
+  console.log('NEW DISEASE_CREATION_AMOUNT IS ', web3.utils.fromWei(DISEASE_CREATION_AMOUNT, "ether" )); 
+  
+  SUPPPLY = await EticaReleaseProtocolTestPhase2Instance.totalSupply(); 
+  console.log('NEW SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
+
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS OF PHASE 2 ---------------------------');
 
   })
 
   });
 
+
+
+  async function updatecost(useraccount){
+
+    console.log('---> UPDATING COSTS');
+    return EticaReleaseProtocolTestPhase2Instance.updatecost({from: useraccount.address}).then(async function(receipt){
+    console.log('---> The cost update of DISEASE AND PROPOSAL AMOUNT CREATION was successfull');
+
+      }).catch(async function(error){
+        console.log('An error has occured !', error);
+      })
+   }
 
   async function printBalances(accounts) {
     // accounts.forEach(function(ac, i) {

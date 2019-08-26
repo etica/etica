@@ -205,6 +205,7 @@ let IPFS5_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5, EXPECTED
 
 PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
 console.log('PERIODS_COUNTER BEFORE PERIOD I IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '0', 'Next tests assume 0 Period have been created. Please launch the test again, will be more lucky nex time !');
 
 
 await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
@@ -269,6 +270,10 @@ let IPFS3B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3B, EXPECT
 let IPFS4B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4B, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5B_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5B, EXPECTED_FIRST_DISEASE_HASH);
 
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD II IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '1', 'Next tests assume ONLY 1 Period have been created. Please launch the test again, will be more lucky nex time !');
+
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1B, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2B, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 2", IPFS3B, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
@@ -306,6 +311,10 @@ let IPFS5C = randomipfs();
 let IPFS6C = randomipfs();
 let IPFS7C = randomipfs();
 let IPFS8C = randomipfs();
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD III IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '2', 'Next tests assume ONLY 2 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
 let IPFS1C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1C, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS2C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2C, EXPECTED_FIRST_DISEASE_HASH);
@@ -349,6 +358,10 @@ let IPFS3D = randomipfs();
 let IPFS4D = randomipfs();
 let IPFS5D = randomipfs();
 let IPFS6D = randomipfs();
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD IV IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '3', 'Next tests assume ONLY 3 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
 let IPFS1D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1D, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS2D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2D, EXPECTED_FIRST_DISEASE_HASH);
@@ -396,6 +409,10 @@ let IPFS4E = randomipfs();
 let IPFS5E = randomipfs();
 let IPFS6E = randomipfs();
 
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD V IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '4', 'Next tests assume ONLY 4 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
 let IPFS1E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS2E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS3E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3E, EXPECTED_FIRST_DISEASE_HASH);
@@ -412,6 +429,9 @@ await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malari
 
 PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
 console.log('NEW PERIODS_COUNTER PERIOD V IS ', PERIODS_COUNTER.toString());
+
+assert.equal(PERIODS_COUNTER, '5', 'Next tests assume ONLY 5 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
 // New Period V should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD for PERIOD V IS ', APPROVAL_THRESHOLD.toString());
@@ -452,6 +472,12 @@ let IPFS3F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3F, EXPECT
 let IPFS4F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4F, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS5F_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5F, EXPECTED_FIRST_DISEASE_HASH);
 
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD VI IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '5', 'Next tests assume ONLY 5 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+
 await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3F, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
@@ -461,20 +487,553 @@ await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malari
 // New Period VI should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD for PERIOD VI IS ', APPROVAL_THRESHOLD.toString());
-assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD STILL BE 63.75%');
+assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD NOW BE 63.75%');
 
-await commitvote(test_account3, IPFS2F_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await commitvote(test_account4, IPFS3F_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await commitvote(test_account5, IPFS4F_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await commitvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account3, IPFS2F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS3F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account5, IPFS4F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, false, '5', "random123");
 
 // advance time to enter revealing Period:
 await advanceseconds(DEFAULT_VOTING_TIME);
 
-await revealvote(test_account3, IPFS2F_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await revealvote(test_account4, IPFS3F_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await revealvote(test_account5, IPFS4F_WITH_FIRTDISEASEHASH, true, '5', "random123");
-await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account3, IPFS2F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS3F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account5, IPFS4F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: VII  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1G = randomipfs();
+let IPFS2G = randomipfs();
+
+let IPFS1G_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1G, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2G_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2G, EXPECTED_FIRST_DISEASE_HASH);
+
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD VII IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '6', 'Next tests assume ONLY 6 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1G, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2G, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period VII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD VII IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD STILL BE 63.75%');
+
+await commitvote(test_account3, IPFS1G_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS2G_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1G_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS2G_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: VIII  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1H = randomipfs();
+let IPFS2H = randomipfs();
+
+let IPFS1H_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1H, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2H_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2H, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD VIII IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '7', 'Next tests assume ONLY 7 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1H, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2H, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period VIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD VIII IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD STILL BE 63.75%');
+
+await commitvote(test_account3, IPFS1H_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS2H_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1H_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS2H_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: IX  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1I = randomipfs();
+let IPFS2I = randomipfs();
+
+let IPFS1I_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1I, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2I_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2I, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD IX IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '8', 'Next tests assume ONLY 8 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1I, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2I, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XIV should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD IX IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD STILL BE 63.75%');
+
+await commitvote(test_account3, IPFS1I_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS2I_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1I_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS2I_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: X  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1J = randomipfs();
+let IPFS2J = randomipfs();
+
+let IPFS1J_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1J, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2J_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2J, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD X IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '9', 'Next tests assume ONLY 9 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1J, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2J, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period X should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD X IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '6375', 'APPROVAL_THRESHOLD SHOULD STILL BE 63.75%');
+
+await commitvote(test_account3, IPFS1J_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS2J_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1J_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS2J_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XI  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1K = randomipfs();
+let IPFS2K = randomipfs();
+
+let IPFS1K_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1K, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2K_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2K, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XI IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '10', 'Next tests assume ONLY 10 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1K, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2K, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XI should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XI IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5016', 'APPROVAL_THRESHOLD SHOULD NOW BE 50.16%');
+
+await commitvote(test_account3, IPFS1K_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2K_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1K_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2K_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XII  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1L = randomipfs();
+let IPFS2L = randomipfs();
+let IPFS3L = randomipfs();
+let IPFS4L = randomipfs();
+let IPFS5L = randomipfs();
+
+let IPFS1L_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1L, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2L_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2L, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS3L_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS3L, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS4L_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4L, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS5L_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5L, EXPECTED_FIRST_DISEASE_HASH);
+
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XII IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '11', 'Next tests assume ONLY 11 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1L, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2L, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3L, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS4L, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5L, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XII IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5016', 'APPROVAL_THRESHOLD SHOULD STILL BE 50.16%');
+
+await commitvote(test_account2, IPFS1L_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account3, IPFS2L_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS3L_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account5, IPFS4L_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account6, IPFS5L_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account2, IPFS1L_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account3, IPFS2L_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS3L_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account5, IPFS4L_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account6, IPFS5L_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XIII  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1M = randomipfs();
+let IPFS2M = randomipfs();
+
+let IPFS1M_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1M, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2M_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2M, EXPECTED_FIRST_DISEASE_HASH);
+
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XIII IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '12', 'Next tests assume ONLY 12 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1M, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2M, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XIII IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5016', 'APPROVAL_THRESHOLD SHOULD STILL BE 50.16%');
+
+await commitvote(test_account3, IPFS1M_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await commitvote(test_account4, IPFS2M_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1M_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account4, IPFS2M_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XIV  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1N = randomipfs();
+let IPFS2N = randomipfs();
+
+let IPFS1N_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1N, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2N_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2N, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XIV IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '13', 'Next tests assume ONLY 13 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1N, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2N, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XIV should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XIV IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5016', 'APPROVAL_THRESHOLD SHOULD SILL BE 50.16%');
+
+await commitvote(test_account3, IPFS1N_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2N_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1N_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2N_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XV  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1O = randomipfs();
+let IPFS2O = randomipfs();
+
+let IPFS1O_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1O, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2O_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2O, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XV IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '14', 'Next tests assume ONLY 14 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1O, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2O, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XV should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XV IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5016', 'APPROVAL_THRESHOLD SHOULD STILL BE 50.16%');
+
+await commitvote(test_account3, IPFS1O_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2O_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1O_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2O_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XVI  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1P = randomipfs();
+let IPFS2P = randomipfs();
+
+let IPFS1P_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1P, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2P_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2P, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XVI IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '15', 'Next tests assume ONLY 15 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1P, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2P, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XVI should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XVI IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '4920', 'APPROVAL_THRESHOLD SHOULD NOW BE 49.20%');
+
+await commitvote(test_account3, IPFS1P_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2P_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1P_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2P_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XVII  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+// make few proposals and revealvote() to actualize periodIII.forprops and period.againstprops OF period III:
+
+let IPFS1Q = randomipfs();
+let IPFS2Q = randomipfs();
+
+let IPFS1Q_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1Q, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2Q_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2Q, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XVII IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '16', 'Next tests assume ONLY 16 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1Q, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2Q, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XVII IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '4920', 'APPROVAL_THRESHOLD SHOULD STILL BE 49.20%');
+
+await commitvote(test_account3, IPFS1Q_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2Q_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1Q_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2Q_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XVIII  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+let IPFS1R = randomipfs();
+let IPFS2R = randomipfs();
+
+let IPFS1R_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1R, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2R_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2R, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XVIII IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '17', 'Next tests assume ONLY 17 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1R, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2R, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XVIII IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '4920', 'APPROVAL_THRESHOLD SHOULD STILL BE 49.20%');
+
+await commitvote(test_account3, IPFS1R_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2R_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1R_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2R_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XIX  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+let IPFS1S = randomipfs();
+let IPFS2S = randomipfs();
+
+let IPFS1S_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1S, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2S_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2S, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XIX IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '18', 'Next tests assume ONLY 18 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1S, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2S, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XIX IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '4920', 'APPROVAL_THRESHOLD SHOULD STILL BE 49.20%');
+
+await commitvote(test_account3, IPFS1S_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2S_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1S_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2S_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XX  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+let IPFS1T = randomipfs();
+let IPFS2T = randomipfs();
+
+let IPFS1T_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1T, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2T_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2T, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XIX IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '19', 'Next tests assume ONLY 19 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1T, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2T, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XIX IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '4920', 'APPROVAL_THRESHOLD SHOULD STILL BE 49.20%');
+
+await commitvote(test_account3, IPFS1T_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2T_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1T_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2T_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+
+console.log('<--------------------------- ENTERING NEXT PERIOD: XXI  ---------------------------------- >');
+
+// advance time so that we enter next period: 
+await advanceseconds(REWARD_INTERVAL);
+
+let IPFS1U = randomipfs();
+let IPFS2U = randomipfs();
+
+let IPFS1U_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1U, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2U_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2U, EXPECTED_FIRST_DISEASE_HASH);
+
+PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
+console.log('PERIODS_COUNTER BEFORE PERIOD XXI IS ', PERIODS_COUNTER.toString());
+assert.equal(PERIODS_COUNTER, '20', 'Next tests assume ONLY 20 Periods have been created. Please launch the test again, will be more lucky nex time !');
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1U, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2U, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
+console.log('NEW APPROVAL THRESHOLD for PERIOD XXI IS ', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5301', 'APPROVAL_THRESHOLD SHOULD NOW BE 53.01%');
+
+await commitvote(test_account3, IPFS1U_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account4, IPFS2U_WITH_FIRTDISEASEHASH, true, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1U_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2U_WITH_FIRTDISEASEHASH, true, '5', "random123");
 
 // ----------------------  Make tests for Dynamic APPROVAL THRESHOLD done ----------------------------- //
 

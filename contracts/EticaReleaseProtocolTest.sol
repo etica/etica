@@ -17,11 +17,6 @@ The Software is provided “as is”, without warranty of any kind, express or i
 */
 
 
-// ONLY FOR TESTING !!!
-// EticaReleaseProtocolTest: Same as EticaRelease contract but with initial ETI balance for miner_account to make tests easier
-// You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
-// Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of EticaReleaseProtocolTest.js file assume enough ETI and don't deal with mining tests
-
 // ----------------------------------------------------------------------------
 
 // Safe maths
@@ -164,6 +159,8 @@ contract EticaToken is ERC20Interface{
     mapping(bytes32 => bytes32) solutionForChallenge;
 
     uint public tokensMinted;
+
+    bytes32 RANDOMHASH;
 
     // ----------- Mining system state variables ------------ //
 
@@ -357,6 +354,7 @@ contract EticaToken is ERC20Interface{
        //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
        //do this last since this is a protection mechanism in the mint() function
        challengeNumber = blockhash(block.number - 1);
+       challengeNumber = keccak256(abi.encode(challengeNumber, RANDOMHASH)); // updates challengeNumber with merged mining protection
 
      }
 
@@ -491,6 +489,7 @@ uint public PERIODS_PER_THRESHOLD = 5; // number of Periods before readjusting A
 uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
 uint public PROTOCOL_RATIO_TARGET = 7250; // 7250 means the Protocol has a goal of 72.50% proposals approved and 27.5% proposals rejected
+
 
 
 struct Period{
@@ -1151,6 +1150,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
+  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
 
     emit NewProposal(_proposed_release_hash);
 
@@ -1220,6 +1220,7 @@ DISEASE_CREATION_AMOUNT = _new_disease_cost;
  }
 
 
+
  function commitvote(uint _amount, bytes32 _votehash) public {
 
 require(_amount > 0);
@@ -1237,6 +1238,8 @@ require (commits[msg.sender][_votehash].amount == 0);
  // store _votehash in commits with _amount and current block.timestamp value:
  commits[msg.sender][_votehash].amount = _amount;
  commits[msg.sender][_votehash].timestamp = block.timestamp;
+
+ RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH
 
 emit NewCommit(_votehash);
 

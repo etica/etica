@@ -358,6 +358,12 @@ let _proposal7 = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7_W
 assert.equal(_proposal7.nbvoters, '0', 'Proposal7 should have 0 nbvoters');
 
 
+// assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
+console.log('_general_proposal1.period_id is', _general_proposal1.period_id.toString());
+console.log('_general_proposal7.period_id is', _general_proposal7.period_id.toString());
+
+assert(_general_proposal1.period_id.toString() == _general_proposal7.period_id.toString(), "Please relaunch the test, proposal1 and proposal7 need to be created in same Period. Will be more lucky next time !");
+
 
 // (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:
 await commitvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random123");
@@ -1888,6 +1894,12 @@ assert.equal(_proposal6B.nbvoters, '0', 'Proposal6B should have 0 nbvoters');
 let _proposal7B = await EticaReleaseProtocolTestPhase2Instance.propsdatas(IPFS7B_WITH_FIRTDISEASEHASH);
 assert.equal(_proposal7B.nbvoters, '0', 'Proposal7B should have 0 nbvoters');
 
+
+// assert all proposals are in same Period (not necessary for contract integrity but we assume they are for next steps of Tests)
+console.log('_general_proposal1B.period_id is', _general_proposal1B.period_id.toString());
+console.log('_general_proposal7B.period_id is', _general_proposal7B.period_id.toString());
+
+assert(_general_proposal1B.period_id.toString() == _general_proposal7B.period_id.toString(), "Please relaunch the test, proposal1B and proposal7B need to be created in same Period. Will be more lucky next time !");
 
 
 // (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:

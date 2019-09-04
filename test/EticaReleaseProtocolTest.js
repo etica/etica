@@ -198,7 +198,7 @@ let IPFS6 = randomipfs();
 let IPFS7 = randomipfs();
 let IPFS8 = randomipfs();
 
-await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
+await createdisease(FIRST_DISEASE_NAME);
 let indexfromhash = await EticaReleaseProtocolTestInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseProtocolTestInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
 
@@ -2110,7 +2110,7 @@ await stakeclmidx(test_account8, 2);
  }
 
 
- async function createdisease(_diseasename, _diseasedescription){
+ async function createdisease(_diseasename){
 
   console.log('................................  START CREATION OF NEW DISEASE', _diseasename,' ....................... ');
 
@@ -2121,7 +2121,7 @@ await stakeclmidx(test_account8, 2);
   let contract_balance_before_createdisease = await EticaReleaseProtocolTestInstance.balanceOf(EticaReleaseProtocolTestInstance.address);
   //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
    
-  return EticaReleaseProtocolTestInstance.createdisease(_diseasename, _diseasedescription, {from: test_account.address}).then(async function(receipt){
+  return EticaReleaseProtocolTestInstance.createdisease(_diseasename, {from: test_account.address}).then(async function(receipt){
    // check diseasesbyIds and diseasesbyNames mappings insertion:
 let hashfromname = await EticaReleaseProtocolTestInstance.getdiseasehashbyName(_diseasename);
 let indexfromhash = await EticaReleaseProtocolTestInstance.diseasesbyIds(_expectedhash);
@@ -2142,7 +2142,6 @@ assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in disea
 // check diseases mapping insertion:
 assert.equal(new_disease.disease_hash, _expectedhash, 'First disease should exists with right diseasehash');
 assert.equal(new_disease.name, _diseasename, 'First disease should exists with right name');
-assert.equal(new_disease.description, _diseasedescription, 'First disease should exists with right description');
 
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less

@@ -208,7 +208,7 @@ console.log('PERIODS_COUNTER BEFORE PERIOD I IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '0', 'Next tests assume 0 Period have been created. Please launch the test again, will be more lucky nex time !');
 
 
-await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
+await createdisease(FIRST_DISEASE_NAME);
 let indexfromhash = await EticaReleaseProtocolTestDynamicsInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseProtocolTestDynamicsInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
 
@@ -1415,7 +1415,7 @@ await revealvote(test_account4, IPFS2U_WITH_FIRTDISEASEHASH, true, '5', "random1
  }
 
 
- async function createdisease(_diseasename, _diseasedescription){
+ async function createdisease(_diseasename){
 
   console.log('................................  START CREATION OF NEW DISEASE', _diseasename,' ....................... ');
 
@@ -1426,7 +1426,7 @@ await revealvote(test_account4, IPFS2U_WITH_FIRTDISEASEHASH, true, '5', "random1
   let contract_balance_before_createdisease = await EticaReleaseProtocolTestDynamicsInstance.balanceOf(EticaReleaseProtocolTestDynamicsInstance.address);
   //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
    
-  return EticaReleaseProtocolTestDynamicsInstance.createdisease(_diseasename, _diseasedescription, {from: test_account.address}).then(async function(receipt){
+  return EticaReleaseProtocolTestDynamicsInstance.createdisease(_diseasename, {from: test_account.address}).then(async function(receipt){
    // check diseasesbyIds and diseasesbyNames mappings insertion:
 let hashfromname = await EticaReleaseProtocolTestDynamicsInstance.getdiseasehashbyName(_diseasename);
 let indexfromhash = await EticaReleaseProtocolTestDynamicsInstance.diseasesbyIds(_expectedhash);
@@ -1447,7 +1447,6 @@ assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in disea
 // check diseases mapping insertion:
 assert.equal(new_disease.disease_hash, _expectedhash, 'First disease should exists with right diseasehash');
 assert.equal(new_disease.name, _diseasename, 'First disease should exists with right name');
-assert.equal(new_disease.description, _diseasedescription, 'First disease should exists with right description');
 
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less

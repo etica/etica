@@ -582,7 +582,6 @@ struct Period{
   struct Disease{
       bytes32 disease_hash;
       string name;
-      string description;
   }
 
      // -----------  DISEASES STRUCTS ----------------  //
@@ -628,7 +627,7 @@ event CreatedPeriod(uint period_id, uint interval);
 event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, uint periodrwdeditor);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
-event NewDisease(uint diseaseindex, string title, string description);
+event NewDisease(uint diseaseindex, string title);
 event NewProposal(bytes32 proposed_release_hash);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewCommit(bytes32 votehash);
@@ -1047,7 +1046,7 @@ function stakescount(address _staker) public view returns (uint slength){
 
 
 // -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
-function createdisease(string memory _name, string memory _description) public {
+function createdisease(string memory _name) public {
 
 
   // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
@@ -1071,15 +1070,14 @@ function createdisease(string memory _name, string memory _description) public {
    // store the Disease
    diseases[diseasesCounter] = Disease(
      _diseasehash,
-     _name,
-     _description
+     _name
    );
 
    // Updates diseasesbyIds and diseasesbyNames mappings:
    diseasesbyIds[_diseasehash] = diseasesCounter;
    diseasesbyNames[_name] = _diseasehash;
 
-   emit NewDisease(diseasesCounter, _name, _description);
+   emit NewDisease(diseasesCounter, _name);
 
 }
 

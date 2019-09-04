@@ -150,7 +150,7 @@ await eticatobosom(test_account8, '3.1805');
 
 
 
-    await createdisease(FIRST_DISEASE_NAME, FIRST_DISEASE_DESC);
+    await createdisease(FIRST_DISEASE_NAME);
 
     let PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestUpdateCostInstance.PROPOSAL_DEFAULT_VOTE(); 
     console.log('PROPOSAL_DEFAULT_VOTE ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
@@ -660,7 +660,7 @@ assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been cr
  }
 
 
- async function createdisease(_diseasename, _diseasedescription){
+ async function createdisease(_diseasename){
 
   console.log('................................  START CREATION OF NEW DISEASE', _diseasename,' ....................... ');
 
@@ -671,7 +671,7 @@ assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been cr
   let contract_balance_before_createdisease = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(EticaReleaseProtocolTestUpdateCostInstance.address);
   //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
    
-  return EticaReleaseProtocolTestUpdateCostInstance.createdisease(_diseasename, _diseasedescription, {from: test_account.address}).then(async function(receipt){
+  return EticaReleaseProtocolTestUpdateCostInstance.createdisease(_diseasename, {from: test_account.address}).then(async function(receipt){
    // check diseasesbyIds and diseasesbyNames mappings insertion:
 let hashfromname = await EticaReleaseProtocolTestUpdateCostInstance.getdiseasehashbyName(_diseasename);
 let indexfromhash = await EticaReleaseProtocolTestUpdateCostInstance.diseasesbyIds(_expectedhash);
@@ -686,13 +686,11 @@ assert.equal(hashfromname, _expectedhash, 'Disease should have an entry in disea
     let contract_balance_after_createdisease = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(EticaReleaseProtocolTestUpdateCostInstance.address);
 //console.log('THE NEW DISEASE IS:', new_disease);
 //console.log('NAME OF THE NEW DISEASE IS:', new_disease.name);
-//console.log('DESCRIPTION OF THE NEW DISEASE IS:', new_disease.description);
 //console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
 // check diseases mapping insertion:
 assert.equal(new_disease.disease_hash, _expectedhash, 'First disease should exists with right diseasehash');
 assert.equal(new_disease.name, _diseasename, 'First disease should exists with right name');
-assert.equal(new_disease.description, _diseasedescription, 'First disease should exists with right description');
 
 // test_account should have paid 100 ETI to contract
    // test_account should have 100 ETI less

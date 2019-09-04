@@ -541,7 +541,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
 
                // try create new disease:
-                  return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !").then(assert.fail)
+                  return EticaReleaseInstance.createdisease("Malaria", {from: test_account.address}).then(assert.fail)
                   .catch(async function(error){
                     assert(true);
                     let test_accountbalanceafter = await EticaReleaseInstance.balanceOf(test_account.address);
@@ -596,20 +596,18 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
            //console.log('test_account balance before Disease Creation is', web3.utils.fromWei(test_accountbalance_before_createdisease, "ether" ));
            //console.log('contract balance before Disease Creation is', web3.utils.fromWei(contract_balance_before_createdisease, "ether" ));
            // try create new disease:
-              return EticaReleaseInstance.createdisease("Malaria", "Malaria is a disease that kills millions of people each year !", {from: test_account.address}).then(async function(receipt){
+              return EticaReleaseInstance.createdisease("Malaria", {from: test_account.address}).then(async function(receipt){
                 let first_disease = await EticaReleaseInstance.diseases(1);
                 let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
                 let test_accountbalance_after_createdisease = await EticaReleaseInstance.balanceOf(test_account.address);
                 let contract_balance_after_createdisease = await EticaReleaseInstance.balanceOf(EticaReleaseInstance.address);
             //console.log('THE FIRST DISEASE IS:', first_disease);
             //console.log('NAME OF THE FIRST DISEASE IS:', first_disease.name);
-            //console.log('DESCRIPTION OF THE FIRST DISEASE IS:', first_disease.description);
             //console.log('NUMBER OF DISEASES IS:', diseasesCounter);
 
             // check diseases mapping insertion:
             assert.equal(first_disease.disease_hash, EXPECTED_FIRST_DISEASE_HASH, 'First disease should exists with right diseasehash');
             assert.equal(first_disease.name, 'Malaria', 'First disease should exists with right name');
-            assert.equal(first_disease.description, 'Malaria is a disease that kills millions of people each year !', 'First disease should exists with right description');
             assert.equal(diseasesCounter, 1, 'There should be exactly 1 disease at this point');
 
             // check diseasesbyIds and diseasesbyNames mappings insertion:

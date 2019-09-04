@@ -17,6 +17,12 @@ The Software is provided “as is”, without warranty of any kind, express or i
 */
 
 
+// ONLY FOR TESTING !!!
+// EticaReleaseProtocolTestPhase2: Same as EticaRelease contract but with initial supply > 21 million ETI and miner_aacount with ETI available to make tests easier
+// You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
+// Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of EticaReleaseProtocolTestPhase2.js file assume enough ETI and don't deal with mining tests
+
+
 // ----------------------------------------------------------------------------
 
 // Safe maths

@@ -17,6 +17,12 @@ The Software is provided “as is”, without warranty of any kind, express or i
 */
 
 
+// ONLY FOR TESTING !!!
+// EticaReleaseProtocolTestUpdateCost: Same as EticaRelease contract but with PeriodsCounter initialsed to 467 and initial supply > 21 million ETI and miner_aacount with ETI available to make tests easier
+// You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
+// Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of EticaReleaseProtocolTestPhase2.js file assume enough ETI and don't deal with mining tests
+
+
 // ----------------------------------------------------------------------------
 
 // Safe maths
@@ -587,7 +593,7 @@ struct Period{
 enum ProposalStatus { Rejected, Accepted, Pending, Singlevoter }
 
 mapping(uint => Period) public periods;
-uint public periodsCounter;
+uint public periodsCounter = 467;
 mapping(uint => uint) public PeriodsIssued; // keeps track of which periods have already issued ETI
 uint public PeriodsIssuedCounter;
 mapping(uint => uint) public IntervalsPeriods; // keeps track of which intervals have already a period

@@ -1258,7 +1258,7 @@ emit NewCommit(_votehash);
 // --- check commit --- //
 bytes32 _votehash;
 _votehash = keccak256(abi.encode(_proposed_release_hash, _approved, msg.sender, _vary));
-emit NewReveal(_votehash);
+
 require(commits[msg.sender][_votehash].amount > 0);
 // --- check commit done --- //
 
@@ -1401,6 +1401,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
              period.editor_sum = period.editor_sum - _old_proposal_editorweight;
          }
          }
+
+         emit NewReveal(_votehash);
          
 
   }

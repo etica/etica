@@ -276,23 +276,20 @@ await commitvote(test_account7, IPFS3_WITH_FIRTDISEASEHASH, true, '70', "random1
 await commitvote(test_account2, IPFS4_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await commitvote(test_account3, IPFS4_WITH_FIRTDISEASEHASH, true, '10', "random123");
 //await should_fail_commitvote(test_account4, IPFS4_WITH_FIRTDISEASEHASH, true, '50');  // should fail vote twice on same proposal
-await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '50', "random123");
-await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '35', "random123");
-await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '60', "random123");
+await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '25', "random123");
+await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '20', "random123");
+await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '51.5', "random123");
+
+// should be able to stength commits:
+await commitvote(test_account5, IPFS4_WITH_FIRTDISEASEHASH, true, '25', "random123");
+await commitvote(test_account6, IPFS4_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '8.5', "random123");
 
 // should fail to commitvote with incorrect amount for a proposal:
 await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '500000', "random123");
 await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '-500', "random123");
 await should_fail_commitvote(test_account, IPFS4_WITH_FIRTDISEASEHASH, true, '0', "random123");
 
-// should fail for users to commitvote twice on same Proposal:
-/* to deal with it latter:
-await should_fail_commitvote(test_account2, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
-await should_fail_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, false, '25', "random123");
-await should_fail_commitvote(test_account5, IPFS2_WITH_FIRTDISEASEHASH, true, '35', "random123");
-await should_fail_commitvote(test_account6, IPFS3_WITH_FIRTDISEASEHASH, true, '50', "random123");
-await should_fail_commitvote(test_account7, IPFS4_WITH_FIRTDISEASEHASH, true, '95', "random123");
-*/
 // END COMMITING
 
 // ------- should fail revealing vote too early ------------ //
@@ -363,7 +360,7 @@ assert.equal(_proposal7.nbvoters, '0', 'Proposal7 should have 0 nbvoters');
 
 
 
-// (to be added latter) make new commits that should be too late and thus revealvote() of these commits should fail:
+// make new commits that should be too late and thus revealvote() of these commits should fail:
 await commitvote(test_account8, IPFS2_WITH_FIRTDISEASEHASH, true, '60', "random123");
 await commitvote(test_account8, IPFS3_WITH_FIRTDISEASEHASH, true, '10', "random123");
 await commitvote(test_account8, IPFS4_WITH_FIRTDISEASEHASH, false, '5', "random123");

@@ -1229,9 +1229,6 @@ DISEASE_CREATION_AMOUNT = _new_disease_cost;
 
 require(_amount > 0);
 
-// only one commit
-require (commits[msg.sender][_votehash].amount == 0);
-
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
  bosoms[msg.sender] = bosoms[msg.sender].sub(_amount);
@@ -1240,7 +1237,7 @@ require (commits[msg.sender][_votehash].amount == 0);
  blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
 
  // store _votehash in commits with _amount and current block.timestamp value:
- commits[msg.sender][_votehash].amount = _amount;
+ commits[msg.sender][_votehash].amount = commits[msg.sender][_votehash].amount.add(_amount);
  commits[msg.sender][_votehash].timestamp = block.timestamp;
 
  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH

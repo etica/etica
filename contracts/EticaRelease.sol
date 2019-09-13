@@ -179,38 +179,46 @@ contract EticaToken is ERC20Interface{
 
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
-      /* Phase 1:
-      --> 10 500 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
-      --> 10 500 000 ETI to be distributed trough MINING as block reward
+      /* Phase 1 will last about 10 years:
+      --> 9 450 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
+      --> 11 550 000 ETI to be distributed trough MINING as block reward
+
+      Phase1 is divided between 10 eras:
+      Each Era will allocate 2 100 000 ETI between mining reward and the staking system reward.
+      Each era is supposed to last about a year but can vary depending on hashrate.
+      Era1: 90% ETI to mining and 10% ETI to Staking  |  Era2: 80% ETI to mining and 20% ETI to Staking
+      Era3: 70% ETI to mining and 30% ETI to Staking  |  Era4: 60% ETI to mining and 40% ETI to Staking
+      Era5: 50% ETI to mining and 50% ETI to Staking  |  Era6: 50% ETI to mining and 50% ETI to Staking
+      Era7: 50% ETI to mining and 50% ETI to Staking  |  Era8: 50% ETI to mining and 50% ETI to Staking
+      Era9: 50% ETI to mining and 50% ETI to Staking  |  Era10: 50% ETI to mining and 50% ETI to Staking
+      Era1: 1 890 000 ETI as mining era 210 000 ETI as Staking reward
+      Era2: 1 680 000 ETI as mining era 420 000 ETI as Staking reward
+      Era3: 1 470 000 ETI as mining era 630 000 ETI as Staking reward 
+      Era4: 1 260 000 ETI as mining era 840 000 ETI as Staking reward
+      From Era5 to era10: 1 050 000 ETI as mining era 1 050 000 ETI as Staking reward
       */
 
-      // --- PUBLISHING REWARD --- //
-       // periodrewardtemp: Temporary fixed ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
-         // Calculation of periodrewardtemp:
-           // The amount of reward will be about twice as much as the first rewards of phase 2
-           // Calculation of first rewards of phase 2:
-           // 21 000 000 * 0.026180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-           // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
-           // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
-      periodrewardtemp = 21087708494827787412014; // 21087,708494827787412014415585507 ETI per period (7 days) will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
-      // --- PUBLISHING REWARD --- //
+      // --- STAKING REWARD --- //
+       // periodrewardtemp: It is the temporary ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
+         // Calculation of initial periodrewardtemp:
+         // 210 000 / 52.1429 = 4027.3939500871643119; ETI per week
+      periodrewardtemp = 4027393950087164311900; // 4027.393950087164311900 ETI per period (7 days) for era1
+      // --- STAKING REWARD --- //
 
       // --- MINING REWARD --- //
-      _totalMiningSupply = 10500000 * 10**uint(decimals);
+      _totalMiningSupply = 11550000 * 10**uint(decimals);
 
       if(locked) revert();
       locked = true;
 
       tokensMinted = 0;
 
-
-      // The amount of etica mined per 7 days will be twice of first rewards of phase 2
-      // eSTIMATION of first rewards of phase 2:
-      // 21 000 000 * 0.026180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (wide ESTIMATION of first weeks reward of phase2)
-      // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI per 7 days
-      // 21087,708494827787412014415585507 ETI per 7 days = 20,920345728995820845252396414193‬ ETI per block (10 minutes)
-      blockreward = 20920345728995820845;
+      // Calculation of initial blockreward:
+      // 1 890 000 / 52.1429 = 36246.5455507844788073; ETI per week
+      // amount to 5178.0779358263541153286 ETI per day;
+      // amount to 215.7532473260980881386917 ETI per hour;
+      // amount to 35.9588745543496813564486167 ETI per block;
+      blockreward = 35958874554349681356;
 
       miningTarget = _MAXIMUM_TARGET;
 
@@ -323,6 +331,28 @@ contract EticaToken is ERC20Interface{
              supply = supply.add(blockreward);
              balances[msg.sender] = balances[msg.sender].add(blockreward);
 
+              if(tokensMinted > 1890000 * 10**uint(decimals)){
+ 
+              if(tokensMinted >= 6300000 * 10**uint(decimals)) {
+                blockreward = 19977152530194267420;
+                periodrewardtemp = 20136969750435821559600; // from era5 20136.9697504358215596 ETI per week
+              }
+
+              else if (tokensMinted < 3570000 * 10**uint(decimals)) {
+                blockreward = 319634440483108278723;
+                periodrewardtemp = 8054787900174328623800; // era2 8054.7879001743286238 ETI per week
+              }
+              else if (tokensMinted < 5040000 * 10**uint(decimals)) {
+                blockreward = 27968013542271974388;
+                periodrewardtemp = 12082181850261492935800; // era3 12082.1818502614929358 ETI per week
+              }
+              else {
+                blockreward = 23972583036233120904;
+                periodrewardtemp = 16109575800348657247700; // era4 16109.5758003486572477 ETI per week
+              }
+
+              }
+
              //set readonly diagnostics data
              lastRewardTo = msg.sender;
              lastRewardEthBlockNumber = block.number;
@@ -421,6 +451,17 @@ contract EticaToken is ERC20Interface{
         return miningTarget;
     }
 
+
+    //mining reward only if the protocol didnt reach the max ETI supply that can be ever mined: 
+    function getMiningReward() public view returns (uint) {
+         if(tokensMinted <= _totalMiningSupply){
+          return blockreward;
+         }
+         else {
+          return 0;
+         }
+         
+    }
 
      //help debug mining software
      function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns (bytes32 digesttest) {

@@ -530,7 +530,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             // test Disease creation without enough ETI should fail
               it("cannot create a new disease if account has not enough ETI:", async function () {
                 console.log('------------------------------- Starting test ---------------------------');
-                console.log('.......................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS ENOUGH ETI ?  ..................... ');
+                console.log('.......................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS NOT ENOUGH ETI ?  ..................... ');
                 let test_accountbalancebefore = await EticaReleaseInstance.balanceOf(test_account.address);
                 let first_disease = await EticaReleaseInstance.diseases(1);
                 let diseasesCounter = await EticaReleaseInstance.diseasesCounter();
@@ -551,7 +551,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     //console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
                     //console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
                     assert.equal(diseasesCounter, "0", 'THERE SHOULD NOT BE ANY DISEASE YET');
-                    console.log('........................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS ENOUGH ETI ....................... ');
+                    console.log('........................... Cannot CREATE A NEW DISEASE IF ACCOUNT HAS NOT ENOUGH ETI ....................... ');
                     console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
                   });
 

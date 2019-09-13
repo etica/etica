@@ -358,7 +358,7 @@ contract EticaToken is ERC20Interface{
 
        //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
        //do this last since this is a protection mechanism in the mint() function
-       challengeNumber = blockhash(block.number - 1);
+       challengeNumber = blockhash(block.number.sub(1));
        challengeNumber = keccak256(abi.encode(challengeNumber, RANDOMHASH)); // updates challengeNumber with merged mining protection
 
      }
@@ -373,10 +373,10 @@ contract EticaToken is ERC20Interface{
      function _reAdjustDifficulty() internal {
 
           // should get as close as possible to (2016 * 10 minutes) seconds => 1 209 600 seconds
-         uint ethTimeSinceLastDifficultyPeriod = block.timestamp - latestDifficultyPeriodStarted;      
+         uint ethTimeSinceLastDifficultyPeriod = block.timestamp.sub(latestDifficultyPeriodStarted);      
 
          //we want miners to spend 10 minutes to mine each 'block'
-         uint targetTimePerDiffPeriod = _BLOCKS_PER_READJUSTMENT * 10 minutes; //Target is 1 209 600 seconds. (2016 * 10 minutes) seconds to mine _BLOCKS_PER_READJUSTMENT blocks of ETI.
+         uint targetTimePerDiffPeriod = _BLOCKS_PER_READJUSTMENT.mul(10 minutes); //Target is 1 209 600 seconds. (2016 * 10 minutes) seconds to mine _BLOCKS_PER_READJUSTMENT blocks of ETI.
 
          //if there were less eth seconds-timestamp than expected
          if( ethTimeSinceLastDifficultyPeriod < targetTimePerDiffPeriod )
@@ -661,7 +661,7 @@ uint _periodsupply;
 
 // era 2 (after 21 000 000 ETI has been reached)
 if(supply >= 21000000 * 10**(decimals)){
-_periodsupply = uint((supply * inflationrate).div(10**(31)));
+_periodsupply = uint((supply.mul(inflationrate)).div(10**(31)));
 }
 // era 1 (before 21 000 000 ETI has been reached)
 else {
@@ -669,8 +669,8 @@ else {
 }
 
 // update Period Reward:
-period.reward_for_curation = uint((_periodsupply * PERIOD_CURATION_REWARD_RATIO).div(10**(11)));
-period.reward_for_editor = uint((_periodsupply * PERIOD_EDITOR_REWARD_RATIO).div(10**(11)));
+period.reward_for_curation = uint((_periodsupply.mul(PERIOD_CURATION_REWARD_RATIO)).div(10**(11)));
+period.reward_for_editor = uint((_periodsupply.mul(PERIOD_EDITOR_REWARD_RATIO)).div(10**(11)));
 
 
 supply = supply.add(_periodsupply);
@@ -719,7 +719,7 @@ function newPeriod() internal {
 
 
   //readjust APPROVAL_THRESHOLD every PERIODS_PER_THRESHOLD periods:
-  if((periodsCounter - 1) % PERIODS_PER_THRESHOLD == 0 && periodsCounter > 1)
+  if((periodsCounter.sub(1)) % PERIODS_PER_THRESHOLD == 0 && periodsCounter > 1)
   {
     readjustThreshold();
   }
@@ -735,7 +735,7 @@ uint _totalagainst = 0; // total of proposals rejected
 
 
 // calculate the mean approval rate (forprops / againstprops) of last PERIODS_PER_THRESHOLD Periods:
-for(uint _periodidx = periodsCounter - PERIODS_PER_THRESHOLD; _periodidx <= periodsCounter - 1;  _periodidx++){
+for(uint _periodidx = periodsCounter.sub(PERIODS_PER_THRESHOLD); _periodidx <= periodsCounter.sub(1);  _periodidx++){
    _totalfor = _totalfor.add(periods[_periodidx].forprops);
    _totalagainst = _totalagainst.add(periods[_periodidx].againstprops); 
 }
@@ -755,12 +755,12 @@ for(uint _periodidx = periodsCounter - PERIODS_PER_THRESHOLD; _periodidx <= peri
            uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval));
 
            // require lower APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD -= uint(((APPROVAL_THRESHOLD - 4500) * shortage_approvals_rate).div(10000));   // decrease by up to 100 % of (APPROVAL_THRESHOLD - 45)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 100 % of (APPROVAL_THRESHOLD - 45)
          }else{
-           uint excess_approvals_rate = uint((_meanapproval - PROTOCOL_RATIO_TARGET));
+           uint excess_approvals_rate = uint((_meanapproval.sub(PROTOCOL_RATIO_TARGET)));
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add((10000 - APPROVAL_THRESHOLD) * excess_approvals_rate / 10000));   // increase by up to 100 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 100 % of (100 - APPROVAL_THRESHOLD)
          }
 
 
@@ -804,7 +804,7 @@ function bosomget (address _staker, uint _amount) internal {
 
 addStake(_staker, _amount);
 
-uint newBosoms = _amount * ETICA_TO_BOSOM_RATIO;
+uint newBosoms = _amount.mul(ETICA_TO_BOSOM_RATIO);
 bosoms[_staker] = bosoms[_staker].add(newBosoms);
 
 }
@@ -895,7 +895,7 @@ function stakeclmidx (uint _stakeidx) public {
   require(block.timestamp > _stake.endTime);
 
   // the amount to be unstaked must be less or equal to the amount of ETI currently marked as blocked in blockedeticas as they need to go through the clmpropbyhash before being unstaked !
-  require(_stake.amount <= stakesAmount[msg.sender] - blockedeticas[msg.sender]);
+  require(_stake.amount <= stakesAmount[msg.sender].sub(blockedeticas[msg.sender]));
 
   // transfer back ETI from contract to staker:
   balances[address(this)] = balances[address(this)].sub(_stake.amount);
@@ -932,7 +932,7 @@ function _deletestake(address _staker,uint _index) internal {
     );
 
   // updates stakesCounter of _staker
-  stakesCounters[_staker] = stakesCounters[_staker] - 1;
+  stakesCounters[_staker] = stakesCounters[_staker].sub(1);
 
 }
 
@@ -966,7 +966,7 @@ for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
     } 
     else {
       // if _stakeidx > stakesCounters[msg.sender] it means the _deletestake() function has pushed the next stakes at the begining:
-      _currentidx = _stakeidx - _nbdeletes; //Notice: initial stakesCounters[msg.sender] = stakesCounters[msg.sender] + _nbdeletes. 
+      _currentidx = _stakeidx.sub(_nbdeletes); //Notice: initial stakesCounters[msg.sender] = stakesCounters[msg.sender] + _nbdeletes. 
       //So "_stackidx <= _maxidx <= initial stakesCounters[msg.sender]" ===> "_stakidx <= stakesCounters[msg.sender] + _nbdeletes" ===> "_stackidx - _nbdeletes <= stakesCounters[msg.sender]"
       require(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
     }
@@ -1014,7 +1014,7 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
   require(_stake.amount > _snapamount);
 
   // calculate the amount of new stake:
-  uint _restAmount = _stake.amount - _snapamount;
+  uint _restAmount = _stake.amount.sub(_snapamount);
   
   // updates the stake amount:
   _stake.amount = _snapamount;
@@ -1309,26 +1309,26 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      bool _isapproved = false;
      bool _istie = false;
      uint totalVotes = proposaldata.forvotes.add(proposaldata.againstvotes);
-     uint _forvotes_numerator = proposaldata.forvotes * 10000; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 10000 to store it as uint
+     uint _forvotes_numerator = proposaldata.forvotes.mul(10000); // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 10000 to store it as uint
      uint _ratio_slashing = 0;
 
-     if ((_forvotes_numerator / totalVotes) > APPROVAL_THRESHOLD){
+     if ((_forvotes_numerator.div(totalVotes)) > APPROVAL_THRESHOLD){
     _isapproved = true;
     }
-    if ((_forvotes_numerator / totalVotes) == APPROVAL_THRESHOLD){
+    if ((_forvotes_numerator.div(totalVotes)) == APPROVAL_THRESHOLD){
         _istie = true;
     }
 
     proposaldata.istie = _istie;
 
     if (_isapproved){
-    _ratio_slashing = uint(((10000 - APPROVAL_THRESHOLD) * totalVotes).div(10000));
-    _ratio_slashing = uint((proposaldata.againstvotes * 10000).div(_ratio_slashing));  
+    _ratio_slashing = uint(((10000 - APPROVAL_THRESHOLD).mul(totalVotes)).div(10000));
+    _ratio_slashing = uint((proposaldata.againstvotes.mul(10000)).div(_ratio_slashing));  
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
     else{
-    _ratio_slashing = uint((totalVotes * APPROVAL_THRESHOLD).div(10000));
-    _ratio_slashing = uint((proposaldata.forvotes * 10000).div(_ratio_slashing));
+    _ratio_slashing = uint((totalVotes.mul(APPROVAL_THRESHOLD)).div(10000));
+    _ratio_slashing = uint((proposaldata.forvotes.mul(10000)).div(_ratio_slashing));
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
 
@@ -1373,8 +1373,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          proposaldata.lastcuration_weight = 0;
          proposaldata.lasteditor_weight = 0;
          // Proposal tied, remove proposal curation and editor sum
-         period.curation_sum = period.curation_sum - _old_proposal_curationweight;
-         period.editor_sum = period.editor_sum - _old_proposal_editorweight;
+         period.curation_sum = period.curation_sum.sub(_old_proposal_curationweight);
+         period.editor_sum = period.editor_sum.sub(_old_proposal_editorweight);
          }
          else {
              // Proposal approved, strengthen curation sum
@@ -1467,10 +1467,10 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    if(voterChoice != proposaldata.status) {
      // slash loosers: voter has voted wrongly and needs to be slashed
      uint _slashRemaining = vote.amount;
-     uint _extraTimeInt = uint(STAKING_DURATION * SEVERITY_LEVEL * proposaldata.slashingratio / 10000);
+     uint _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(proposaldata.slashingratio).div(10000));
 
      if(vote.is_editor){
-     _extraTimeInt = uint(_extraTimeInt * PROPOSERS_INCREASER);
+     _extraTimeInt = uint(_extraTimeInt.mul(PROPOSERS_INCREASER));
      }
 
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
@@ -1479,7 +1479,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
  
         stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
         stakes[msg.sender][_stakeidx].startTime = block.timestamp;
-        _slashRemaining = _slashRemaining - stakes[msg.sender][_stakeidx].amount;
+        _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
         
        if(_slashRemaining == 0){
          break;
@@ -1487,7 +1487,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
       }
       else {
         // The slash amount does not fill a full stake, so the stake needs to be split
-        uint newAmount = stakes[msg.sender][_stakeidx].amount - _slashRemaining;
+        uint newAmount = stakes[msg.sender][_stakeidx].amount.sub(_slashRemaining);
         uint oldTimestamp = stakes[msg.sender][_stakeidx].startTime;
         uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
 
@@ -1513,14 +1513,14 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    require(period.curation_sum > 0); // period curation sum pb !
    // get curation reward only if voter is not the proposer:
    if (!vote.is_editor){
-   _reward_amount = _reward_amount.add((vote.amount * period.reward_for_curation) / (period.curation_sum));
+   _reward_amount = _reward_amount.add((vote.amount.mul(period.reward_for_curation)).div(period.curation_sum));
    }
 
        // if voter is editor and proposal accepted:
     if (vote.is_editor && proposaldata.status == ProposalStatus.Accepted){
           // check before dividing by 0
           require( period.editor_sum > 0); // Period editor sum pb !
-          _reward_amount = _reward_amount.add((proposaldata.lasteditor_weight * period.reward_for_editor) / (period.editor_sum));
+          _reward_amount = _reward_amount.add((proposaldata.lasteditor_weight.mul(period.reward_for_editor)).div(period.editor_sum));
     }
 
     require(_reward_amount <= period.reward_for_curation.add(period.reward_for_editor)); // "System logic error. Too much ETICA calculated for reward."

@@ -676,10 +676,10 @@ period.reward_for_curation = uint((_periodsupply * PERIOD_CURATION_REWARD_RATIO)
 period.reward_for_editor = uint((_periodsupply * PERIOD_EDITOR_REWARD_RATIO).div(10**(11)));
 
 
-supply = supply + _periodsupply;
+supply = supply.add(_periodsupply);
 balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
-PeriodsIssuedCounter = PeriodsIssuedCounter + 1;
+PeriodsIssuedCounter = PeriodsIssuedCounter.add(1);
 
 emit IssuedPeriod(periodsCounter, _periodsupply, period.reward_for_curation, period.reward_for_editor);
 
@@ -698,7 +698,7 @@ function newPeriod() internal {
   if(rwd != 0x0) revert();  //prevent the same interval from having 2 periods
 
 
-  periodsCounter++;
+  periodsCounter = periodsCounter.add(1);
 
   // store this interval period
   periods[periodsCounter] = Period(
@@ -715,7 +715,7 @@ function newPeriod() internal {
 
   // an interval cannot have 2 Periods
   IntervalsPeriods[_interval] = periodsCounter;
-  IntervalsPeriodsCounter++;
+  IntervalsPeriodsCounter = IntervalsPeriodsCounter.add(1);
 
   // issue ETI for this Period Reward
   issue(periodsCounter);
@@ -739,15 +739,15 @@ uint _totalagainst = 0; // total of proposals rejected
 
 // calculate the mean approval rate (forprops / againstprops) of last PERIODS_PER_THRESHOLD Periods:
 for(uint _periodidx = periodsCounter - PERIODS_PER_THRESHOLD; _periodidx <= periodsCounter - 1;  _periodidx++){
-   _totalfor += periods[_periodidx].forprops;
-   _totalagainst += periods[_periodidx].againstprops; 
+   _totalfor = _totalfor.add(periods[_periodidx].forprops);
+   _totalagainst = _totalagainst.add(periods[_periodidx].againstprops); 
 }
 
-  if(_totalfor + _totalagainst == 0){
+  if(_totalfor.add(_totalagainst) == 0){
    _meanapproval = 5000;
   }
   else{
-   _meanapproval = uint(_totalfor.mul(10000).div(_totalfor + _totalagainst));
+   _meanapproval = uint(_totalfor.mul(10000).div(_totalfor.add(_totalagainst)));
   }
 
 // increase or decrease APPROVAL_THRESHOLD based on comparason between _meanapproval and PROTOCOL_RATIO_TARGET:
@@ -763,7 +763,7 @@ for(uint _periodidx = periodsCounter - PERIODS_PER_THRESHOLD; _periodidx <= peri
            uint excess_approvals_rate = uint((_meanapproval - PROTOCOL_RATIO_TARGET));
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD += uint((10000 - APPROVAL_THRESHOLD) * excess_approvals_rate / 10000);   // increase by up to 100 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add((10000 - APPROVAL_THRESHOLD) * excess_approvals_rate / 10000));   // increase by up to 100 % of (100 - APPROVAL_THRESHOLD)
          }
 
 
@@ -819,13 +819,13 @@ bosoms[_staker] = bosoms[_staker].add(newBosoms);
 function addStake(address _staker, uint _amount) internal returns (bool success) {
 
     require(_amount > 0);
-    stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
+    stakesCounters[_staker] = stakesCounters[_staker].add(1); // notice that first stake will have the index of 1 thus not 0 !
 
 
     // increase variable that keeps track of total value of user's stakes
     stakesAmount[_staker] = stakesAmount[_staker].add(_amount);
 
-    uint endTime = block.timestamp + STAKING_DURATION;
+    uint endTime = block.timestamp.add(STAKING_DURATION);
 
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
@@ -842,7 +842,7 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
 function addConsolidation(address _staker, uint _amount, uint _endTime) internal returns (bool success) {
 
     require(_amount > 0);
-    stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
+    stakesCounters[_staker] = stakesCounters[_staker].add(1); // notice that first stake will have the index of 1 thus not 0 !
 
 
     // increase variable that keeps track of total value of user's stakes
@@ -867,7 +867,7 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
 function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
 
     require(_amount > 0);
-    stakesCounters[_staker] = stakesCounters[_staker] + 1; // notice that first stake will have the index of 1 thus not 0 !
+    stakesCounters[_staker] = stakesCounters[_staker].add(1); // notice that first stake will have the index of 1 thus not 0 !
 
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
@@ -949,7 +949,7 @@ function _deletestake(address _staker,uint _index) internal {
 function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
 
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
-require(_endTime < block.timestamp + 730 days); // _endTime cannot be more than two years ahead  
+require(_endTime < block.timestamp.add(730 days)); // _endTime cannot be more than two years ahead  
 
 // _maxidx must be less or equal to nb of stakes and we set a limit for loop of 100:
 require(_maxidx <= 100 && _maxidx <= stakesCounters[msg.sender]);
@@ -978,11 +978,11 @@ for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
       // Plus we check the stake.endTime is above the minimum limit the user is willing to consolidate. For instance user doesn't want to consolidate a stake that is ending tomorrow
       if(stakes[msg.sender][_currentidx].endTime <= _endTime && stakes[msg.sender][_currentidx].endTime >= _min_limit) {
 
-        newAmount += stakes[msg.sender][_currentidx].amount;
+        newAmount = newAmount.add(stakes[msg.sender][_currentidx].amount);
 
         _deletestake(msg.sender, _currentidx);    
 
-        _nbdeletes += 1;
+        _nbdeletes = _nbdeletes.add(1);
 
       }  
 
@@ -1024,7 +1024,7 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
 
 
   // ----- creates a new stake with the rest -------- //
-  stakesCounters[msg.sender] = stakesCounters[msg.sender] + 1;
+  stakesCounters[msg.sender] = stakesCounters[msg.sender].add(1);
 
   // store this stake in _staker's stakes with the index stakesCounters[_staker]
   stakes[msg.sender][stakesCounters[msg.sender]] = Stake(
@@ -1064,7 +1064,7 @@ function createdisease(string memory _name) public {
 
   bytes32 _diseasehash = keccak256(abi.encode(_name));
 
-  diseasesCounter = diseasesCounter + 1; // notice that first disease will have the index of 1 thus not 0 !
+  diseasesCounter = diseasesCounter.add(1); // notice that first disease will have the index of 1 thus not 0 !
 
   //check: if the disease is new we continue, otherwise we exit
    if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will not have index of 0 thus should pass this check
@@ -1096,7 +1096,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
      bytes32 _proposed_release_hash = keccak256(abi.encode(raw_release_hash, _diseasehash));
 
-     proposalsCounter = proposalsCounter + 1; // notice that first proposal will have the index of 1 thus not 0 !
+     proposalsCounter = proposalsCounter.add(1); // notice that first proposal will have the index of 1 thus not 0 !
 
 
      // Check that proposal does not already exist
@@ -1147,7 +1147,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.lastcuration_weight = 0;
        proposaldata.lasteditor_weight = 0;
        proposaldata.starttime = block.timestamp;
-       proposaldata.endtime = block.timestamp + DEFAULT_VOTING_TIME;
+       proposaldata.endtime = block.timestamp.add(DEFAULT_VOTING_TIME);
 
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
@@ -1270,7 +1270,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
  require( commits[msg.sender][_votehash].timestamp <= proposaldata.endtime);
 
  // Verify we are within revealing time:
- require( block.timestamp > proposaldata.endtime && block.timestamp <= proposaldata.endtime + DEFAULT_REVEALING_TIME);
+ require( block.timestamp > proposaldata.endtime && block.timestamp <= proposaldata.endtime.add(DEFAULT_REVEALING_TIME));
 
  require(proposaldata.prestatus != ProposalStatus.Pending); // can vote for proposal only if default vote has changed prestatus of Proposal. Thus can vote only if default vote occured as supposed to
 
@@ -1297,21 +1297,21 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
  vote.voter = msg.sender;
  vote.timestamp = block.timestamp;
 
- proposaldata.nbvoters = proposaldata.nbvoters + 1;
+ proposaldata.nbvoters = proposaldata.nbvoters.add(1);
 
      // PROPOSAL VAR UPDATE
      if(_approved){
-      proposaldata.forvotes = proposaldata.forvotes + commits[msg.sender][_votehash].amount;
+      proposaldata.forvotes = proposaldata.forvotes.add(commits[msg.sender][_votehash].amount);
      }
      else {
-       proposaldata.againstvotes = proposaldata.againstvotes + commits[msg.sender][_votehash].amount;
+       proposaldata.againstvotes = proposaldata.againstvotes.add(commits[msg.sender][_votehash].amount);
      }
 
 
      // Determine slashing conditions
      bool _isapproved = false;
      bool _istie = false;
-     uint totalVotes = proposaldata.forvotes + proposaldata.againstvotes;
+     uint totalVotes = proposaldata.forvotes.add(proposaldata.againstvotes);
      uint _forvotes_numerator = proposaldata.forvotes * 10000; // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 10000 to store it as uint
      uint _ratio_slashing = 0;
 
@@ -1347,10 +1347,10 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
         if(proposaldata.prestatus == ProposalStatus.Singlevoter){
 
           if(_isapproved){
-            period.forprops += 1;
+            period.forprops = period.forprops.add(1);
           }
           else {
-            period.againstprops += 1;
+            period.againstprops = period.againstprops.add(1);
           }
         }
         // in this case the proposal becomes rejected after being accepted or becomes accepted after being rejected:
@@ -1358,17 +1358,17 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
          if(_newstatus == ProposalStatus.Accepted){
           period.againstprops -= 1;
-          period.forprops += 1;
+          period.forprops = period.forprops.add(1);
          }
          // in this case proposal is necessarily Rejected:
          else {
           period.forprops -= 1;
-          period.againstprops += 1;
+          period.againstprops = period.againstprops.add(1);
          }
 
         }
         // updates period forvotes and againstvotes system done
-        period.total_voters += 1;
+        period.total_voters = period.total_voters.add(1);
 
          // Proposal and Period new weight
          if (_istie) {
@@ -1386,16 +1386,16 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
              proposaldata.lastcuration_weight = proposaldata.forvotes;
              proposaldata.lasteditor_weight = proposaldata.forvotes;
              // Proposal approved, replace proposal curation and editor sum with forvotes
-             period.curation_sum = period.curation_sum - _old_proposal_curationweight + proposaldata.lastcuration_weight;
-             period.editor_sum = period.editor_sum - _old_proposal_editorweight + proposaldata.lasteditor_weight;
+             period.curation_sum = period.curation_sum.sub(_old_proposal_curationweight).add(proposaldata.lastcuration_weight);
+             period.editor_sum = period.editor_sum.sub(_old_proposal_editorweight).add(proposaldata.lasteditor_weight);
          }
          else{
              proposaldata.prestatus =  ProposalStatus.Rejected;
              proposaldata.lastcuration_weight = proposaldata.againstvotes;
              proposaldata.lasteditor_weight = 0;
              // Proposal rejected, replace proposal curation sum with againstvotes and remove proposal editor sum
-             period.curation_sum = period.curation_sum - _old_proposal_curationweight + proposaldata.lastcuration_weight;
-             period.editor_sum = period.editor_sum - _old_proposal_editorweight;
+             period.curation_sum = period.curation_sum.sub(_old_proposal_curationweight).add(proposaldata.lastcuration_weight);
+             period.editor_sum = period.editor_sum.sub(_old_proposal_editorweight);
          }
          }
          
@@ -1413,7 +1413,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
    ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
    // Verify voting and revealing period is over
-   require( block.timestamp > proposaldata.endtime + DEFAULT_REVEALING_TIME);
+   require( block.timestamp > proposaldata.endtime.add(DEFAULT_REVEALING_TIME));
 
    
     // we check that the vote exists
@@ -1437,8 +1437,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    uint _current_interval = uint((block.timestamp).div(REWARD_INTERVAL));
 
    // Check if Period is ready for claims or if it needs to wait more
-   uint _min_intervals = uint((DEFAULT_VOTING_TIME + DEFAULT_REVEALING_TIME).div(REWARD_INTERVAL) + 1); // Minimum intervals before claimable
-   require(_current_interval >= period.interval + _min_intervals); // Period not ready for claims yet. Need to wait more !
+   uint _min_intervals = uint(((DEFAULT_VOTING_TIME.add(DEFAULT_REVEALING_TIME)).div(REWARD_INTERVAL)).add(1)); // Minimum intervals before claimable
+   require(_current_interval >= period.interval.add(_min_intervals)); // Period not ready for claims yet. Need to wait more !
 
   // if status equals pending this is the first claim for this proposal
   if (proposaldata.status == ProposalStatus.Pending) {
@@ -1480,7 +1480,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
  
-        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime + _extraTimeInt;
+        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
         stakes[msg.sender][_stakeidx].startTime = block.timestamp;
         _slashRemaining = _slashRemaining - stakes[msg.sender][_stakeidx].amount;
         
@@ -1496,7 +1496,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
         // slash amount split in _slashRemaining and newAmount
         stakes[msg.sender][_stakeidx].amount = _slashRemaining; // only slash the part of the stake that amounts to _slashRemaining
-        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime + _extraTimeInt; // slash the stake
+        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt); // slash the stake
 
         if(newAmount > 0){
           // create a new stake with the rest of what remained from original stake that was split in 2
@@ -1516,17 +1516,17 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
    require(period.curation_sum > 0); // period curation sum pb !
    // get curation reward only if voter is not the proposer:
    if (!vote.is_editor){
-   _reward_amount += (vote.amount * period.reward_for_curation) / (period.curation_sum);
+   _reward_amount = _reward_amount.add((vote.amount * period.reward_for_curation) / (period.curation_sum));
    }
 
        // if voter is editor and proposal accepted:
     if (vote.is_editor && proposaldata.status == ProposalStatus.Accepted){
           // check before dividing by 0
           require( period.editor_sum > 0); // Period editor sum pb !
-          _reward_amount += (proposaldata.lasteditor_weight * period.reward_for_editor) / (period.editor_sum);
+          _reward_amount = _reward_amount.add((proposaldata.lasteditor_weight * period.reward_for_editor) / (period.editor_sum));
     }
 
-    require(_reward_amount <= period.reward_for_curation + period.reward_for_editor); // "System logic error. Too much ETICA calculated for reward."
+    require(_reward_amount <= period.reward_for_curation.add(period.reward_for_editor)); // "System logic error. Too much ETICA calculated for reward."
 
     // SEND ETICA AS REWARD
     balances[address(this)] = balances[address(this)].sub(_reward_amount);

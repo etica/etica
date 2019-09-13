@@ -710,9 +710,18 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
 
  async function commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
   let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
+  let _oldcommit = await EticaReleaseProtocolTestUpdateCostInstance.commits(_from_account.address, expected_votehash);
   console.log('expected_votehash is', expected_votehash);
   return EticaReleaseProtocolTestUpdateCostInstance.commitvote(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
-
+  let _newcommit = await EticaReleaseProtocolTestUpdateCostInstance.commits(_from_account.address, expected_votehash);
+  let _amountbninwei = web3.utils.toBN(web3.utils.toWei(_amount, 'ether'));
+  console.log('new commit amount', web3.utils.fromWei(_newcommit.amount, "ether"));
+  console.log('old commit amount', web3.utils.fromWei(_oldcommit.amount, "ether"));
+  console.log('_amount', _amount);
+  let _expected_sum = web3.utils.toBN(_oldcommit.amount).add(_amountbninwei);
+  _expected_sum = web3.utils.fromWei(_expected_sum, "ether");
+  console.log('expected_sum', _expected_sum);
+  assert.equal(web3.utils.fromWei(_newcommit.amount, "ether"), _expected_sum, 'New commit amount should equal oldcommit + _amount');
   console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }
@@ -728,7 +737,9 @@ console.log('as expected failed to make this commitvote');
 
  async function revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
   return EticaReleaseProtocolTestUpdateCostInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}).then(async function(response){
-
+ let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
+  let _newcommit = await EticaReleaseProtocolTestUpdateCostInstance.commits(_from_account.address, expected_votehash);
+  assert.equal(_newcommit.amount, 0, 'New commit amount should be 0 after revealvote');
   console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }

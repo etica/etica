@@ -1393,8 +1393,15 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          }
          
-         emit NewReveal(_votehash);
+        // resets commit to save space: 
+        _removecommit(msg.sender, _votehash);
+        emit NewReveal(_votehash);
 
+  }
+
+  function _removecommit(address _voter, bytes32 _votehash) internal {
+        commits[msg.sender][_votehash].amount = 0;
+        commits[msg.sender][_votehash].timestamp = 0;
   }
 
 

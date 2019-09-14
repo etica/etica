@@ -116,7 +116,7 @@ contract EticaToken is ERC20Interface{
 
     mapping(address => mapping(address => uint)) allowed;
 
-    //allowed[0x1111....][0x22222...] = 100;
+   
 
     // ----------- Mining system state variables ------------ //
     uint public _totalMiningSupply;
@@ -174,7 +174,7 @@ contract EticaToken is ERC20Interface{
 
     constructor() public{
       supply = 100 * (10**18); // initial supply equals 100 ETI
-      balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
+      balances[address(this)] = balances[address(this)].add(100 * (10**18)); // 100 ETI as the default contract balance.
 
 
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //

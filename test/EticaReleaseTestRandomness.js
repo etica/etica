@@ -6,6 +6,9 @@ var networkInterfaceHelper =  require('./network-interface-helper');
 const truffleAssert = require('truffle-assertions');
 var abi = require('ethereumjs-abi');
 
+console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------');
+console.log('--------------->  NEUTRAL PROTOCOL FOR DECENTRALISED RESEARCH <------------------');
+
 // test suite
 contract('EticaRelease', function(accounts){
   var EticaReleaseInstance;

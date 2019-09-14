@@ -76,6 +76,8 @@ module.exports =  {
     var blockrewardString = await tokenContract.blockreward.call()  ;
     var blockreward = parseInt(blockrewardString)
 
+    var periodrewardtemp = await tokenContract.periodrewardtemp()  ;
+
 
     var miningDifficultyString = await tokenContract.getMiningDifficulty.call()  ;
     var miningDifficulty = parseInt(miningDifficultyString)
@@ -102,7 +104,8 @@ module.exports =  {
     console.log('LastBlock\'s NUMBER IS:', blocknb_before.number);
     console.log('LastBlock\'s TIMESTAMP IS:', blocknb_before.timestamp);
     console.log('LastBlock\'s latestDifficultyPeriodStarted IS:', latestDifficultyPeriodStarted);
-    console.log('blockreward:', blockreward);
+    console.log('blockreward:', web3.utils.fromWei(blockreward.toString(), "ether" ), 'ETI');
+    console.log('periodrewardtemp:', web3.utils.fromWei(periodrewardtemp.toString(), "ether", 'ETI'));
     console.log('epochCount:', epochCount);
     console.log('difficulty:', miningDifficulty);
     console.log('target:', miningTarget);

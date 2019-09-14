@@ -7,7 +7,7 @@ const truffleAssert = require('truffle-assertions');
 var abi = require('ethereumjs-abi');
 
 console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------');
-console.log('---------------> DECENTRALISED RESEARCH INDUSTRY <------------------');
+console.log('---------------> NEUTRAL PROTOCOL FOR DECENTRALISED RESEARCH <------------------');
 console.log('');
 
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO

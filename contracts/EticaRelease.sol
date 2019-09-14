@@ -180,8 +180,9 @@ contract EticaToken is ERC20Interface{
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
       /* Phase 1 will last about 10 years:
-      --> 9 450 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
       --> 11 550 000 ETI to be distributed trough MINING as block reward
+      --> 9 450 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
+      
 
       Phase1 is divided between 10 eras:
       Each Era will allocate 2 100 000 ETI between mining reward and the staking system reward.
@@ -191,11 +192,11 @@ contract EticaToken is ERC20Interface{
       Era5: 50% ETI to mining and 50% ETI to Staking  |  Era6: 50% ETI to mining and 50% ETI to Staking
       Era7: 50% ETI to mining and 50% ETI to Staking  |  Era8: 50% ETI to mining and 50% ETI to Staking
       Era9: 50% ETI to mining and 50% ETI to Staking  |  Era10: 50% ETI to mining and 50% ETI to Staking
-      Era1: 1 890 000 ETI as mining era 210 000 ETI as Staking reward
-      Era2: 1 680 000 ETI as mining era 420 000 ETI as Staking reward
-      Era3: 1 470 000 ETI as mining era 630 000 ETI as Staking reward 
-      Era4: 1 260 000 ETI as mining era 840 000 ETI as Staking reward
-      From Era5 to era10: 1 050 000 ETI as mining era 1 050 000 ETI as Staking reward
+      Era1: 1 890 000 ETI as mining reward and 210 000 ETI as Staking reward
+      Era2: 1 680 000 ETI as mining reward and 420 000 ETI as Staking reward
+      Era3: 1 470 000 ETI as mining reward and 630 000 ETI as Staking reward 
+      Era4: 1 260 000 ETI as mining reward and 840 000 ETI as Staking reward
+      From Era5 to era10: 1 050 000 ETI as mining reward and 1 050 000 ETI as Staking reward
       */
 
       // --- STAKING REWARD --- //
@@ -215,9 +216,9 @@ contract EticaToken is ERC20Interface{
 
       // Calculation of initial blockreward:
       // 1 890 000 / 52.1429 = 36246.5455507844788073; ETI per week
-      // amount to 5178.0779358263541153286 ETI per day;
-      // amount to 215.7532473260980881386917 ETI per hour;
-      // amount to 35.9588745543496813564486167 ETI per block;
+      // amounts to 5178.0779358263541153286 ETI per day;
+      // amounts to 215.7532473260980881386917 ETI per hour;
+      // amounts to 35.9588745543496813564486167 ETI per block for era1 of phase1;
       blockreward = 35958874554349681356;
 
       miningTarget = _MAXIMUM_TARGET;
@@ -323,35 +324,38 @@ contract EticaToken is ERC20Interface{
               solutionForChallenge[challengeNumber] = digest;
               if(solution != 0x0) revert();  //prevent the same answer from awarding twice
 
-
-             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply + blockreward
-             assert(tokensMinted < _totalMiningSupply);
-
-             tokensMinted = tokensMinted.add(blockreward);
-             supply = supply.add(blockreward);
-             balances[msg.sender] = balances[msg.sender].add(blockreward);
-
               if(tokensMinted > 1890000 * 10**uint(decimals)){
  
               if(tokensMinted >= 6300000 * 10**uint(decimals)) {
-                blockreward = 19977152530194267420;
-                periodrewardtemp = 20136969750435821559600; // from era5 20136.9697504358215596 ETI per week
+                // 6 300 000 = 5 040 000 + 1 260 000;
+                blockreward = 19977152530194267420; // 19.977152530194267420 per block (amounts to 1050000 ETI a year)
+                periodrewardtemp = 20136969750435821559600; // from era5 to era 10: 20136.9697504358215596 ETI per week
               }
 
               else if (tokensMinted < 3570000 * 10**uint(decimals)) {
-                blockreward = 319634440483108278723;
-                periodrewardtemp = 8054787900174328623800; // era2 8054.7879001743286238 ETI per week
+                // 3 570 000 = 1 890 000 + 1 680 000;
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
               }
               else if (tokensMinted < 5040000 * 10**uint(decimals)) {
-                blockreward = 27968013542271974388;
-                periodrewardtemp = 12082181850261492935800; // era3 12082.1818502614929358 ETI per week
+                // 5 040 000 = 3 570 000 + 1 470 000;
+                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
+                periodrewardtemp = 12082181850261492935800; // era3 12082.181850261492935800 ETI per week
               }
               else {
-                blockreward = 23972583036233120904;
-                periodrewardtemp = 16109575800348657247700; // era4 16109.5758003486572477 ETI per week
+                blockreward = 23972583036233120904; // 23.972583036233120904 per block (amounts to 1260000 ETI a year)
+                periodrewardtemp = 16109575800348657247700; // era4 16109.575800348657247700 ETI per week
               }
 
               }
+
+             tokensMinted = tokensMinted.add(blockreward);
+             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply
+             assert(tokensMinted < _totalMiningSupply);
+
+             supply = supply.add(blockreward);
+             balances[msg.sender] = balances[msg.sender].add(blockreward);
+
 
              //set readonly diagnostics data
              lastRewardTo = msg.sender;

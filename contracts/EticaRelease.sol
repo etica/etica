@@ -698,11 +698,11 @@ if(rwd != 0x0) revert();  //prevent the same period from issuing twice
 
 uint _periodsupply;
 
-// era 2 (after 21 000 000 ETI has been reached)
+// Phase 2 (after 21 000 000 ETI has been reached)
 if(supply >= 21000000 * 10**(decimals)){
 _periodsupply = uint((supply.mul(inflationrate)).div(10**(31)));
 }
-// era 1 (before 21 000 000 ETI has been reached)
+// Phase 1 (before 21 000 000 ETI has been reached)
 else {
   _periodsupply = periodrewardtemp;
 }

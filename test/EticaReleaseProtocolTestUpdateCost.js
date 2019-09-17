@@ -16,6 +16,8 @@ var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
 var DEFAULT_REVEALING_TIME = 0;
 var REWARD_INTERVAL = 0; // initialize global variable REWARD_INTERVAL
 
+var ETH_PRICE_USD = 198.54;
+
 // test suite
 contract('EticaReleaseProtocolTestUpdateCost', function(accounts){
   var EticaReleaseProtocolTestUpdateCostInstance;
@@ -70,6 +72,7 @@ var test_account8= {
 var PROPOSAL_DEFAULT_VOTE = 10; // 10 ETI default vote for proposal submissions
 
 var FIRST_DISEASE_NAME = "Malaria";
+var SECOND_DISEASE_NAME = "Ebola";
 var FIRST_DISEASE_DESC = "Malaria is a disease that kills millions of people each year !";
 
 var encoded = abi.rawEncode([ "string" ], [ FIRST_DISEASE_NAME ]);
@@ -78,6 +81,8 @@ var EXPECTED_FIRST_DISEASE_HASH = get_expected_keccak256_hash(FIRST_DISEASE_NAME
 //console.log('EXPECTED_FIRST_DISEASE_HASH is ', EXPECTED_FIRST_DISEASE_HASH);
 
 var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in the protocol
+
+var GASPRICE = 0;
 
   it("testing ETICA PROTOCOL UPDATECOST:", async function () {
     console.log('------------------------------------- Starting TESTS OF ETICA PROTOCOL DYNAMICS ---------------------------');
@@ -105,6 +110,11 @@ var TOTAL_DISEASES = 0; // var keep track of total number of diseases created in
 
     REWARD_INTERVAL = await EticaReleaseProtocolTestUpdateCostInstance.REWARD_INTERVAL();
     console.log('REWARD_INTERVAL IS ', REWARD_INTERVAL);
+
+    GASPRICE = Number(await web3.eth.getGasPrice()).toString();
+    console.log('GAS PRICE IS ', GASPRICE, 'WEI');
+    console.log('GAS PRICE IS ', web3.utils.fromWei(GASPRICE, "ether" ), 'ETH');
+    
 
 
 // TRANSFERS FROM MINER ACCOUNT:
@@ -263,6 +273,49 @@ assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been cr
 
 
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS OF UPDATECOST ---------------------------');
+  console.log('------------------------------------- ETICA PROTOCOL SHOWING GAS COST ---------------------------');
+  await getcost_createdisease(SECOND_DISEASE_NAME);
+  let IPFS1 = randomipfs();
+  let IPFS2 = randomipfs();
+
+  let IPFS1_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1, EXPECTED_FIRST_DISEASE_HASH);
+  let IPFS2_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2, EXPECTED_FIRST_DISEASE_HASH);
+
+  await getcost_createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+ await getcost_createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+ await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+ await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+await getcost_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await getcost_commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+await commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await getcost_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await getcost_revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
+await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
+
+// advance time to enter claimable Period:
+let REVEALING_TIME_ADD_1 = Number(DEFAULT_VOTING_TIME) + 1;
+await advanceseconds(REVEALING_TIME_ADD_1);
+await getcost_clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+await getcost_clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
+await getcost_clmpropbyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
+await getcost_clmpropbyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS2_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account, IPFS1_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
+
+  console.log('------------------------------------- ETICA PROTOCOL SHOWING GAS COST DONE ---------------------------');
+
 
   })
 
@@ -660,6 +713,34 @@ assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been cr
  }
 
 
+ async function getcost_createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, _firstfield, _secondfield, _thirdfield){
+
+  console.log('................................  ESTIMATING COST CREATION OF NEW PROPOSAL', _title,' ....................... ');
+
+  let oldproposalsCounter = await EticaReleaseProtocolTestUpdateCostInstance.proposalsCounter();
+
+  let _from_accountbalancebefore = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(_from_account.address);
+  //console.log('_from_account ETI balance before:', web3.utils.fromWei(_from_accountbalancebefore, "ether" ));
+
+  let _from_accountbosomsbefore = await EticaReleaseProtocolTestUpdateCostInstance.bosoms(_from_account.address);
+  //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
+
+  return EticaReleaseProtocolTestUpdateCostInstance.propose.estimateGas(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}).then(async function(response){
+
+    let gas = Number(response);
+    let gasprice = Number(gas * GASPRICE).toString();
+    let ethprice = web3.utils.fromWei(gasprice, 'ether');
+    let usdprice = ethprice * ETH_PRICE_USD;
+    console.log("gas estimation of creation of proposal = " + gas + " units");
+    console.log("gas cost estimation of creation proposal = " + (gas * GASPRICE) + " wei");
+    console.log("eth cost estimation of creation proposal = " + ethprice + " ether");
+    console.log("usd cost estimation of creation proposal = " + usdprice + " USD");
+
+    console.log('................................  ESTIMATED COST CREATION NEW  PROPOSAL', _title,' WITH SUCCESS ....................... ');
+    });
+ }
+
+
  async function createdisease(_diseasename){
 
   console.log('................................  START CREATION OF NEW DISEASE', _diseasename,' ....................... ');
@@ -707,6 +788,31 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
 })
  }
 
+ async function getcost_createdisease(_diseasename){
+
+  console.log('................................  ESTIMATING GAS COST CREATION OF NEW DISEASE', _diseasename,' ....................... ');
+
+  // calculate expected hash of disease:
+  let _expectedhash = get_expected_keccak256_hash(_diseasename);
+
+  let test_accountbalance_before_createdisease = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(test_account.address);
+  let contract_balance_before_createdisease = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(EticaReleaseProtocolTestUpdateCostInstance.address);
+  //console.log('miner account balance after transfer is', web3.utils.fromWei(miner_accountbalanceafter_transfer, "ether" ));
+   
+  return EticaReleaseProtocolTestUpdateCostInstance.createdisease.estimateGas(_diseasename, {from: test_account.address}).then(async function(receipt){
+    let gas = Number(receipt);
+    let gasprice = Number(gas * GASPRICE).toString();
+    let ethprice = web3.utils.fromWei(gasprice, 'ether');
+    let usdprice = ethprice * ETH_PRICE_USD;
+    console.log("gas estimation of creation of disease = " + gas + " units");
+    console.log("gas cost estimation of creation disease = " + (gas * GASPRICE) + " wei");
+    console.log("eth cost estimation of creation disease = " + ethprice + " ether");
+    console.log("usd cost estimation of creation disease = " + usdprice + " USD");
+
+
+})
+ }
+
 
  async function commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
   let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
@@ -723,6 +829,23 @@ console.log('................................  CREATED NEW DISEASE', _diseasenam
   console.log('expected_sum', _expected_sum);
   assert.equal(web3.utils.fromWei(_newcommit.amount, "ether"), _expected_sum, 'New commit amount should equal oldcommit + _amount');
   console.log('................................  VOTED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  });
+ }
+
+ async function getcost_commitvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
+  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
+  let _oldcommit = await EticaReleaseProtocolTestUpdateCostInstance.commits(_from_account.address, expected_votehash);
+  console.log('expected_votehash is', expected_votehash);
+  return EticaReleaseProtocolTestUpdateCostInstance.commitvote.estimateGas(web3.utils.toWei(_amount, 'ether'), expected_votehash, {from: _from_account.address}).then(async function(response){
+    let gas = Number(response);
+    let gasprice = Number(gas * GASPRICE).toString();
+    let ethprice = web3.utils.fromWei(gasprice, 'ether');
+    let usdprice = ethprice * ETH_PRICE_USD;
+    console.log("gas estimation of commitvote = " + gas + " units");
+    console.log("gas cost estimation of commitvote = " + (gas * GASPRICE) + " wei");
+    console.log("eth cost estimation of commitvote = " + ethprice + " ether");
+    console.log("usd cost estimation of commitvote = " + usdprice + " USD");
+    console.log('................................  ESTIMATED COST COMMIT VOTE ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
   });
  }
 
@@ -744,10 +867,40 @@ console.log('as expected failed to make this commitvote');
   });
  }
 
+ async function getcost_revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
+  return EticaReleaseProtocolTestUpdateCostInstance.revealvote.estimateGas(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}).then(async function(response){
+    let gas = Number(response);
+    let gasprice = Number(gas * GASPRICE).toString();
+    let ethprice = web3.utils.fromWei(gasprice, 'ether');
+    let usdprice = ethprice * ETH_PRICE_USD;
+    console.log("gas estimation of commitvote = " + gas + " units");
+    console.log("gas cost estimation of revealvote = " + (gas * GASPRICE) + " wei");
+    console.log("eth cost estimation of revealvote = " + ethprice + " ether");
+    console.log("usd cost estimation of revealvote = " + usdprice + " USD");
+  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  });
+ }
+
  async function clmpropbyhash(_from_account, _proposed_release_hash){
   return EticaReleaseProtocolTestUpdateCostInstance.clmpropbyhash(_proposed_release_hash, {from: _from_account.address}).then(async function(response){
 
   console.log('................................  CLAIMED PROPOSAL ', _proposed_release_hash,' WITH SUCCESS ....................... ');
+  });
+ }
+
+ async function getcost_clmpropbyhash(_from_account, _proposed_release_hash){
+  return EticaReleaseProtocolTestUpdateCostInstance.clmpropbyhash.estimateGas(_proposed_release_hash, {from: _from_account.address}).then(async function(response){
+
+    let gas = Number(response);
+    let gasprice = Number(gas * GASPRICE).toString();
+    let ethprice = web3.utils.fromWei(gasprice, 'ether');
+    let usdprice = ethprice * ETH_PRICE_USD;
+    console.log("gas estimation of clmpropbyhash = " + gas + " units");
+    console.log("gas cost estimation of clmpropbyhash = " + (gas * GASPRICE) + " wei");
+    console.log("eth cost estimation of clmpropbyhash = " + ethprice + " ether");
+    console.log("usd cost estimation of clmpropbyhash = " + usdprice + " USD");
+
+  console.log('................................  ESTIMATED CLAIM OF PROPOSAL COST', _proposed_release_hash,' WITH SUCCESS ....................... ');
   });
  }
 

@@ -1728,6 +1728,111 @@ await stakeclmidx(test_account8, 2);
 // ------------ Stake Consolidation -------------- //
 
 
+// TESTING FEES:
+
+// advance time so that we enter next period: 
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+let IPFS1U = randomipfs();
+let IPFS2U = randomipfs();
+
+let IPFS1U_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1U, EXPECTED_FIRST_DISEASE_HASH);
+let IPFS2U_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2U, EXPECTED_FIRST_DISEASE_HASH);
+
+let OLD_STAKE_AMOUNT_ACCOUNT = await getstakeAmount(test_account);
+let OLD_STAKE_AMOUNT_ACCOUNT_2 = await getstakeAmount(test_account2);
+let OLD_STAKE_AMOUNT_ACCOUNT_3 = await getstakeAmount(test_account3);
+let OLD_STAKE_AMOUNT_ACCOUNT_4 = await getstakeAmount(test_account4);
+let OLD_STAKE_AMOUNT_ACCOUNT_5 = await getstakeAmount(test_account5);
+let OLD_STAKE_AMOUNT_ACCOUNT_6 = await getstakeAmount(test_account6);
+
+console.log('OLD_STAKE_AMOUNT_ACCOUNT:', web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT, "ether" ));
+console.log('OLD_STAKE_AMOUNT_ACCOUNT_2:', web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_2, "ether" ));
+console.log('OLD_STAKE_AMOUNT_ACCOUNT_3:', web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_3, "ether" ));
+console.log('OLD_STAKE_AMOUNT_ACCOUNT_4:', web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_4, "ether" ));
+console.log('OLD_STAKE_AMOUNT_ACCOUNT_5:', web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_5, "ether" ));
+console.log('OLD_STAKE_AMOUNT_ACCOUNT_6:', web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_6, "ether" ));
+
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1U, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2U, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+
+// APPROVAL_THRESHOLD SHOULD STILL BE 50.00%
+APPROVAL_THRESHOLD = await EticaReleaseProtocolTestInstance.APPROVAL_THRESHOLD();
+console.log('CURRENT APPROVAL THRESHOLD', APPROVAL_THRESHOLD.toString());
+assert.equal(APPROVAL_THRESHOLD, '5000', 'APPROVAL_THRESHOLD SHOULD CURRENTLY BE 50.00%');
+
+await commitvote(test_account3, IPFS1U_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await commitvote(test_account5, IPFS1U_WITH_FIRTDISEASEHASH, false, '115', "random123");
+
+await commitvote(test_account4, IPFS2U_WITH_FIRTDISEASEHASH, true, '61', "random123");
+await commitvote(test_account6, IPFS2U_WITH_FIRTDISEASEHASH, false, '2', "random123");
+
+// advance time to enter revealing Period:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await revealvote(test_account3, IPFS1U_WITH_FIRTDISEASEHASH, true, '5', "random123");
+await revealvote(test_account4, IPFS2U_WITH_FIRTDISEASEHASH, true, '61', "random123");
+await revealvote(test_account5, IPFS1U_WITH_FIRTDISEASEHASH, false, '115', "random123");
+await revealvote(test_account6, IPFS2U_WITH_FIRTDISEASEHASH, false, '2', "random123");
+
+
+
+// advance time to enter claimable time:
+await advanceseconds(DEFAULT_VOTING_TIME);
+
+await clmpropbyhash(test_account, IPFS1U_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account2, IPFS2U_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account3, IPFS1U_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account4, IPFS2U_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account5, IPFS1U_WITH_FIRTDISEASEHASH);
+await clmpropbyhash(test_account6, IPFS2U_WITH_FIRTDISEASEHASH);
+
+// IPFS1U_WITH_FIRTDISEASEHASH should be rejected with slashingratio of:
+let _proposal_IPFS1U_WITH_FIRTDISEASEHASH_data = await EticaReleaseProtocolTestInstance.propsdatas(IPFS1U_WITH_FIRTDISEASEHASH);
+// check Proposal's DATA:
+assert.equal(_proposal_IPFS1U_WITH_FIRTDISEASEHASH_data.status, '0', 'First proposal should exist with right status');
+assert.equal(_proposal_IPFS1U_WITH_FIRTDISEASEHASH_data.istie, false, 'First proposal should exist with right istie');
+assert.equal(_proposal_IPFS1U_WITH_FIRTDISEASEHASH_data.prestatus, '0', 'First proposal should exist with right prestatus');
+assert.equal(_proposal_IPFS1U_WITH_FIRTDISEASEHASH_data.slashingratio.toNumber(), '9167', 'First proposal should exist with right slashingratio');
+
+// IPFS2U_WITH_FIRTDISEASEHASH should be accepted with slashing ratio of:
+let _proposal_IPFS2U_WITH_FIRTDISEASEHASH_data = await EticaReleaseProtocolTestInstance.propsdatas(IPFS2U_WITH_FIRTDISEASEHASH);
+// check Proposal's DATA:
+assert.equal(_proposal_IPFS2U_WITH_FIRTDISEASEHASH_data.status, '1', 'Second proposal should exist with right status');
+assert.equal(_proposal_IPFS2U_WITH_FIRTDISEASEHASH_data.istie, false, 'Second proposal should exist with right istie');
+assert.equal(_proposal_IPFS2U_WITH_FIRTDISEASEHASH_data.prestatus, '1', 'Second proposal should exist with right prestatus');
+assert.equal(_proposal_IPFS2U_WITH_FIRTDISEASEHASH_data.slashingratio.toNumber(), '9366', 'Second proposal should exist with right slashingratio');
+
+let NEW_STAKE_AMOUNT_ACCOUNT = await getstakeAmount(test_account);
+let NEW_STAKE_AMOUNT_ACCOUNT_2 = await getstakeAmount(test_account2);
+let NEW_STAKE_AMOUNT_ACCOUNT_3 = await getstakeAmount(test_account3);
+let NEW_STAKE_AMOUNT_ACCOUNT_4 = await getstakeAmount(test_account4);
+let NEW_STAKE_AMOUNT_ACCOUNT_5 = await getstakeAmount(test_account5);
+let NEW_STAKE_AMOUNT_ACCOUNT_6 = await getstakeAmount(test_account6);
+
+console.log('NEW_STAKE_AMOUNT_ACCOUNT:', web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT, "ether" ));
+console.log('NEW_STAKE_AMOUNT_ACCOUNT_2:', web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_2, "ether" ));
+console.log('NEW_STAKE_AMOUNT_ACCOUNT_3:', web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_3, "ether" ));
+console.log('NEW_STAKE_AMOUNT_ACCOUNT_4:', web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_4, "ether" ));
+console.log('NEW_STAKE_AMOUNT_ACCOUNT_5:', web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_5, "ether" ));
+console.log('NEW_STAKE_AMOUNT_ACCOUNT_6:', web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_6, "ether" ));
+
+let _effective_fee_acc = web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT, "ether" ) - web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT, "ether" );
+let _effective_fee_acc_2 = web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_2, "ether" ) - web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_2, "ether" );
+let _effective_fee_acc_3 = web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_3, "ether" ) - web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_3, "ether" );
+let _effective_fee_acc_4 = web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_4, "ether" ) - web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_4, "ether" );
+let _effective_fee_acc_5 = web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_5, "ether" ) - web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_5, "ether" );
+let _effective_fee_acc_6 = web3.utils.fromWei(OLD_STAKE_AMOUNT_ACCOUNT_6, "ether" ) - web3.utils.fromWei(NEW_STAKE_AMOUNT_ACCOUNT_6, "ether" );
+
+assert.equal(_effective_fee_acc, '10');
+assert.equal(_effective_fee_acc_2, '0');
+assert.equal(_effective_fee_acc_3, '1.6499999999999986');
+assert.equal(_effective_fee_acc_4, '0');
+assert.equal(_effective_fee_acc_5, '0');
+assert.equal(_effective_fee_acc_6, '0.660000000000025');
+// IPFS2U_WITH_FIRTDISEASEHASH should be accepted with slashing ratio of:
+
+
   console.log('------------------------------------- ETICA PROTOCOL SUCCESSFULLY PASSED THE TESTS of PHASE 1 ---------------------------');
 
   })
@@ -1811,6 +1916,13 @@ await stakeclmidx(test_account8, 2);
    async function getstake(_from_account, _idx){
 
     let _thestake = await EticaReleaseProtocolTestInstance.stakes(_from_account.address,_idx);
+    return _thestake;
+
+   }
+
+   async function getstakeAmount(_from_account){
+
+    let _thestake = await EticaReleaseProtocolTestInstance.stakesAmount(_from_account.address);
     return _thestake;
 
    }

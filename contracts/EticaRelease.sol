@@ -794,12 +794,12 @@ for(uint _periodidx = periodsCounter.sub(PERIODS_PER_THRESHOLD); _periodidx <= p
            uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval));
 
            // require lower APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 100 % of (APPROVAL_THRESHOLD - 45)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 27.50 % of (APPROVAL_THRESHOLD - 45)
          }else{
            uint excess_approvals_rate = uint((_meanapproval.sub(PROTOCOL_RATIO_TARGET)));
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 100 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 27.50 % of (100 - APPROVAL_THRESHOLD)
          }
 
 
@@ -1519,6 +1519,41 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      _extraTimeInt = uint(_extraTimeInt.mul(PROPOSERS_INCREASER));
      }
 
+
+// REQUIRE FEE if slashingratio is superior to 90.50%:
+if(proposaldata.slashingratio > 9050){
+    // 33% fee if voter is not proposer or 100% fee if voter is proposer
+    uint _feeRemaining = uint(vote.amount.mul(33).div(100));
+      if(vote.is_editor){
+        _feeRemaining = vote.amount;
+      }
+     // update _slashRemaining 
+    _slashRemaining = vote.amount.sub(_feeRemaining);
+
+         for(uint _stakeidxa = 1; _stakeidxa <= stakesCounters[msg.sender];  _stakeidxa++) {
+      //if stake is big enough and can take into account the whole fee:
+      if(stakes[msg.sender][_stakeidxa].amount > _feeRemaining) {
+ 
+        stakes[msg.sender][_stakeidxa].amount = stakes[msg.sender][_stakeidxa].amount.sub(_feeRemaining);
+        stakesAmount[msg.sender] = stakesAmount[msg.sender].sub(_feeRemaining);
+        _feeRemaining = 0;
+         break;
+      }
+      else {
+        // The fee amount is more than or equal to a full stake, so the stake needs to be deleted:
+          _feeRemaining = _feeRemaining.sub(stakes[msg.sender][_stakeidxa].amount);
+          _deletestake(msg.sender, _stakeidxa);
+          if(_feeRemaining == 0){
+           break;
+          }
+      }
+    }
+}
+
+
+
+// SLASH only if slash remaining > 0
+if(_slashRemaining > 0){
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
@@ -1549,6 +1584,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
         break;
       }
     }
+}
     // the slash is over
    }
    else {

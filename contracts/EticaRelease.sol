@@ -511,7 +511,6 @@ contract EticaRelease is EticaToken {
   /* --------- PROD VALUES -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
-uint ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
 uint DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 days
      --------- PROD VALUES ------------- */
@@ -519,7 +518,6 @@ uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 day
 /* --------- TESTING VALUES -------------*/
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
-uint public ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
 uint public DEFAULT_VOTING_TIME = 3 minutes; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 1 minutes; // default revealing duration 7 days
 /* --------- TESTING VALUES -------------*/
@@ -842,9 +840,7 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
 function bosomget (address _staker, uint _amount) internal {
 
 addStake(_staker, _amount);
-
-uint newBosoms = _amount.mul(ETICA_TO_BOSOM_RATIO);
-bosoms[_staker] = bosoms[_staker].add(newBosoms);
+bosoms[_staker] = bosoms[_staker].add(_amount);
 
 }
 

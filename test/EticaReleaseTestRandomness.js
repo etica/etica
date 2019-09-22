@@ -725,8 +725,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     // check Proposal's IPFS:
                     assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
-                    assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right old_release_hash');
-                    assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right grandparent_hash');
+                    assert.equal(first_proposal_ipfs.related_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right related_hash');
+                    assert.equal(first_proposal_ipfs.other_related_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right other_related_hash');
 
                     // check Proposal's FREEFIELDS:
                     assert.equal(first_proposal_freefields.firstfield, 'Targets:[one_target_here,another_target_here]', 'First proposal should exist with right firstfield');
@@ -801,8 +801,8 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                         // check Proposal's IPFS:
                         assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should have kept the same raw_release_hash');
-                        assert.equal(first_proposal_ipfs.old_release_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should have kept the same old_release_hash');
-                        assert.equal(first_proposal_ipfs.grandparent_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should have kept the same grandparent_hash');
+                        assert.equal(first_proposal_ipfs.related_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should have kept the same related_hash');
+                        assert.equal(first_proposal_ipfs.other_related_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should have kept the same other_related_hash');
 
                         // check Proposal's DATA:
                         assert.equal(first_proposal_data.status, '2', 'First proposal should have kept the same status');

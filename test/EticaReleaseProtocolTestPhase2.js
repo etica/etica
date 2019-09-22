@@ -2996,10 +2996,10 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random1
   }
 
      // propose should fail:
-     async function should_fail_propose(_from_account, _diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, _firstfield, _secondfield, _thirdfield) {
+     async function should_fail_propose(_from_account, _diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield) {
      
       console.log('should fail to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
-      await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}));
+      await truffleAssert.fails(EticaReleaseProtocolTestPhase2Instance.propose(_diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}));
       console.log('as expected failed to propose proposal with same raw_release_hash and diseasehash (', _raw_release_hash,' - ', _diseasehash, ')combination');
   
     }
@@ -3212,7 +3212,7 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random1
    }
 
 
- async function createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, _firstfield, _secondfield, _thirdfield){
+ async function createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield){
 
   console.log('................................  START CREATION OF NEW PROPOSAL', _title,' ....................... ');
 
@@ -3224,7 +3224,7 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random1
   let _from_accountbosomsbefore = await EticaReleaseProtocolTestPhase2Instance.bosoms(_from_account.address);
   //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
 
-  return EticaReleaseProtocolTestPhase2Instance.propose(_diseasehash, _title, _description, _raw_release_hash, _old_release_hash, _grandparent_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}).then(async function(response){
+  return EticaReleaseProtocolTestPhase2Instance.propose(_diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}).then(async function(response){
 
     let first_proposal = await EticaReleaseProtocolTestPhase2Instance.proposals(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
     let proposalsCounter = await EticaReleaseProtocolTestPhase2Instance.proposalsCounter();
@@ -3245,8 +3245,8 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, '5', "random1
 
     // check Proposal's IPFS:
     assert.equal(first_proposal_ipfs.raw_release_hash, _raw_release_hash, 'First proposal should exist with right raw_release_hash');
-    assert.equal(first_proposal_ipfs.old_release_hash, _old_release_hash, 'First proposal should exist with right old_release_hash');
-    assert.equal(first_proposal_ipfs.grandparent_hash, _grandparent_hash, 'First proposal should exist with right grandparent_hash');
+    assert.equal(first_proposal_ipfs.related_hash, _related_hash, 'First proposal should exist with right related_hash');
+    assert.equal(first_proposal_ipfs.other_related_hash, _other_related_hash, 'First proposal should exist with right other_related_hash');
 
     // check Proposal's DATA:
     assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');

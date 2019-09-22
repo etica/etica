@@ -545,8 +545,8 @@ struct Period{
   struct ProposalIpfs{
     // IPFS hashes of the files:
     string raw_release_hash; // IPFS hash of the files of the proposal
-    string old_release_hash; // raw IPFS hash of the old version
-    string grandparent_hash; // raw IPFS hash of the grandparent
+    string related_hash; // raw IPFS hash of a related proposal
+    string other_related_hash; // raw IPFS hash of an other related proposal
   }
 
   struct ProposalFreefield{
@@ -1081,7 +1081,7 @@ function createdisease(string memory _name) public {
 
 
 function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
-  string memory old_release_hash, string memory grandparent_hash, string memory _firstfield, string memory _secondfield, string memory _thirdfield) public {
+  string memory related_hash, string memory other_related_hash, string memory _firstfield, string memory _secondfield, string memory _thirdfield) public {
 
     //check if the disease exits
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
@@ -1119,8 +1119,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        // Proposal IPFS:
        ProposalIpfs storage proposalipfs = propsipfs[_proposed_release_hash];
        proposalipfs.raw_release_hash = raw_release_hash;
-       proposalipfs.old_release_hash = old_release_hash;
-       proposalipfs.grandparent_hash = grandparent_hash;
+       proposalipfs.related_hash = related_hash;
+       proposalipfs.other_related_hash = other_related_hash;
 
        // Proposal freefields:
        ProposalFreefield storage proposalfree = propsfreefields[_proposed_release_hash];

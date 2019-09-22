@@ -108,6 +108,8 @@ contract EticaToken is ERC20Interface{
     uint public PERIOD_CURATION_REWARD_RATIO = 38196601125; // 38.196601125% of period reward will be used as curation reward
     uint public PERIOD_EDITOR_REWARD_RATIO = 61803398875; // 61.803398875% of period reward will be used as editor reward
 
+    uint public UNRECOVERABLE_ETI;
+
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
     string public foundermsgproof;
@@ -154,7 +156,6 @@ contract EticaToken is ERC20Interface{
     address public lastRewardTo;
     uint public lastRewardEthBlockNumber;
 
-    bool locked = false;
 
     mapping(bytes32 => bytes32) solutionForChallenge;
 
@@ -209,8 +210,6 @@ contract EticaToken is ERC20Interface{
       // --- MINING REWARD --- //
       _totalMiningSupply = 11550000 * 10**uint(decimals);
 
-      if(locked) revert();
-      locked = true;
 
       tokensMinted = 0;
 
@@ -1091,6 +1090,8 @@ function createdisease(string memory _name) public {
   // transfer DISEASE_CREATION_AMOUNT ETI from user wallet to contract wallet:
   transfer(address(this), DISEASE_CREATION_AMOUNT);
 
+  UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(DISEASE_CREATION_AMOUNT);
+
   // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
@@ -1523,6 +1524,7 @@ if(proposaldata.slashingratio > 9050){
       if(vote.is_editor){
         _feeRemaining = vote.amount;
       }
+    UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
      // update _slashRemaining 
     _slashRemaining = vote.amount.sub(_feeRemaining);
 

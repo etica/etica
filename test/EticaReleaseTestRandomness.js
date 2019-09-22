@@ -703,6 +703,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     let disease1_proposals_before = await EticaReleaseInstance.getdiseaseproposals(EXPECTED_FIRST_DISEASE_HASH);
                     console.log('disease1_proposals before proposal creation', disease1_proposals_before);
 
+                    let all_proposals_before = await EticaReleaseInstance.getallproposals();
+                    console.log('all_proposals before proposal creation', all_proposals_before);
+
 
                     return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6","Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards", {from: test_account.address}).then(async function(response){
 
@@ -754,6 +757,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
                     let disease1_proposals_after = await EticaReleaseInstance.getdiseaseproposals(EXPECTED_FIRST_DISEASE_HASH);
                     console.log('disease1_proposals after proposal creation', disease1_proposals_after);
+
+                    let all_proposals_after = await EticaReleaseInstance.getallproposals();
+                    console.log('all_proposals after proposal creation', all_proposals_after);
 
                     // ------------ WARNING
                     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered

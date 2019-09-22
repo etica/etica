@@ -640,6 +640,7 @@ mapping(bytes32 => bytes32[]) public diseaseproposals; // mapping of array of al
 
 // -----------  PROPOSALS MAPPINGS ------------  //
 mapping(bytes32 => Proposal) public proposals;
+mapping(uint => bytes32) public proposalsbyIndex; // get proposal.proposed_release_hash by giving its id (index): example: [2] => [huhihgfytoouhi]  where huhihgfytoouhi is proposed_release_hash of a Proposal
 uint public proposalsCounter;
 
 mapping(bytes32 => ProposalData) public propsdatas;
@@ -1639,6 +1640,16 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
  }
   function getdiseaseproposalscount(bytes32 _diseasehash) public view returns (uint _proposalsnb){
      return diseaseproposals[_diseasehash].length;
+ }
+
+ function getallproposals() public view returns (bytes32[] memory _proposals){
+   uint _indx = 0;
+   bytes32[] memory _okproposals;
+   for(uint _propidx = 1; _propidx <= proposalsCounter;  _propidx++) {
+    _okproposals[_indx] = proposals[proposalsbyIndex[_propidx]].proposed_release_hash;
+    _indx = _indx.add(1);
+    }
+     return _okproposals;
  }
 // -------------  GETTER FUNCTIONS ---------------- //
 

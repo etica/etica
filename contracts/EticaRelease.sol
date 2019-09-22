@@ -636,6 +636,8 @@ uint public diseasesCounter;
 mapping(bytes32 => uint) public diseasesbyIds; // get disease.index by giving its disease_hash: example: [leiojej757575ero] => [0]  where leiojej757575ero is disease_hash of a Disease
 mapping(string => bytes32) private diseasesbyNames; // get disease.disease_hash by giving its name: example: ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is disease_hash of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
+mapping(bytes32 => bytes32[]) public diseaseproposals; // mapping of array of all proposals for a disease
+
 // -----------  PROPOSALS MAPPINGS ------------  //
 mapping(bytes32 => Proposal) public proposals;
 uint public proposalsCounter;
@@ -1128,6 +1130,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
      bytes32 _proposed_release_hash = keccak256(abi.encode(raw_release_hash, _diseasehash));
+     diseaseproposals[_diseasehash].push(_proposed_release_hash);
 
      proposalsCounter = proposalsCounter.add(1); // notice that first proposal will have the index of 1 thus not 0 !
 
@@ -1629,6 +1632,13 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
 
  function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
      return diseasesbyNames[_name];
+ }
+
+ function getdiseaseproposals(bytes32 _diseasehash) public view returns (bytes32[] memory _proposals){
+     return diseaseproposals[_diseasehash];
+ }
+  function getdiseaseproposalscount(bytes32 _diseasehash) public view returns (uint _proposalsnb){
+     return diseaseproposals[_diseasehash].length;
  }
 // -------------  GETTER FUNCTIONS ---------------- //
 

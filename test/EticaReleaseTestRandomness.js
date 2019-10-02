@@ -324,7 +324,6 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
         //console.log('NUMBER OF PERIODS IS:', periodsCounter);
         assert.equal(first_period.id.toNumber(), 1, 'First period should exists');
         assert.equal(periodsCounter, 1, 'First period should exists');
-        assert.equal(first_period.total_voters.toNumber(), 0, 'First period nb voters should be 0');
         console.log('................................  CAN CREATE A PERIOD  ....................... ');
         console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
         })
@@ -428,8 +427,6 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
               //console.log('test_account Stake before:', test_accountstakebefore);
               //console.log('test_account Stake amount before:', web3.utils.fromWei(test_accountstakebefore.amount, "ether" ));
 
-
-              //console.log('stake starting block is:', test_accountstakebefore.startTime.toString());
               //console.log('stake ending block is:', test_accountstakebefore.endTime.toString());
 
               console.log('------------- BEGIN BLOCKS ADVANCEMENT --------------');
@@ -741,7 +738,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), '0', 'First proposal should exist with right lasteditor_weight');
 
                     let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                    assert.equal(first_period.total_voters.toNumber(), 0, 'First period should have 0 voter');
+                    //assert.equal(first_period.total_voters.toNumber(), 0, 'First period should have 0 voter');
                     assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
                     assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
 
@@ -1335,7 +1332,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                           assert.equal(web3.utils.fromWei(miner_account_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(miner_account_bosomsafter.toString(), "ether" ), "1", 'miner_account should have 1 Bosom less!');*/
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                          assert.equal(first_period.total_voters.toNumber(), 0, 'First period should not have any vote at this stage');
+                          //assert.equal(first_period.total_voters.toNumber(), 0, 'First period should not have any vote at this stage');
 
 
                         // ------------ WARNING
@@ -1403,7 +1400,7 @@ it("can revealvote against Proposal", async function () {
     assert.equal(web3.utils.fromWei(test_account_5_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_5_bosomsafter.toString(), "ether" ), "0", 'test_account5 should have same amount of Bosoms!');
 
     let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-    assert.equal(first_period.total_voters.toNumber(), 1, 'First period should have 1 voters');
+    //assert.equal(first_period.total_voters.toNumber(), 1, 'First period should have 1 voters');
     assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
     assert.equal(first_period.againstprops.toNumber(), 1, 'First period should have 1 againstprops');
 
@@ -1462,7 +1459,7 @@ it("can revealvote against Proposal", async function () {
                           assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');*/
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                          assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
+                          //assert.equal(first_period.total_voters.toNumber(), 2, 'First period should have 2 voters');
                           assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
                           assert.equal(first_period.againstprops.toNumber(), 1, 'First period should have 1 againstprops');
                   
@@ -1572,7 +1569,7 @@ it("can revealvote against Proposal", async function () {
                           assert.equal(web3.utils.fromWei(test_account_2_bosomsbefore.toString(), "ether" ) - web3.utils.fromWei(test_account_2_bosomsafter.toString(), "ether" ), "1", 'test_account2 should have 1 Bosom less!');*/
 
                           let first_period = await EticaReleaseInstance.periods(first_proposal.period_id);
-                          assert.equal(first_period.total_voters.toNumber(), 3, 'First period should have 3 voters');
+                          //assert.equal(first_period.total_voters.toNumber(), 3, 'First period should have 3 voters');
                           assert.equal(first_period.forprops.toNumber(), 1, 'First period should have 1 forprops');
                           assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
                       
@@ -1823,7 +1820,6 @@ it("can revealvote against Proposal", async function () {
                                 let test_account5stakebefore = await EticaReleaseInstance.stakes(test_account5.address,1);
                                 console.log('test_account5 first stake BEFORE CLMPROPBYHASH WAS:', test_account5stakebefore);
                                  console.log('stake amount is', test_account5stakebefore.amount.toString());
-                                 console.log('stake startTime is', test_account5stakebefore.startTime.toString());
                                  console.log('stake endTime is', test_account5stakebefore.endTime.toString());
 
                                 await advanceminutes(6);
@@ -1846,7 +1842,6 @@ it("can revealvote against Proposal", async function () {
                                  let test_account5stakeafter = await EticaReleaseInstance.stakes(test_account5.address,1);
                                  console.log('test_account5 stake AFTER CLMPROPBYHASH IS:', test_account5stakeafter);
                                  console.log('stake amount is', test_account5stakeafter.amount.toString());
-                                 console.log('stake startTime is', test_account5stakebefore.startTime.toString());
                                  console.log('stake endTime is', test_account5stakeafter.endTime.toString());
         
         

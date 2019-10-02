@@ -538,7 +538,6 @@ struct Period{
     uint interval;
     uint curation_sum; // used for proposals weight system
     uint editor_sum; // used for proposals weight system
-    uint total_voters; // Total nb of voters in this period
     uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
     uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
     uint forprops; // number of accepted proposals in this period
@@ -547,7 +546,6 @@ struct Period{
 
   struct Stake{
       uint amount;
-      uint startTime; // CREATION Time of the struct, doesnt represent the actual time when the stake STARTED as stakescsldt() can create consolidated Stakes with increased startTime
       uint endTime; // Time when the stake will be claimable
   }
 
@@ -752,7 +750,6 @@ function newPeriod() internal {
     _interval,
     0x0, //_curation_sum
     0x0, //_editor_sum
-    0x0, //_total_voters;
     0x0, //_reward_for_curation
     0x0, //_reward_for_editor
     0x0, // _forprops
@@ -874,7 +871,6 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // startTime
       endTime // endTime
     );
 
@@ -895,7 +891,6 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // startTime
       _endTime // endTime
     );
 
@@ -908,7 +903,7 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
 
 // ----  split Stake ------  //
 
-function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
+function splitStake(address _staker, uint _amount, uint _endTime) internal returns (bool success) {
 
     require(_amount > 0);
     stakesCounters[_staker] = stakesCounters[_staker].add(1); // notice that first stake will have the index of 1 thus not 0 !
@@ -916,7 +911,6 @@ function splitStake(address _staker, uint _amount, uint _startTime, uint _endTim
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      _startTime, // startTime
       _endTime // endTime
     );
 
@@ -974,7 +968,6 @@ function _deletestake(address _staker,uint _index) internal {
   // remove last stake
   stakes[_staker][stakesCounters[_staker]] = Stake(
     0x0, // amount
-    0x0, // startTime
     0x0 // endTime
     );
 
@@ -1073,7 +1066,6 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
   // store this stake in _staker's stakes with the index stakesCounters[_staker]
   stakes[msg.sender][stakesCounters[msg.sender]] = Stake(
       _restAmount, // stake amount
-      block.timestamp, // startTime
       _stake.endTime // endTime
     );
   // ------ creates a new stake with the rest ------- //  
@@ -1384,7 +1376,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
         }
         // updates period forvotes and againstvotes system done
-        period.total_voters = period.total_voters.add(1);
 
          // Proposal and Period new weight
          if (_istie) {
@@ -1540,7 +1531,6 @@ if(_slashRemaining > 0){
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
  
         stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
-        stakes[msg.sender][_stakeidx].startTime = block.timestamp;
         _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
         
        if(_slashRemaining == 0){
@@ -1550,7 +1540,6 @@ if(_slashRemaining > 0){
       else {
         // The slash amount does not fill a full stake, so the stake needs to be split
         uint newAmount = stakes[msg.sender][_stakeidx].amount.sub(_slashRemaining);
-        uint oldTimestamp = stakes[msg.sender][_stakeidx].startTime;
         uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
 
         // slash amount split in _slashRemaining and newAmount
@@ -1559,7 +1548,7 @@ if(_slashRemaining > 0){
 
         if(newAmount > 0){
           // create a new stake with the rest of what remained from original stake that was split in 2
-          splitStake(msg.sender, newAmount, oldTimestamp, oldCompletionTime);
+          splitStake(msg.sender, newAmount, oldCompletionTime);
         }
 
         break;

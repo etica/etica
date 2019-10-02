@@ -113,6 +113,8 @@ contract EticaToken is ERC20Interface{
     uint public PERIOD_CURATION_REWARD_RATIO = 38196601125; // 38.196601125% of period reward will be used as curation reward
     uint public PERIOD_EDITOR_REWARD_RATIO = 61803398875; // 61.803398875% of period reward will be used as editor reward
 
+    uint public UNRECOVERABLE_ETI;
+
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
     string public foundermsgproof;
@@ -159,7 +161,6 @@ contract EticaToken is ERC20Interface{
     address public lastRewardTo;
     uint public lastRewardEthBlockNumber;
 
-    bool locked = false;
 
     mapping(bytes32 => bytes32) solutionForChallenge;
 
@@ -215,8 +216,6 @@ contract EticaToken is ERC20Interface{
       // --- MINING REWARD --- //
       _totalMiningSupply = 11550000 * 10**uint(decimals);
 
-      if(locked) revert();
-      locked = true;
 
       tokensMinted = 0;
 
@@ -513,7 +512,7 @@ function () payable external {
 
 
 
-contract EticaReleaseProtocolTest is EticaToken {
+contract EticaRelease is EticaToken {
   /* --------- PROD VALUES -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
@@ -643,8 +642,12 @@ uint public diseasesCounter;
 mapping(bytes32 => uint) public diseasesbyIds; // get disease.index by giving its disease_hash: example: [leiojej757575ero] => [0]  where leiojej757575ero is disease_hash of a Disease
 mapping(string => bytes32) private diseasesbyNames; // get disease.disease_hash by giving its name: example: ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is disease_hash of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
+mapping(bytes32 => mapping(uint => bytes32)) public diseaseproposals; // mapping of mapping of all proposals for a disease
+mapping(bytes32 => uint) public diseaseProposalsCounter; // keeps track of how many proposals for each disease
+
 // -----------  PROPOSALS MAPPINGS ------------  //
 mapping(bytes32 => Proposal) public proposals;
+mapping(uint => bytes32) public proposalsbyIndex; // get proposal.proposed_release_hash by giving its id (index): example: [2] => [huhihgfytoouhi]  where huhihgfytoouhi is proposed_release_hash of a Proposal
 uint public proposalsCounter;
 
 mapping(bytes32 => ProposalData) public propsdatas;
@@ -846,7 +849,6 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
 function bosomget (address _staker, uint _amount) internal {
 
 addStake(_staker, _amount);
-
 bosoms[_staker] = bosoms[_staker].add(_amount);
 
 }
@@ -1098,6 +1100,8 @@ function createdisease(string memory _name) public {
   // transfer DISEASE_CREATION_AMOUNT ETI from user wallet to contract wallet:
   transfer(address(this), DISEASE_CREATION_AMOUNT);
 
+  UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(DISEASE_CREATION_AMOUNT);
+
   // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
 
@@ -1134,6 +1138,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
      bytes32 _proposed_release_hash = keccak256(abi.encode(raw_release_hash, _diseasehash));
+     diseaseProposalsCounter[_diseasehash] = diseaseProposalsCounter[_diseasehash].add(1);
+     diseaseproposals[_diseasehash][diseaseProposalsCounter[_diseasehash]] = _proposed_release_hash;
 
      proposalsCounter = proposalsCounter.add(1); // notice that first proposal will have the index of 1 thus not 0 !
 
@@ -1530,6 +1536,7 @@ if(proposaldata.slashingratio > 9050){
       if(vote.is_editor){
         _feeRemaining = vote.amount;
       }
+    UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
      // update _slashRemaining 
     _slashRemaining = vote.amount.sub(_feeRemaining);
 
@@ -1634,6 +1641,16 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
 
  function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
      return diseasesbyNames[_name];
+ }
+
+ function getallproposals() public view returns (bytes32[] memory _proposals){
+   uint _indx = 0;
+   bytes32[] memory _okproposals;
+   for(uint _propidx = 1; _propidx <= proposalsCounter;  _propidx++) {
+    _okproposals[_indx] = proposals[proposalsbyIndex[_propidx]].proposed_release_hash;
+    _indx = _indx.add(1);
+    }
+     return _okproposals;
  }
 // -------------  GETTER FUNCTIONS ---------------- //
 

@@ -707,38 +707,27 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     console.log('all_proposals before proposal creation', all_proposals_before);
                     assert(disease1_proposal1_before == 0x0, 'This disease should not have any proposal yet');
 
-
-                    return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6","Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards", {from: test_account.address}).then(async function(response){
+                    
+                    return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t","Use this field as the community created standards",0, {from: test_account.address}).then(async function(response){
 
                     let first_proposal = await EticaReleaseInstance.proposals(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                     //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-                    let first_proposal_ipfs = await EticaReleaseInstance.propsipfs(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
-                    //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
-
                     let first_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                     //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
-
-                    let first_proposal_freefields = await EticaReleaseInstance.propsfreefields(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
-                    //console.log('THE FIRST PROPOSAL FREEFIELDS IS:', first_proposal_freefields);
 
                     // check Proposal's general information:
                     assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
                     assert(first_proposal.period_id >= 1);
                     assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should exist with right name');
                     assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should exist with right description');
+                    assert.equal(first_proposal.chunk_id, 0x0, 'First proposal should exist with right chunk_id');
+                    assert.equal(first_proposal.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
+                    assert.equal(first_proposal.freefield, 'Use this field as the community created standards', 'First proposal should exist with right freefield');
                     assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
-
-                    // check Proposal's IPFS:
-                    assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should exist with right raw_release_hash');
-                    assert.equal(first_proposal_ipfs.related_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should exist with right related_hash');
-                    assert.equal(first_proposal_ipfs.other_related_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should exist with right other_related_hash');
-
-                    // check Proposal's FREEFIELDS:
-                    assert.equal(first_proposal_freefields.firstfield, 'Targets:[one_target_here,another_target_here]', 'First proposal should exist with right firstfield');
-                    assert.equal(first_proposal_freefields.secondfield, 'Compounds:[one_compound_here, another_compound_here]', 'First proposal should exist with right secondfield');
-                    assert.equal(first_proposal_freefields.thirdfield, 'Use this field as the community created standards', 'First proposal should exist with right thirdfield');
+                    
+            
 
                     // check Proposal's DATA:
                     assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
@@ -801,9 +790,6 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
                         //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
-                        let first_proposal_ipfs = await EticaReleaseInstance.propsipfs(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
-                        //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
-
                         let first_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH);
                         //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
 
@@ -811,12 +797,10 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should have kept the same disease_id');
                         assert.equal(first_proposal.title, 'Proposal Crisper K32 for Malaria', 'First proposal should have kept the same name');
                         assert.equal(first_proposal.description, 'Using Crisper to treat Malaria', 'First proposal should have kept the same description');
+                        assert.equal(first_proposal.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should have kept the same raw_release_hash');
+                        assert.equal(first_proposal.freefield, 'Use this field as the community created standards', 'First proposal should have kept the same freefield');
                         assert.equal(proposalsCounter, 1, 'There should be exactly 1 proposal at this point');
 
-                        // check Proposal's IPFS:
-                        assert.equal(first_proposal_ipfs.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'First proposal should have kept the same raw_release_hash');
-                        assert.equal(first_proposal_ipfs.related_hash, 'QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA', 'First proposal should have kept the same related_hash');
-                        assert.equal(first_proposal_ipfs.other_related_hash, 'QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6', 'First proposal should have kept the same other_related_hash');
 
                         // check Proposal's DATA:
                         assert.equal(first_proposal_data.status, '2', 'First proposal should have kept the same status');

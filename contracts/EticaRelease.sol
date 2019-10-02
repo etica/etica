@@ -559,9 +559,12 @@ struct Period{
       bytes32 proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
       bytes32 disease_id;
       uint period_id;
+      uint chunk_id;
       address proposer; // address of the proposer
       string title; // Title of the Proposal
       string description; // Description of the Proposal
+      string freefield;
+      string raw_release_hash;
   }
 
 // main data of Proposal:
@@ -579,19 +582,6 @@ struct Period{
       uint againstvotes;
       uint lastcuration_weight; // period curation weight of proposal
       uint lasteditor_weight; // period editor weight of proposal
-  }
-
-  struct ProposalIpfs{
-    // IPFS hashes of the files:
-    string raw_release_hash; // IPFS hash of the files of the proposal
-    string related_hash; // raw IPFS hash of a related proposal
-    string other_related_hash; // raw IPFS hash of an other related proposal
-  }
-
-  struct ProposalFreefield{
-    string firstfield;
-    string secondfield;
-    string thirdfield;
   }
 
   // -----------  PROPOSALS STRUCTS ------------  //
@@ -656,8 +646,6 @@ mapping(uint => bytes32) public proposalsbyIndex; // get proposal.proposed_relea
 uint public proposalsCounter;
 
 mapping(bytes32 => ProposalData) public propsdatas;
-mapping(bytes32 => ProposalIpfs) public propsipfs;
-mapping(bytes32 => ProposalFreefield) public propsfreefields;
 // -----------  PROPOSALS MAPPINGS ------------  //
 
 // -----------  CHUNKS MAPPINGS ----------------  //
@@ -688,7 +676,8 @@ event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, ui
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title);
-event NewProposal(bytes32 proposed_release_hash);
+event NewProposal(bytes32 proposed_release_hash, address _proposer, bytes32 diseasehash, uint chunkid);
+event NewChunk(uint chunkid, bytes32 diseasehash);
 event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewCommit(bytes32 votehash);
 event NewReveal(bytes32 votehash);
@@ -1143,8 +1132,7 @@ function createdisease(string memory _name) public {
 
 
 
-function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
-  string memory related_hash, string memory other_related_hash, string memory _firstfield, string memory _secondfield, string memory _thirdfield) public {
+function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash, string memory _freefield, uint _chunkid) public {
 
     //check if the disease exits
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
@@ -1175,23 +1163,13 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposal.id = proposalsCounter;
        proposal.disease_id = _diseasehash; // _diseasehash has already been checked to equal diseases[diseasesbyIds[_diseasehash]].disease_hash
        proposal.period_id = IntervalsPeriods[_current_interval];
+       proposal.chunk_id = _chunkid;
        proposal.proposed_release_hash = _proposed_release_hash; // Hash of "raw_release_hash + name of Disease",
        proposal.proposer = msg.sender;
        proposal.title = _title;
        proposal.description = _description;
-
-
-       // Proposal IPFS:
-       ProposalIpfs storage proposalipfs = propsipfs[_proposed_release_hash];
-       proposalipfs.raw_release_hash = raw_release_hash;
-       proposalipfs.related_hash = related_hash;
-       proposalipfs.other_related_hash = other_related_hash;
-
-       // Proposal freefields:
-       ProposalFreefield storage proposalfree = propsfreefields[_proposed_release_hash];
-       proposalfree.firstfield = _firstfield;
-       proposalfree.secondfield = _secondfield;
-       proposalfree.thirdfield = _thirdfield;
+       proposal.raw_release_hash = raw_release_hash;
+       proposal.freefield = _freefield;
 
 
        //  Proposal Data:
@@ -1237,14 +1215,14 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
   
   
         // updates chunk proposals infos:
-  //chunkProposalsCounter[proposal.chunk_id] = chunkProposalsCounter[proposal.chunk_id].add(1);
-  //chunkproposals[proposal.chunk_id][chunkProposalsCounter[proposal.chunk_id]] = proposal.proposed_release_hash;
+  chunkProposalsCounter[proposal.chunk_id] = chunkProposalsCounter[proposal.chunk_id].add(1);
+  chunkproposals[proposal.chunk_id][chunkProposalsCounter[proposal.chunk_id]] = proposal.proposed_release_hash;
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
   RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
 
-    emit NewProposal(_proposed_release_hash);
+    emit NewProposal(_proposed_release_hash, msg.sender, proposal.disease_id, _chunkid);
 
 }
 

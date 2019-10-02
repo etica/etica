@@ -1200,14 +1200,15 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
       // UPDATE PROPOSAL:
       proposaldata.prestatus = ProposalStatus.Singlevoter;
-  
-  // if chunk exists updates proposal.chunk_id and diseasechunks:
-  if (diseasechunks[_diseasehash][_chunkid] != 0){
-  proposal.chunk_id = _chunkid;
-  // updates chunk proposals infos:
-  chunkProposalsCounter[proposal.chunk_id] = chunkProposalsCounter[proposal.chunk_id].add(1);
-  chunkproposals[proposal.chunk_id][chunkProposalsCounter[proposal.chunk_id]] = proposal.proposed_release_hash;
-  }
+
+      // if chunk exists updates proposal.chunk_id and diseasechunks:
+      uint existing_chunk = chunks[_chunkid].id;
+      if(existing_chunk != 0x0 && chunks[_chunkid].diseaseid == _diseasehash) {
+        proposal.chunk_id = _chunkid;
+        // updates chunk proposals infos:
+        chunkProposalsCounter[_chunkid] = chunkProposalsCounter[_chunkid].add(1);
+        chunkproposals[_chunkid][chunkProposalsCounter[_chunkid]] = proposal.proposed_release_hash;
+      }
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 

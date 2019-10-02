@@ -670,16 +670,16 @@ mapping(address => uint) public blockedeticas;
 
 // ---------- EVENTS ----------- //
 event CreatedPeriod(uint period_id, uint interval);
-event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, uint periodrwdeditor);
-event NewStake(address indexed staker, uint amount);
-event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title);
 event NewProposal(bytes32 proposed_release_hash, address _proposer, bytes32 diseasehash, uint chunkid);
 event NewChunk(uint chunkid, bytes32 diseasehash);
-event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
-event NewCommit(bytes32 votehash);
-event NewReveal(bytes32 votehash);
-event NewSnap(uint stakeidx, uint amount);
+event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
+event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
+event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
+event NewCommit(address _voter, bytes32 votehash);
+event NewReveal(address _voter, bytes32 _proposal);
+event NewStake(address indexed staker, uint amount);
+event StakeClaimed(address indexed staker, uint stakeamount);
 // ----------- EVENTS ---------- //
 
 
@@ -724,8 +724,6 @@ supply = supply.add(_periodsupply);
 balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
 PeriodsIssuedCounter = PeriodsIssuedCounter.add(1);
-
-emit IssuedPeriod(periodsCounter, _periodsupply, period.reward_for_curation, period.reward_for_editor);
 
 return true;
 
@@ -914,7 +912,6 @@ function splitStake(address _staker, uint _amount, uint _endTime) internal retur
       _endTime // endTime
     );
 
-    emit NewStake(_staker, _amount);
 
     return true;
 }
@@ -944,7 +941,7 @@ function stakeclmidx (uint _stakeidx) public {
   balances[msg.sender] = balances[msg.sender].add(_stake.amount);
 
   emit Transfer(address(this), msg.sender, _stake.amount);
-  emit StakeClaimed(msg.sender, _stakeidx);
+  emit StakeClaimed(msg.sender, _stake.amount);
 
   // deletes the stake
   _deletestake(msg.sender, _stakeidx);
@@ -1070,7 +1067,6 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
     );
   // ------ creates a new stake with the rest ------- //  
 
-emit NewSnap(_stakeidx, _snapamount);
 
 }
 
@@ -1136,7 +1132,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
      diseaseproposals[_diseasehash][diseaseProposalsCounter[_diseasehash]] = _proposed_release_hash;
 
      proposalsCounter = proposalsCounter.add(1); // notice that first proposal will have the index of 1 thus not 0 !
-
+     proposalsbyIndex[proposalsCounter] = _proposed_release_hash;
 
      // Check that proposal does not already exist
      // only allow one proposal for each {raw_release_hash,  _diseasehash} combinasion
@@ -1252,7 +1248,7 @@ require(_amount > 0);
 
  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH
 
-emit NewCommit(_votehash);
+emit NewCommit(msg.sender, _votehash);
 
  }
 
@@ -1408,7 +1404,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          
         // resets commit to save space: 
         _removecommit(_votehash);
-        emit NewReveal(_votehash);
+        emit NewReveal(msg.sender, proposal.proposed_release_hash);
 
   }
 
@@ -1498,6 +1494,7 @@ if(proposaldata.slashingratio > 9050){
       if(vote.is_editor){
         _feeRemaining = vote.amount;
       }
+    emit NewFee(msg.sender, _feeRemaining, vote.proposal_hash);  
     UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
      // update _slashRemaining 
     _slashRemaining = vote.amount.sub(_feeRemaining);
@@ -1526,6 +1523,7 @@ if(proposaldata.slashingratio > 9050){
 
 // SLASH only if slash remaining > 0
 if(_slashRemaining > 0){
+  emit NewSlash(msg.sender, _slashRemaining, vote.proposal_hash);
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
@@ -1582,7 +1580,7 @@ if(_slashRemaining > 0){
     balances[msg.sender] = balances[msg.sender].add(_reward_amount);
 
     emit Transfer(address(this), msg.sender, _reward_amount);
-    emit VoteClaimed(msg.sender, _reward_amount, _proposed_release_hash);
+    emit RewardClaimed(msg.sender, _reward_amount, _proposed_release_hash);
    }
 
   }   // end bracket if (proposaldata.istie not true)

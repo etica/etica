@@ -525,8 +525,6 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
 
 
 
-
-
             // test Disease creation without enough ETI should fail
               it("cannot create a new disease if account has not enough ETI:", async function () {
                 console.log('------------------------------- Starting test ---------------------------');
@@ -634,6 +632,33 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             })
 
                 });
+
+                // test Disease creation without enough ETI should fail
+              it("cannot create a new chunk if account has not enough ETI:", async function () {
+                console.log('------------------------------- Starting test ---------------------------');
+                console.log('.......................... Cannot CREATE A NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ?  ..................... ');
+                let test_account3balancebefore = await EticaReleaseInstance.balanceOf(test_account3.address);
+                let first_chunk = await EticaReleaseInstance.chunks(1);
+                let chunksCounter = await EticaReleaseInstance.chunksCounter();
+                //console.log('test_account ETI balance before:', web3.utils.fromWei(test_accountbalancebefore, "ether" ));
+                //console.log('(should be empty as no disease exists yet) FIRST DISEASE IS:', first_disease);
+                //console.log('(should be 0 as no disease exists yet) NUMBER OF DISEASES IS:', diseasesCounter);
+                assert.equal(chunksCounter, "0", 'THERE SHOULD NOT BE ANY CHUNK YET');
+
+                assert(web3.utils.fromWei(test_account3balancebefore, "ether" ) < 5, 'test_account3 should not have enough ETI before CALLING createchunk FUNCTION, please rekaunch the tests will be more lucky next time !');
+               // try create new chunk:
+                  return EticaReleaseInstance.createchunk(EXPECTED_FIRST_DISEASE_HASH, "Title Chunk 1", "This the desc of first Chunk to fight and Beat Malaria", {from: test_account3.address}).then(assert.fail)
+                  .catch(async function(error){
+                    assert(true);
+                    let test_account3balanceafter = await EticaReleaseInstance.balanceOf(test_account3.address);
+                    let first_chunk = await EticaReleaseInstance.chunks(1);
+                    let chunksCounter = await EticaReleaseInstance.chunksCounter();
+                    assert.equal(chunksCounter, "0", 'THERE SHOULD NOT BE ANY CHUNK YET');
+                    console.log('........................... Cannot CREATE A NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ....................... ');
+                    console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+                  });
+
+              });
 
 
                 // test_account will need more ETI to keep going with tests
@@ -1897,6 +1922,67 @@ it("can revealvote against Proposal", async function () {
                 });
 
             });
+
+              // test Disease creation without enough ETI should fail
+              it("can create a new chunk if account has enough ETI:", async function () {
+                console.log('------------------------------- Starting test ---------------------------');
+                console.log('.......................... Can CREATE A NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ?  ..................... ');
+                let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                let first_chunk = await EticaReleaseInstance.chunks(1);
+                let chunksCounter = await EticaReleaseInstance.chunksCounter();
+                console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+                assert.equal(chunksCounter, "0", 'THERE SHOULD NOT BE ANY CHUNK YET');
+
+                assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 5, 'miner_account should have enough ETI before CALLING createchunk FUNCTION, please rekaunch the tests will be more lucky next time !');
+               // try create new chunk:
+                  return EticaReleaseInstance.createchunk(EXPECTED_FIRST_DISEASE_HASH, "Title Chunk 1", "This the desc of first Chunk to fight and Beat Malaria", {from: miner_account.address})
+                  .then(async function(resp){
+                    let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
+                    let first_chunk = await EticaReleaseInstance.chunks(1);
+                    let chunksCounter = await EticaReleaseInstance.chunksCounter();
+                    console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
+                    assert.equal(chunksCounter, "1", 'THERE SHOULD BE A NEW CHUNK NOW');
+                    assert.equal(first_chunk.id, "1", 'The chunk should have the right id');
+                    assert.equal(first_chunk.diseaseid, EXPECTED_FIRST_DISEASE_HASH, 'The chunk should have the diseaseid');
+                    assert.equal(first_chunk.idx, "1", 'The chunk should have the right index');
+                    assert.equal(first_chunk.title, "Title Chunk 1", 'The chunk should have the right title');
+                    assert.equal(first_chunk.desc, 'This the desc of first Chunk to fight and Beat Malaria');
+                    console.log('........................... Can CREATE A NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ....................... ');
+                    console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+                  });
+
+              });
+
+               // test Disease creation without enough ETI should fail
+               it("can create a new chunk if account has enough ETI:", async function () {
+                console.log('------------------------------- Starting test ---------------------------');
+                console.log('.......................... Can CREATE A ANOTHER NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ?  ..................... ');
+                let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                let first_chunk = await EticaReleaseInstance.chunks(1);
+                let chunksCounter = await EticaReleaseInstance.chunksCounter();
+                assert.equal(chunksCounter, "1", 'THERE SHOULD BE 1 CHUNK NOW');
+                console.log('miner_account ETI balance before:', web3.utils.fromWei(miner_accountbalancebefore, "ether" ));
+
+                assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 5, 'miner_account should have enough ETI before CALLING createchunk FUNCTION, please rekaunch the tests will be more lucky next time !');
+               // try create new chunk:
+                  return EticaReleaseInstance.createchunk(EXPECTED_FIRST_DISEASE_HASH, "Title Chunk 2", "This is the desc of second Chunk to fight and Beat Malaria", {from: miner_account.address})
+                  .then(async function(resp){
+                    assert(true);
+                    let miner_accountbalanceafter = await EticaReleaseInstance.balanceOf(miner_account.address);
+                    let second_chunk = await EticaReleaseInstance.chunks(2);
+                    let chunksCounter = await EticaReleaseInstance.chunksCounter();
+                    console.log('miner_account ETI balance after:', web3.utils.fromWei(miner_accountbalanceafter, "ether" ));
+                    assert.equal(chunksCounter, "2", 'THERE SHOULD BE 2 NEW CHUNKS NOW');
+                    assert.equal(second_chunk.id, "2", 'The chunk should have the right id');
+                    assert.equal(second_chunk.diseaseid, EXPECTED_FIRST_DISEASE_HASH, 'The chunk should have the diseaseid');
+                    assert.equal(second_chunk.idx, "2", 'The chunk should have the right index');
+                    assert.equal(second_chunk.title, "Title Chunk 2", 'The chunk should have the right title');
+                    assert.equal(second_chunk.desc, 'This is the desc of second Chunk to fight and Beat Malaria');
+                    console.log('........................... Can CREATE A NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ....................... ');
+                    console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
+                  });
+
+              });
 
 
   async function printBalances(accounts) {

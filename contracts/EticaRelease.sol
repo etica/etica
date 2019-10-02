@@ -589,7 +589,8 @@ struct Period{
     struct Chunk{
     uint id;
     bytes32 diseaseid; // hash of the disease
-    string name;
+    uint idx;
+    string title;
     string desc;
   }
 
@@ -1151,7 +1152,6 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposal.id = proposalsCounter;
        proposal.disease_id = _diseasehash; // _diseasehash has already been checked to equal diseases[diseasesbyIds[_diseasehash]].disease_hash
        proposal.period_id = IntervalsPeriods[_current_interval];
-       proposal.chunk_id = _chunkid;
        proposal.proposed_release_hash = _proposed_release_hash; // Hash of "raw_release_hash + name of Disease",
        proposal.proposer = msg.sender;
        proposal.title = _title;
@@ -1201,10 +1201,13 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       // UPDATE PROPOSAL:
       proposaldata.prestatus = ProposalStatus.Singlevoter;
   
-  
-        // updates chunk proposals infos:
+  // if chunk exists updates proposal.chunk_id and diseasechunks:
+  if (diseasechunks[_diseasehash][_chunkid] != 0){
+  proposal.chunk_id = _chunkid;
+  // updates chunk proposals infos:
   chunkProposalsCounter[proposal.chunk_id] = chunkProposalsCounter[proposal.chunk_id].add(1);
   chunkproposals[proposal.chunk_id][chunkProposalsCounter[proposal.chunk_id]] = proposal.proposed_release_hash;
+  }
 
   // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
@@ -1588,7 +1591,7 @@ if(_slashRemaining > 0){
   }
 
 
-    function createchunck(bytes32 _diseasehash, string memory _title, string memory _description) public {
+    function createchunk(bytes32 _diseasehash, string memory _title, string memory _description) public {
 
   //check if the disease exits
   require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
@@ -1603,17 +1606,18 @@ if(_slashRemaining > 0){
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
-  chunksCounter = chunksCounter.add(1);
+  chunksCounter = chunksCounter.add(1); // get general id of Chunk
 
   // updates disease's chunks infos:
-  diseasechunks[_diseasehash][chunksCounter] = chunksCounter;
-  diseaseChunksCounter[_diseasehash] = diseaseChunksCounter[_diseasehash].add(1);
+  diseaseChunksCounter[_diseasehash] = diseaseChunksCounter[_diseasehash].add(1); // Increase chunks index of Disease
+  diseasechunks[_diseasehash][diseaseChunksCounter[_diseasehash]] = chunksCounter;
   
 
   // store the Chunk
    chunks[chunksCounter] = Chunk(
-     chunksCounter,
-     _diseasehash,
+     chunksCounter, // general id of the chunk
+     _diseasehash, // disease of the chunk
+     diseaseChunksCounter[_diseasehash], // Index of chunk within disease
      _title,
      _description
    );

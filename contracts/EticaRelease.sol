@@ -1233,7 +1233,7 @@ DISEASE_CREATION_AMOUNT = _new_disease_cost;
 
  function commitvote(uint _amount, bytes32 _votehash) public {
 
-require(_amount > 0);
+require(_amount > 10);
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
@@ -1586,6 +1586,42 @@ if(_slashRemaining > 0){
   }   // end bracket if (proposaldata.istie not true)
   
   }
+
+
+    function createchunck(bytes32 _diseasehash, string memory _title, string memory _description) public {
+
+  //check if the disease exits
+  require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
+  if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+
+  // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  // make sure the user has enough ETI to create a chunk
+  require(balances[msg.sender] >= 5 * 10**(decimals));
+  // transfer 5 ETI from user wallet to contract wallet:
+  transfer(address(this), 5 * 10**(decimals));
+
+  // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  chunksCounter = chunksCounter.add(1);
+
+  // updates disease's chunks infos:
+  diseasechunks[_diseasehash][chunksCounter] = chunksCounter;
+  diseaseChunksCounter[_diseasehash] = diseaseChunksCounter[_diseasehash].add(1);
+  
+
+  // store the Chunk
+   chunks[chunksCounter] = Chunk(
+     chunksCounter,
+     _diseasehash,
+     _title,
+     _description
+   );
+
+  emit NewChunk(chunksCounter, _diseasehash);
+
+  }
+
 
 // -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
 

@@ -512,7 +512,7 @@ function () payable external {
 
 
 
-contract EticaRelease is EticaToken {
+contract EticaReleaseProtocolTest is EticaToken {
   /* --------- PROD VALUES -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours

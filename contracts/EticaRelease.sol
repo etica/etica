@@ -990,7 +990,7 @@ function _deletestake(address _staker,uint _index) internal {
 
 // slashing function needs to loop trough stakes. Can create issues for claiming votes:
 // The function stakescsldt() has been created to consolidate (gather) stakes when user has too much stakes
-function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
+function stakescsldt(uint _endTime, uint _min_limit, uint _maxidx) public {
 
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
 require(_endTime < block.timestamp.add(730 days)); // _endTime cannot be more than two years ahead  
@@ -1265,7 +1265,7 @@ emit NewCommit(_votehash);
  }
 
 
- function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount, string memory _vary) public {
+ function revealvote(bytes32 _proposed_release_hash, bool _approved, string memory _vary) public {
  
 
 // --- check commit --- //
@@ -1416,12 +1416,12 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          
         // resets commit to save space: 
-        _removecommit(msg.sender, _votehash);
+        _removecommit(_votehash);
         emit NewReveal(_votehash);
 
   }
 
-  function _removecommit(address _voter, bytes32 _votehash) internal {
+  function _removecommit(bytes32 _votehash) internal {
         commits[msg.sender][_votehash].amount = 0;
         commits[msg.sender][_votehash].timestamp = 0;
   }

@@ -1151,7 +1151,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             assert(lstblock.timestamp <= first_proposal_data_after.endtime + 60, 'Block timestamp should be lower than revealing time end before testing REVEALVOTE TOO SOON');
 
            // try to VOTE for proposal, should fail:
-           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('4', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, "random123", {from: test_account2.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
                 let test_account_2_balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
@@ -1318,7 +1318,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                       return EticaReleaseInstance.commitvote(web3.utils.toWei('2', 'ether'), expected_votehash, {from: miner_account.address}).then(async function(resp){
 
                       // the revealvote() should not work as the related commit was done too late:
-                      return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('2', 'ether'), "random123", {from: miner_account.address}).then(assert.fail)
+                      return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, "random123", {from: miner_account.address}).then(assert.fail)
                       .catch(async function(error){
                         assert(true);
 
@@ -1385,7 +1385,7 @@ it("can revealvote against Proposal", async function () {
   assert(lstblock.timestamp <= first_proposal_data_after.endtime + 60, 'Block timestamp should be lower than first proposal end OF REVEALING votes before testing CAN STILL REVEALVOTE against');
   assert(lstblock.timestamp > first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal end of VOTE COMMITTING OF before testing CAN REVEALVOTE against');
 
-  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, web3.utils.toWei('4', 'ether'), "random123", {from: test_account5.address}).then(async function(response){
+  return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, false, "random123", {from: test_account5.address}).then(async function(response){
 
     let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
     console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
@@ -1445,7 +1445,7 @@ it("can revealvote against Proposal", async function () {
                         let test_account_2_bosomsbefore = await EticaReleaseInstance.bosoms(test_account2.address);
                         //console.log('test_account Bosoms before revealvote IS:', web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ));
 
-                        return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('4', 'ether'), "random123", {from: test_account2.address}).then(async function(response){
+                        return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, "random123", {from: test_account2.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
@@ -1510,7 +1510,7 @@ it("can revealvote against Proposal", async function () {
             assert(lstblock.timestamp >= first_proposal_data_after.endtime, 'Block timestamp should be higher than first proposal endvote before testing CANNOT REVEAL VOTE TWICE ON SAME PROPOSAL');
 
            // try to VOTE for proposal, should fail:
-           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('4', 'ether'), "random123", {from: test_account2.address}).then(assert.fail)
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, "random123", {from: test_account2.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
                 let test_account_2_balanceafter = await EticaReleaseInstance.balanceOf(test_account2.address);
@@ -1555,7 +1555,7 @@ it("can revealvote against Proposal", async function () {
                         let test_account_4_bosomsbefore = await EticaReleaseInstance.bosoms(test_account4.address);
                         //console.log('test_account Bosoms before revealvote IS:', web3.utils.fromWei(test_account_2_bosomsbefore, "ether" ));
 
-                        return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('3', 'ether'), "random123", {from: test_account4.address}).then(async function(response){
+                        return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, "random123", {from: test_account4.address}).then(async function(response){
 
                           let first_proposal_data_after = await EticaReleaseInstance.propsdatas(first_proposal.proposed_release_hash);
                           console.log('THE FIRST PROPOSAL DATA AFTER revealvote IS:', first_proposal_data_after);
@@ -1623,7 +1623,7 @@ it("can revealvote against Proposal", async function () {
             assert(lstblock.timestamp > first_proposal_data_after.endtime.toNumber() + 60, 'Block timestamp should be higher than first proposal end OF revealvoting before testing CANNOT REVEALVOTE TOO LATE');
 
            // try to VOTE for proposal, should be too late:
-           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, web3.utils.toWei('1', 'ether'), "random123", {from: test_account3.address}).then(assert.fail)
+           return EticaReleaseInstance.revealvote(first_proposal.proposed_release_hash, true, "random123", {from: test_account3.address}).then(assert.fail)
               .catch(async function(error){
                 assert(true);
                 let test_account_3_balanceafter = await EticaReleaseInstance.balanceOf(test_account3.address);

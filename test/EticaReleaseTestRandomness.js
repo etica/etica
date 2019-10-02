@@ -700,11 +700,12 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     let test_accountbosomsbefore = await EticaReleaseInstance.bosoms(test_account.address);
                     //console.log('test_account Bosoms before:', web3.utils.fromWei(test_accountbosomsbefore, "ether" ));
 
-                    let disease1_proposals_before = await EticaReleaseInstance.getdiseaseproposals(EXPECTED_FIRST_DISEASE_HASH);
-                    console.log('disease1_proposals before proposal creation', disease1_proposals_before);
+                    let disease1_proposal1_before = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,1);
+                    console.log('disease1_proposal1 before proposal creation', disease1_proposal1_before);
 
                     let all_proposals_before = await EticaReleaseInstance.getallproposals();
                     console.log('all_proposals before proposal creation', all_proposals_before);
+                    assert(disease1_proposal1_before == 0x0, 'This disease should not have any proposal yet');
 
 
                     return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6","Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards", {from: test_account.address}).then(async function(response){
@@ -755,11 +756,12 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     assert.equal(first_period.forprops.toNumber(), 0, 'First period should have 0 forprops');
                     assert.equal(first_period.againstprops.toNumber(), 0, 'First period should have 0 againstprops');
 
-                    let disease1_proposals_after = await EticaReleaseInstance.getdiseaseproposals(EXPECTED_FIRST_DISEASE_HASH);
-                    console.log('disease1_proposals after proposal creation', disease1_proposals_after);
+                    let disease1_proposal1_after = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,1);
+                    console.log('disease1_proposal1 after proposal creation', disease1_proposal1_after);
+                    assert(disease1_proposal1_after != 0x0, 'This disease should have one proposal now');
 
-                    let all_proposals_after = await EticaReleaseInstance.getallproposals();
-                    console.log('all_proposals after proposal creation', all_proposals_after);
+                    /*let all_proposals_after = await EticaReleaseInstance.getallproposals();
+                    console.log('all_proposals after proposal creation', all_proposals_after);*/
 
                     // ------------ WARNING
                     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered

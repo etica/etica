@@ -1209,44 +1209,12 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.endtime = block.timestamp.add(DEFAULT_VOTING_TIME);
 
 
-  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+// --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
-  defaultvote(_proposed_release_hash);
-
-  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-
-  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
-
-    emit NewProposal(_proposed_release_hash);
-
-}
-
-
-
- function defaultvote(bytes32 _proposed_release_hash) internal {
-
-   require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
-
-   //check if the proposal exists and that we get the right proposal:
-   Proposal storage proposal = proposals[_proposed_release_hash];
-   require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
-
-
-   ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
-    // Verify voting is still in progress
-    require( block.timestamp < proposaldata.endtime);
-
-
-    // default vote can't be called twice on same proposal:
-    // can vote for proposal only if default vote hasn't changed prestatus of Proposal yet. Thus can default vote only if default vote has not occured yet
-    require(proposaldata.prestatus == ProposalStatus.Pending);
+    require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
 
     // Consume bosom:
     bosoms[msg.sender] = bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
-
-
-   // get Period of Proposal:
-   Period storage period = periods[proposal.period_id];
 
 
     // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
@@ -1266,8 +1234,19 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
       // UPDATE PROPOSAL:
       proposaldata.prestatus = ProposalStatus.Singlevoter;
+  
+  
+        // updates chunk proposals infos:
+  //chunkProposalsCounter[proposal.chunk_id] = chunkProposalsCounter[proposal.chunk_id].add(1);
+  //chunkproposals[proposal.chunk_id][chunkProposalsCounter[proposal.chunk_id]] = proposal.proposed_release_hash;
 
- }
+  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
+
+    emit NewProposal(_proposed_release_hash);
+
+}
 
 
  function updatecost() public {

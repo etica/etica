@@ -596,6 +596,17 @@ struct Period{
 
   // -----------  PROPOSALS STRUCTS ------------  //
 
+    // -----------  CHUNKS STRUCTS ------------  //
+
+    struct Chunk{
+    uint id;
+    bytes32 diseaseid; // hash of the disease
+    string name;
+    string desc;
+  }
+
+  // -----------  CHUNKS STRUCTS ------------  //
+
   // -----------  VOTES STRUCTS ----------------  //
   struct Vote{
     bytes32 proposal_hash; // proposed_release_hash of proposal
@@ -648,6 +659,15 @@ mapping(bytes32 => ProposalData) public propsdatas;
 mapping(bytes32 => ProposalIpfs) public propsipfs;
 mapping(bytes32 => ProposalFreefield) public propsfreefields;
 // -----------  PROPOSALS MAPPINGS ------------  //
+
+// -----------  CHUNKS MAPPINGS ----------------  //
+mapping(uint => Chunk) public chunks;
+uint public chunksCounter;
+mapping(bytes32 => mapping(uint => uint)) public diseasechunks; // chunks of a disease
+mapping(uint => mapping(uint => bytes32)) public chunkproposals; // proposals of a chunk
+mapping(bytes32 => uint) public diseaseChunksCounter; // keeps track of how many chunks for each disease
+mapping(uint => uint) public chunkProposalsCounter; // keeps track of how many proposals for each chunk
+// -----------  CHUNKS MAPPINGS ----------------  //
 
 // -----------  VOTES MAPPINGS ----------------  //
 mapping(bytes32 => mapping(address => Vote)) public votes;

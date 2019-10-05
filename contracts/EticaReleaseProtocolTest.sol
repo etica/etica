@@ -180,8 +180,8 @@ contract EticaToken is ERC20Interface{
 
     constructor() public{
       supply = 1100000 * (10**18); // initial supply equals 1 100 000 ETI
-      balances[address(this)] = balances[address(this)].add(1000000 * (10**18)); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
-      balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC].add(100000 * (10**18)); // 100 000 ETI to miner_account replace address with your miner_account address
+      balances[address(this)] = 1000000 * (10**18); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
+      balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = 100000 * (10**18); // 100 000 ETI to miner_account replace address with your miner_account address
 
 
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
@@ -544,7 +544,6 @@ struct Period{
     uint interval;
     uint curation_sum; // used for proposals weight system
     uint editor_sum; // used for proposals weight system
-    uint total_voters; // Total nb of voters in this period
     uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
     uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
     uint forprops; // number of accepted proposals in this period
@@ -553,7 +552,6 @@ struct Period{
 
   struct Stake{
       uint amount;
-      uint startTime; // CREATION Time of the struct, doesnt represent the actual time when the stake STARTED as stakescsldt() can create consolidated Stakes with increased startTime
       uint endTime; // Time when the stake will be claimable
   }
 
@@ -565,9 +563,12 @@ struct Period{
       bytes32 proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
       bytes32 disease_id;
       uint period_id;
+      uint chunk_id;
       address proposer; // address of the proposer
       string title; // Title of the Proposal
       string description; // Description of the Proposal
+      string freefield;
+      string raw_release_hash;
   }
 
 // main data of Proposal:
@@ -587,20 +588,19 @@ struct Period{
       uint lasteditor_weight; // period editor weight of proposal
   }
 
-  struct ProposalIpfs{
-    // IPFS hashes of the files:
-    string raw_release_hash; // IPFS hash of the files of the proposal
-    string related_hash; // raw IPFS hash of a related proposal
-    string other_related_hash; // raw IPFS hash of an other related proposal
-  }
-
-  struct ProposalFreefield{
-    string firstfield;
-    string secondfield;
-    string thirdfield;
-  }
-
   // -----------  PROPOSALS STRUCTS ------------  //
+
+    // -----------  CHUNKS STRUCTS ------------  //
+
+    struct Chunk{
+    uint id;
+    bytes32 diseaseid; // hash of the disease
+    uint idx;
+    string title;
+    string desc;
+  }
+
+  // -----------  CHUNKS STRUCTS ------------  //
 
   // -----------  VOTES STRUCTS ----------------  //
   struct Vote{
@@ -651,9 +651,16 @@ mapping(uint => bytes32) public proposalsbyIndex; // get proposal.proposed_relea
 uint public proposalsCounter;
 
 mapping(bytes32 => ProposalData) public propsdatas;
-mapping(bytes32 => ProposalIpfs) public propsipfs;
-mapping(bytes32 => ProposalFreefield) public propsfreefields;
 // -----------  PROPOSALS MAPPINGS ------------  //
+
+// -----------  CHUNKS MAPPINGS ----------------  //
+mapping(uint => Chunk) public chunks;
+uint public chunksCounter;
+mapping(bytes32 => mapping(uint => uint)) public diseasechunks; // chunks of a disease
+mapping(uint => mapping(uint => bytes32)) public chunkproposals; // proposals of a chunk
+mapping(bytes32 => uint) public diseaseChunksCounter; // keeps track of how many chunks for each disease
+mapping(uint => uint) public chunkProposalsCounter; // keeps track of how many proposals for each chunk
+// -----------  CHUNKS MAPPINGS ----------------  //
 
 // -----------  VOTES MAPPINGS ----------------  //
 mapping(bytes32 => mapping(address => Vote)) public votes;
@@ -670,15 +677,16 @@ mapping(address => uint) public blockedeticas;
 
 // ---------- EVENTS ----------- //
 event CreatedPeriod(uint period_id, uint interval);
-event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, uint periodrwdeditor);
-event NewStake(address indexed staker, uint amount);
-event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title);
-event NewProposal(bytes32 proposed_release_hash);
-event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
-event NewCommit(bytes32 votehash);
-event NewReveal(bytes32 votehash);
-event NewSnap(uint stakeidx, uint amount);
+event NewProposal(bytes32 proposed_release_hash, address _proposer, bytes32 diseasehash, uint chunkid);
+event NewChunk(uint chunkid, bytes32 diseasehash);
+event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
+event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
+event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
+event NewCommit(address _voter, bytes32 votehash);
+event NewReveal(address _voter, bytes32 _proposal);
+event NewStake(address indexed staker, uint amount);
+event StakeClaimed(address indexed staker, uint stakeamount);
 // ----------- EVENTS ---------- //
 
 
@@ -724,8 +732,6 @@ balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
 PeriodsIssuedCounter = PeriodsIssuedCounter.add(1);
 
-emit IssuedPeriod(periodsCounter, _periodsupply, period.reward_for_curation, period.reward_for_editor);
-
 return true;
 
 }
@@ -749,7 +755,6 @@ function newPeriod() internal {
     _interval,
     0x0, //_curation_sum
     0x0, //_editor_sum
-    0x0, //_total_voters;
     0x0, //_reward_for_curation
     0x0, //_reward_for_editor
     0x0, // _forprops
@@ -871,7 +876,6 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // startTime
       endTime // endTime
     );
 
@@ -892,7 +896,6 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // startTime
       _endTime // endTime
     );
 
@@ -905,7 +908,7 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
 
 // ----  split Stake ------  //
 
-function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
+function splitStake(address _staker, uint _amount, uint _endTime) internal returns (bool success) {
 
     require(_amount > 0);
     stakesCounters[_staker] = stakesCounters[_staker].add(1); // notice that first stake will have the index of 1 thus not 0 !
@@ -913,11 +916,9 @@ function splitStake(address _staker, uint _amount, uint _startTime, uint _endTim
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      _startTime, // startTime
       _endTime // endTime
     );
 
-    emit NewStake(_staker, _amount);
 
     return true;
 }
@@ -947,7 +948,7 @@ function stakeclmidx (uint _stakeidx) public {
   balances[msg.sender] = balances[msg.sender].add(_stake.amount);
 
   emit Transfer(address(this), msg.sender, _stake.amount);
-  emit StakeClaimed(msg.sender, _stakeidx);
+  emit StakeClaimed(msg.sender, _stake.amount);
 
   // deletes the stake
   _deletestake(msg.sender, _stakeidx);
@@ -971,7 +972,6 @@ function _deletestake(address _staker,uint _index) internal {
   // remove last stake
   stakes[_staker][stakesCounters[_staker]] = Stake(
     0x0, // amount
-    0x0, // startTime
     0x0 // endTime
     );
 
@@ -987,7 +987,7 @@ function _deletestake(address _staker,uint _index) internal {
 
 // slashing function needs to loop trough stakes. Can create issues for claiming votes:
 // The function stakescsldt() has been created to consolidate (gather) stakes when user has too much stakes
-function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
+function stakescsldt(uint _endTime, uint _min_limit, uint _maxidx) public {
 
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
 require(_endTime < block.timestamp.add(730 days)); // _endTime cannot be more than two years ahead  
@@ -1070,12 +1070,10 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
   // store this stake in _staker's stakes with the index stakesCounters[_staker]
   stakes[msg.sender][stakesCounters[msg.sender]] = Stake(
       _restAmount, // stake amount
-      block.timestamp, // startTime
       _stake.endTime // endTime
     );
   // ------ creates a new stake with the rest ------- //  
 
-emit NewSnap(_stakeidx, _snapamount);
 
 }
 
@@ -1129,8 +1127,7 @@ function createdisease(string memory _name) public {
 
 
 
-function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
-  string memory related_hash, string memory other_related_hash, string memory _firstfield, string memory _secondfield, string memory _thirdfield) public {
+function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash, string memory _freefield, uint _chunkid) public {
 
     //check if the disease exits
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
@@ -1142,7 +1139,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
      diseaseproposals[_diseasehash][diseaseProposalsCounter[_diseasehash]] = _proposed_release_hash;
 
      proposalsCounter = proposalsCounter.add(1); // notice that first proposal will have the index of 1 thus not 0 !
-
+     proposalsbyIndex[proposalsCounter] = _proposed_release_hash;
 
      // Check that proposal does not already exist
      // only allow one proposal for each {raw_release_hash,  _diseasehash} combinasion
@@ -1165,19 +1162,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposal.proposer = msg.sender;
        proposal.title = _title;
        proposal.description = _description;
-
-
-       // Proposal IPFS:
-       ProposalIpfs storage proposalipfs = propsipfs[_proposed_release_hash];
-       proposalipfs.raw_release_hash = raw_release_hash;
-       proposalipfs.related_hash = related_hash;
-       proposalipfs.other_related_hash = other_related_hash;
-
-       // Proposal freefields:
-       ProposalFreefield storage proposalfree = propsfreefields[_proposed_release_hash];
-       proposalfree.firstfield = _firstfield;
-       proposalfree.secondfield = _secondfield;
-       proposalfree.thirdfield = _thirdfield;
+       proposal.raw_release_hash = raw_release_hash;
+       proposal.freefield = _freefield;
 
 
        //  Proposal Data:
@@ -1195,44 +1181,12 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.endtime = block.timestamp.add(DEFAULT_VOTING_TIME);
 
 
-  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+// --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
-  defaultvote(_proposed_release_hash);
-
-  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-
-  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
-
-    emit NewProposal(_proposed_release_hash);
-
-}
-
-
-
- function defaultvote(bytes32 _proposed_release_hash) internal {
-
-   require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
-
-   //check if the proposal exists and that we get the right proposal:
-   Proposal storage proposal = proposals[_proposed_release_hash];
-   require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
-
-
-   ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
-    // Verify voting is still in progress
-    require( block.timestamp < proposaldata.endtime);
-
-
-    // default vote can't be called twice on same proposal:
-    // can vote for proposal only if default vote hasn't changed prestatus of Proposal yet. Thus can default vote only if default vote has not occured yet
-    require(proposaldata.prestatus == ProposalStatus.Pending);
+    require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
 
     // Consume bosom:
     bosoms[msg.sender] = bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
-
-
-   // get Period of Proposal:
-   Period storage period = periods[proposal.period_id];
 
 
     // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
@@ -1253,7 +1207,22 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       // UPDATE PROPOSAL:
       proposaldata.prestatus = ProposalStatus.Singlevoter;
 
- }
+      // if chunk exists updates proposal.chunk_id and diseasechunks:
+      uint existing_chunk = chunks[_chunkid].id;
+      if(existing_chunk != 0x0 && chunks[_chunkid].diseaseid == _diseasehash) {
+        proposal.chunk_id = _chunkid;
+        // updates chunk proposals infos:
+        chunkProposalsCounter[_chunkid] = chunkProposalsCounter[_chunkid].add(1);
+        chunkproposals[_chunkid][chunkProposalsCounter[_chunkid]] = proposal.proposed_release_hash;
+      }
+
+  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
+
+    emit NewProposal(_proposed_release_hash, msg.sender, proposal.disease_id, _chunkid);
+
+}
 
 
  function updatecost() public {
@@ -1274,7 +1243,7 @@ DISEASE_CREATION_AMOUNT = _new_disease_cost;
 
  function commitvote(uint _amount, bytes32 _votehash) public {
 
-require(_amount > 0);
+require(_amount > 10);
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
@@ -1289,12 +1258,12 @@ require(_amount > 0);
 
  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH
 
-emit NewCommit(_votehash);
+emit NewCommit(msg.sender, _votehash);
 
  }
 
 
- function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount, string memory _vary) public {
+ function revealvote(bytes32 _proposed_release_hash, bool _approved, string memory _vary) public {
  
 
 // --- check commit --- //
@@ -1413,7 +1382,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
         }
         // updates period forvotes and againstvotes system done
-        period.total_voters = period.total_voters.add(1);
 
          // Proposal and Period new weight
          if (_istie) {
@@ -1445,12 +1413,12 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          
         // resets commit to save space: 
-        _removecommit(msg.sender, _votehash);
-        emit NewReveal(_votehash);
+        _removecommit(_votehash);
+        emit NewReveal(msg.sender, proposal.proposed_release_hash);
 
   }
 
-  function _removecommit(address _voter, bytes32 _votehash) internal {
+  function _removecommit(bytes32 _votehash) internal {
         commits[msg.sender][_votehash].amount = 0;
         commits[msg.sender][_votehash].timestamp = 0;
   }
@@ -1536,6 +1504,7 @@ if(proposaldata.slashingratio > 9050){
       if(vote.is_editor){
         _feeRemaining = vote.amount;
       }
+    emit NewFee(msg.sender, _feeRemaining, vote.proposal_hash);  
     UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
      // update _slashRemaining 
     _slashRemaining = vote.amount.sub(_feeRemaining);
@@ -1564,12 +1533,12 @@ if(proposaldata.slashingratio > 9050){
 
 // SLASH only if slash remaining > 0
 if(_slashRemaining > 0){
+  emit NewSlash(msg.sender, _slashRemaining, vote.proposal_hash);
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
  
         stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
-        stakes[msg.sender][_stakeidx].startTime = block.timestamp;
         _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
         
        if(_slashRemaining == 0){
@@ -1579,7 +1548,6 @@ if(_slashRemaining > 0){
       else {
         // The slash amount does not fill a full stake, so the stake needs to be split
         uint newAmount = stakes[msg.sender][_stakeidx].amount.sub(_slashRemaining);
-        uint oldTimestamp = stakes[msg.sender][_stakeidx].startTime;
         uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
 
         // slash amount split in _slashRemaining and newAmount
@@ -1588,7 +1556,7 @@ if(_slashRemaining > 0){
 
         if(newAmount > 0){
           // create a new stake with the rest of what remained from original stake that was split in 2
-          splitStake(msg.sender, newAmount, oldTimestamp, oldCompletionTime);
+          splitStake(msg.sender, newAmount, oldCompletionTime);
         }
 
         break;
@@ -1622,12 +1590,49 @@ if(_slashRemaining > 0){
     balances[msg.sender] = balances[msg.sender].add(_reward_amount);
 
     emit Transfer(address(this), msg.sender, _reward_amount);
-    emit VoteClaimed(msg.sender, _reward_amount, _proposed_release_hash);
+    emit RewardClaimed(msg.sender, _reward_amount, _proposed_release_hash);
    }
 
   }   // end bracket if (proposaldata.istie not true)
   
   }
+
+
+    function createchunk(bytes32 _diseasehash, string memory _title, string memory _description) public {
+
+  //check if the disease exits
+  require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
+  if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+
+  // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  // make sure the user has enough ETI to create a chunk
+  require(balances[msg.sender] >= 5 * 10**(decimals));
+  // transfer 5 ETI from user wallet to contract wallet:
+  transfer(address(this), 5 * 10**(decimals));
+
+  // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  chunksCounter = chunksCounter.add(1); // get general id of Chunk
+
+  // updates disease's chunks infos:
+  diseaseChunksCounter[_diseasehash] = diseaseChunksCounter[_diseasehash].add(1); // Increase chunks index of Disease
+  diseasechunks[_diseasehash][diseaseChunksCounter[_diseasehash]] = chunksCounter;
+  
+
+  // store the Chunk
+   chunks[chunksCounter] = Chunk(
+     chunksCounter, // general id of the chunk
+     _diseasehash, // disease of the chunk
+     diseaseChunksCounter[_diseasehash], // Index of chunk within disease
+     _title,
+     _description
+   );
+
+  emit NewChunk(chunksCounter, _diseasehash);
+
+  }
+
 
 // -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
 

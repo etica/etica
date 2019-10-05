@@ -804,7 +804,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                         assert(web3.utils.fromWei(test_accountbosomsbefore, "ether" ) >= PROPOSAL_DEFAULT_VOTE, 'test_account should have enough Bosoms before CALLING PROPOSE FUNCTION (because propose function should fail but not for this reason)');
 
 
-                        return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t", "QmT4AeWE9Q9EaoyLJiqaZuYQ8mJeq4ZBncjjFH9dQ9uDVA", "QmT9qk3CRYbFDWpDFYeAv8T8H1gnongwKhh5J68NLkLir6","Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards", {from: test_account.address}).then(assert.fail)
+                        return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper K32 for Malaria 2", "Using Crisper to treat Malaria 2", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t","Use this field as the community created standards",0, {from: test_account.address}).then(assert.fail)
                         .catch(async function(error){
 
                         // ---> Assert the previous existing Proposal with same {raw_release_hash, disease_hash} thus same _proposed_release_hash (EXPECTED_FIRST_PROPOSAL_PROPOSED_RELEASE_HASH) has not changed
@@ -1990,77 +1990,84 @@ it("can revealvote against Proposal", async function () {
                 console.log('------------------------------------ Starting test ---------------------------');
                 console.log('................................  CAN CREATE A PROPOSAL for a CHUNK ? .......................');
 
+                let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
+                assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 10, 'miner_account should have enough ETI before CALLING eticatobosom FUNCTION, please rekaunch the tests will be more lucky next time !');
 
-                let miner_accountbosomsbefore = await EticaReleaseInstance.bosoms(miner_account.address);
-
-                let disease1_proposal2_before = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,2);
-                console.log('disease1_proposal2 before proposal creation', disease1_proposal2_before);
-
-                let all_proposals_before = await EticaReleaseInstance.getallproposals();
-                console.log('all_proposals before proposal creation', all_proposals_before);
-                assert(disease1_proposal2_before == 0x0, 'This disease should only have 1 proposal now');
-
-                assert(web3.utils.fromWei(miner_accountbalancebefore, "ether" ) >= 5, 'miner_account should have enough Bosoms before CALLING createchunk FUNCTION, please rekaunch the tests will be more lucky next time !');
-                return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper O89 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4XOTHER","Use this field as the community created standards",2, {from: miner_account.address}).then(async function(response){
-
-                var encoded = abi.rawEncode([ "string", "bytes32" ], [ 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4XOTHER', EXPECTED_FIRST_DISEASE_HASH ]);
-
-                let EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH = web3.utils.keccak256(encoded);
-                let second_proposal = await EticaReleaseInstance.proposals(EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH);
-                let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
-
-                let second_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH);
-
-                // check Proposal's general information:
-                assert.equal(second_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'second proposal should exist with right disease_id');
-                assert(second_proposal.period_id >= 1);
-                assert.equal(second_proposal.title, 'Proposal Crisper O89 for Malaria', 'Second proposal should exist with right name');
-                assert.equal(second_proposal.description, 'Using Crisper to treat Malaria', 'second proposal should exist with right description');
-                assert.equal(second_proposal.chunk_id.toString(), '2', 'second proposal should exist with right chunk_id');
-                assert.equal(second_proposal.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4X3vb2t', 'second proposal should exist with right raw_release_hash');
-                assert.equal(second_proposal.freefield, 'Use this field as the community created standards', 'second proposal should exist with right freefield');
-                assert.equal(proposalsCounter, 2, 'There should be exactly 2 proposals at this point');
-                
-        
-
-                // check Proposal's DATA:
-                assert.equal(second_proposal_data.status, '2', 'second proposal should exist with right status');
-                assert.equal(second_proposal_data.istie, true, 'second proposal should exist with right istie');
-                assert.equal(second_proposal_data.prestatus, '3', 'second proposal should exist with right prestatus');
-                assert.equal(second_proposal_data.nbvoters, '0', 'second proposal should exist with right nbvoters');
-                assert.equal(second_proposal_data.slashingratio.toNumber(), '0', 'second proposal should exist with right slashingratio');
-                assert.equal(web3.utils.fromWei(second_proposal_data.forvotes.toString()), '0', 'second proposal should exist with right forvotes');
-                assert.equal(web3.utils.fromWei(second_proposal_data.againstvotes.toString()), '0', 'second proposal should exist with right againstvotes');
-                assert.equal(web3.utils.fromWei(second_proposal_data.lastcuration_weight, "ether" ), '0', 'second proposal should exist with right lastcuration_weight');
-                assert.equal(web3.utils.fromWei(second_proposal_data.lasteditor_weight, "ether" ), '0', 'second proposal should exist with right lasteditor_weight');
-
-                let disease1_proposal2_after = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,2);
-                console.log('disease1_proposal2 after proposal creation', disease1_proposal2_after);
-                assert(disease1_proposal2_after != 0x0, 'This disease should have two proposals now');
-
-                let chunk2ProposalsCounter = await EticaReleaseInstance.chunkProposalsCounter(2);
-                console.log('CHUNK 2 chunk2ProposalsCounter after is', chunk2ProposalsCounter);
-                assert(chunk2ProposalsCounter == 1, 'tHE cHUNK 2 should have a proposal now');
-
-                let chunk2_proposal1_after = await EticaReleaseInstance.chunkproposals(2,1);
-                console.log('chunk2_proposal1_after proposal creation', chunk2_proposal1_after);
-                assert(chunk2_proposal1_after == EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH, 'THE CHUNK 2 first proposal should be EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH');
-
-
-                /*let all_proposals_after = await EticaReleaseInstance.getallproposals();
-                console.log('all_proposals after proposal creation', all_proposals_after);*/
-
-                // ------------ WARNING
-                // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
-                // ------------ WARNING
-
-                console.log('................................  CAN CREATE A PROPOSAL  ....................... ');
-                console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
-                });
+// try staking 10 ETI:
+return EticaReleaseInstance.eticatobosoms(miner_account.address,  web3.utils.toBN(10000000000000000000), {from: miner_account.address}).then(async function(receipt){
 
 
 
-                });
+
+
+  let miner_accountbosomsbefore = await EticaReleaseInstance.bosoms(miner_account.address);
+
+  let disease1_proposal2_before = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,2);
+  console.log('disease1_proposal2 before proposal creation', disease1_proposal2_before);
+
+  //let all_proposals_before = await EticaReleaseInstance.getallproposals();
+  //console.log('all_proposals before proposal creation', all_proposals_before);
+  assert(disease1_proposal2_before == 0x0, 'This disease should only have 1 proposal now');
+
+  assert(web3.utils.fromWei(miner_accountbosomsbefore, "ether" ) >= 10, 'miner_account should have enough Bosoms before CALLING propose FUNCTION, please rekaunch the tests will be more lucky next time !');
+  return EticaReleaseInstance.propose(EXPECTED_FIRST_DISEASE_HASH, "Proposal Crisper O89 for Malaria", "Using Crisper to treat Malaria", "QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4XOTHER","Use this field as the community created standards",2, {from: miner_account.address}).then(async function(response){
+
+  var encoded = abi.rawEncode([ "string", "bytes32" ], [ 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4XOTHER', EXPECTED_FIRST_DISEASE_HASH ]);
+
+  let EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH = web3.utils.keccak256(encoded);
+  let second_proposal = await EticaReleaseInstance.proposals(EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH);
+  let proposalsCounter = await EticaReleaseInstance.proposalsCounter();
+
+  let second_proposal_data = await EticaReleaseInstance.propsdatas(EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH);
+
+  // check Proposal's general information:
+  assert.equal(second_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'second proposal should exist with right disease_id');
+  assert(second_proposal.period_id >= 1);
+  assert.equal(second_proposal.title, 'Proposal Crisper O89 for Malaria', 'Second proposal should exist with right name');
+  assert.equal(second_proposal.description, 'Using Crisper to treat Malaria', 'second proposal should exist with right description');
+  assert.equal(second_proposal.chunk_id.toString(), '2', 'second proposal should exist with right chunk_id');
+  assert.equal(second_proposal.raw_release_hash, 'QmWWQSuPMS6aXCbZKpEjPHPUZN2NjB3YrhJTHsV4XOTHER', 'second proposal should exist with right raw_release_hash');
+  assert.equal(second_proposal.freefield, 'Use this field as the community created standards', 'second proposal should exist with right freefield');
+  assert.equal(proposalsCounter, 2, 'There should be exactly 2 proposals at this point');
+  
+
+
+  // check Proposal's DATA:
+  assert.equal(second_proposal_data.status, '2', 'second proposal should exist with right status');
+  assert.equal(second_proposal_data.istie, true, 'second proposal should exist with right istie');
+  assert.equal(second_proposal_data.prestatus, '3', 'second proposal should exist with right prestatus');
+  assert.equal(second_proposal_data.nbvoters, '0', 'second proposal should exist with right nbvoters');
+  assert.equal(second_proposal_data.slashingratio.toNumber(), '0', 'second proposal should exist with right slashingratio');
+  assert.equal(web3.utils.fromWei(second_proposal_data.forvotes.toString()), '0', 'second proposal should exist with right forvotes');
+  assert.equal(web3.utils.fromWei(second_proposal_data.againstvotes.toString()), '0', 'second proposal should exist with right againstvotes');
+  assert.equal(web3.utils.fromWei(second_proposal_data.lastcuration_weight, "ether" ), '0', 'second proposal should exist with right lastcuration_weight');
+  assert.equal(web3.utils.fromWei(second_proposal_data.lasteditor_weight, "ether" ), '0', 'second proposal should exist with right lasteditor_weight');
+
+  let disease1_proposal2_after = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,2);
+  console.log('disease1_proposal2 after proposal creation', disease1_proposal2_after);
+  assert(disease1_proposal2_after != 0x0, 'This disease should have two proposals now');
+
+  let chunk2ProposalsCounter = await EticaReleaseInstance.chunkProposalsCounter(2);
+  console.log('CHUNK 2 chunk2ProposalsCounter after is', chunk2ProposalsCounter);
+  assert(chunk2ProposalsCounter == 1, 'the CHUNK 2 should have a proposal now');
+
+  let chunk2_proposal1_after = await EticaReleaseInstance.chunkproposals(2,1);
+  console.log('chunk2_proposal1_after proposal creation', chunk2_proposal1_after);
+  assert(chunk2_proposal1_after == EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH, 'THE CHUNK 2 first proposal should be EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH');
+
+
+  /*let all_proposals_after = await EticaReleaseInstance.getallproposals();
+  console.log('all_proposals after proposal creation', all_proposals_after);*/
+
+  // ------------ WARNING
+  // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+  // ------------ WARNING
+
+  console.log('................................  CAN CREATE A PROPOSAL  ....................... ');
+  console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');
+  });
+  })
+});
 
 
   async function printBalances(accounts) {

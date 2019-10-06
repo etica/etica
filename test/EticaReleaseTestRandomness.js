@@ -1956,7 +1956,7 @@ it("can revealvote against Proposal", async function () {
                // test Disease creation without enough ETI should fail
                it("can create a new chunk if account has enough ETI:", async function () {
                 console.log('------------------------------- Starting test ---------------------------');
-                console.log('.......................... Can CREATE A ANOTHER NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ?  ..................... ');
+                console.log('.......................... Can CREATE ANOTHER NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ?  ..................... ');
                 let miner_accountbalancebefore = await EticaReleaseInstance.balanceOf(miner_account.address);
                 let first_chunk = await EticaReleaseInstance.chunks(1);
                 let chunksCounter = await EticaReleaseInstance.chunksCounter();
@@ -1978,7 +1978,7 @@ it("can revealvote against Proposal", async function () {
                     assert.equal(second_chunk.idx, "2", 'The chunk should have the right index');
                     assert.equal(second_chunk.title, "Title Chunk 2", 'The chunk should have the right title');
                     assert.equal(second_chunk.desc, 'This is the desc of second Chunk to fight and Beat Malaria');
-                    console.log('........................... Can CREATE A NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ....................... ');
+                    console.log('........................... Can CREATE ANOTHER NEW CHUNK IF ACCOUNT HAS NOT ENOUGH ETI ....................... ');
                     console.log('------------------------------- END OF TEST with SUCCESS ---------------------------');
                   });
 

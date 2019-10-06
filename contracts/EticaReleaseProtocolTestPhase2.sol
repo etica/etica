@@ -17,6 +17,11 @@ The Software is provided “as is”, without warranty of any kind, express or i
 */
 
 
+// ONLY FOR TESTING !!!
+// EticaReleaseProtocolTestPhase2: Same as EticaRelease contract but with initial supply > 21 million ETI and miner_aacount with ETI available to make tests easier
+// You can copy and paste EticaRelease code here but with only modifying constructor function so that miner_account has some ETI immediatly after deployment without having to mine 
+// Done this to avoid to wait too long so that miner_account has mined a block and thus has ETI available, we need a lot of ETI as all tests of EticaReleaseProtocolTestPhase2.js file assume enough ETI and don't deal with mining tests
+
 // ----------------------------------------------------------------------------
 
 // Safe maths
@@ -108,6 +113,8 @@ contract EticaToken is ERC20Interface{
     uint public PERIOD_CURATION_REWARD_RATIO = 38196601125; // 38.196601125% of period reward will be used as curation reward
     uint public PERIOD_EDITOR_REWARD_RATIO = 61803398875; // 61.803398875% of period reward will be used as editor reward
 
+    uint public UNRECOVERABLE_ETI;
+
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
     string public foundermsgproof;
@@ -116,7 +123,7 @@ contract EticaToken is ERC20Interface{
 
     mapping(address => mapping(address => uint)) allowed;
 
-    //allowed[0x1111....][0x22222...] = 100;
+   
 
     // ----------- Mining system state variables ------------ //
     uint public _totalMiningSupply;
@@ -154,7 +161,6 @@ contract EticaToken is ERC20Interface{
     address public lastRewardTo;
     uint public lastRewardEthBlockNumber;
 
-    bool locked = false;
 
     mapping(bytes32 => bytes32) solutionForChallenge;
 
@@ -174,46 +180,53 @@ contract EticaToken is ERC20Interface{
 
     constructor() public{
       supply = 21000001 * (10**18); // initial supply equals 21000001 ETI
-      balances[address(this)] = balances[address(this)].add(1000000 * (10**18)); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
-      balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC].add(100000 * (10**18)); // 100 000 ETI to miner_account replace address with your miner_account address
+      balances[address(this)] = 1000000 * (10**18); // 1 000 000 ETI as the default contract balance. To avoid any issue that could arise from negative contract balance because of significant numbers approximations
+      balances[0x5FBd856f7f0c79723100FF6e1450cC1464D3fffC] = 10100000 * (10**18); // 10 100 000 ETI to miner_account replace address with your miner_account address
       // Loads the 19 900 001 ETI (21 000 000 - 1 100 000) to random wallet (here test_account8 of ganache):
-      balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E] = balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E].add(10000000 * (10**18)); // 10 000 000 ETI to random account1
+      //balances[0xd13cCB6eA16e2cBE56F95745681Cc667828ecd4E] = 10000000 * (10**18); // 10 000 000 ETI to random account1
 
 
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
-      /* Phase 1:
-      --> 10 500 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
-      --> 10 500 000 ETI to be distributed trough MINING as block reward
+      /* Phase 1 will last about 10 years:
+      --> 11 550 000 ETI to be distributed trough MINING as block reward
+      --> 9 450 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
+      
+
+      Phase1 is divided between 10 eras:
+      Each Era will allocate 2 100 000 ETI between mining reward and the staking system reward.
+      Each era is supposed to last about a year but can vary depending on hashrate.
+      Era1: 90% ETI to mining and 10% ETI to Staking  |  Era2: 80% ETI to mining and 20% ETI to Staking
+      Era3: 70% ETI to mining and 30% ETI to Staking  |  Era4: 60% ETI to mining and 40% ETI to Staking
+      Era5: 50% ETI to mining and 50% ETI to Staking  |  Era6: 50% ETI to mining and 50% ETI to Staking
+      Era7: 50% ETI to mining and 50% ETI to Staking  |  Era8: 50% ETI to mining and 50% ETI to Staking
+      Era9: 50% ETI to mining and 50% ETI to Staking  |  Era10: 50% ETI to mining and 50% ETI to Staking
+      Era1: 1 890 000 ETI as mining reward and 210 000 ETI as Staking reward
+      Era2: 1 680 000 ETI as mining reward and 420 000 ETI as Staking reward
+      Era3: 1 470 000 ETI as mining reward and 630 000 ETI as Staking reward 
+      Era4: 1 260 000 ETI as mining reward and 840 000 ETI as Staking reward
+      From Era5 to era10: 1 050 000 ETI as mining reward and 1 050 000 ETI as Staking reward
       */
 
-      // --- PUBLISHING REWARD --- //
-       // periodrewardtemp: Temporary fixed ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
-         // Calculation of periodrewardtemp:
-           // The amount of reward will be about twice as much as the first rewards of phase 2
-           // Calculation of first rewards of phase 2:
-           // 21 000 000 * 0.026180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-           // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (first weeks reward of phase2 rough estimation)
-           // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI
-      periodrewardtemp = 21087708494827787412014; // 21087,708494827787412014415585507 ETI per period (7 days) will take about 9,5491502812526287948853291408588 years to reach 10 500 000 ETI
-      // --- PUBLISHING REWARD --- //
+      // --- STAKING REWARD --- //
+       // periodrewardtemp: It is the temporary ETI issued per period (7 days) as reward of Etica System during phase 1. (Will be replaced by dynamic inflation of golden number at phase 2)
+         // Calculation of initial periodrewardtemp:
+         // 210 000 / 52.1429 = 4027.3939500871643119; ETI per week
+      periodrewardtemp = 4027393950087164311900; // 4027.393950087164311900 ETI per period (7 days) for era1
+      // --- STAKING REWARD --- //
 
       // --- MINING REWARD --- //
-      _totalMiningSupply = 10500000 * 10**uint(decimals);
+      _totalMiningSupply = 11550000 * 10**uint(decimals);
 
-      if(locked) revert();
-      locked = true;
 
       tokensMinted = 0;
 
-
-      // The amount of etica mined per 7 days will be twice of first rewards of phase 2
-      // eSTIMATION of first rewards of phase 2:
-      // 21 000 000 * 0.026180339887498948482045868343656 = 549 787,13763747791812296323521678‬ ETI (first year reward)
-      // 549 787,13763747791812296323521678‬ / 52.1429 = 10 543,854247413893706007207792754‬ ETI (wide ESTIMATION of first weeks reward of phase2)
-      // 10 543,854247413893706007207792754‬ * 2 = 21087,708494827787412014415585507 ETI per 7 days
-      // 21087,708494827787412014415585507 ETI per 7 days = 20,920345728995820845252396414193‬ ETI per block (10 minutes)
-      blockreward = 20920345728995820845;
+      // Calculation of initial blockreward:
+      // 1 890 000 / 52.1429 = 36246.5455507844788073; ETI per week
+      // amounts to 5178.0779358263541153286 ETI per day;
+      // amounts to 215.7532473260980881386917 ETI per hour;
+      // amounts to 35.9588745543496813564486167 ETI per block for era1 of phase1;
+      blockreward = 35958874554349681356;
 
       miningTarget = _MAXIMUM_TARGET;
 
@@ -318,13 +331,38 @@ contract EticaToken is ERC20Interface{
               solutionForChallenge[challengeNumber] = digest;
               if(solution != 0x0) revert();  //prevent the same answer from awarding twice
 
+              if(tokensMinted > 1890000 * 10**uint(decimals)){
+ 
+              if(tokensMinted >= 6300000 * 10**uint(decimals)) {
+                // 6 300 000 = 5 040 000 + 1 260 000;
+                blockreward = 19977152530194267420; // 19.977152530194267420 per block (amounts to 1050000 ETI a year)
+                periodrewardtemp = 20136969750435821559600; // from era5 to era 10: 20136.9697504358215596 ETI per week
+              }
 
-             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply + blockreward
-             assert(tokensMinted < _totalMiningSupply);
+              else if (tokensMinted < 3570000 * 10**uint(decimals)) {
+                // 3 570 000 = 1 890 000 + 1 680 000;
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
+              }
+              else if (tokensMinted < 5040000 * 10**uint(decimals)) {
+                // 5 040 000 = 3 570 000 + 1 470 000;
+                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
+                periodrewardtemp = 12082181850261492935800; // era3 12082.181850261492935800 ETI per week
+              }
+              else {
+                blockreward = 23972583036233120904; // 23.972583036233120904 per block (amounts to 1260000 ETI a year)
+                periodrewardtemp = 16109575800348657247700; // era4 16109.575800348657247700 ETI per week
+              }
+
+              }
 
              tokensMinted = tokensMinted.add(blockreward);
+             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply
+             assert(tokensMinted < _totalMiningSupply);
+
              supply = supply.add(blockreward);
              balances[msg.sender] = balances[msg.sender].add(blockreward);
+
 
              //set readonly diagnostics data
              lastRewardTo = msg.sender;
@@ -425,6 +463,17 @@ contract EticaToken is ERC20Interface{
     }
 
 
+    //mining reward only if the protocol didnt reach the max ETI supply that can be ever mined: 
+    function getMiningReward() public view returns (uint) {
+         if(tokensMinted <= _totalMiningSupply){
+          return blockreward;
+         }
+         else {
+          return 0;
+         }
+         
+    }
+
      //help debug mining software
      function getMintDigest(uint256 nonce, bytes32 challenge_digest, bytes32 challenge_number) public view returns (bytes32 digesttest) {
 
@@ -469,7 +518,6 @@ contract EticaReleaseProtocolTestPhase2 is EticaToken {
   /* --------- PROD VALUES -------------
 uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint STAKING_DURATION = 28 days; // default stake duration 28 jours
-uint ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
 uint DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 days
      --------- PROD VALUES ------------- */
@@ -477,7 +525,6 @@ uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 day
 /* --------- TESTING VALUES -------------*/
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
-uint public ETICA_TO_BOSOM_RATIO = 1; // get 1 Bosom for each ETI staked
 uint public DEFAULT_VOTING_TIME = 3 minutes; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 1 minutes; // default revealing duration 7 days
 /* --------- TESTING VALUES -------------*/
@@ -499,7 +546,6 @@ struct Period{
     uint interval;
     uint curation_sum; // used for proposals weight system
     uint editor_sum; // used for proposals weight system
-    uint total_voters; // Total nb of voters in this period
     uint reward_for_curation; // total ETI issued to be used as Period reward for Curation
     uint reward_for_editor; // total ETI issued to be used as Period reward for Editor
     uint forprops; // number of accepted proposals in this period
@@ -508,7 +554,6 @@ struct Period{
 
   struct Stake{
       uint amount;
-      uint startTime; // CREATION Time of the struct, doesnt represent the actual time when the stake STARTED as stakescsldt() can create consolidated Stakes with increased startTime
       uint endTime; // Time when the stake will be claimable
   }
 
@@ -520,9 +565,12 @@ struct Period{
       bytes32 proposed_release_hash; // Hash of "raw_release_hash + name of Disease"
       bytes32 disease_id;
       uint period_id;
+      uint chunk_id;
       address proposer; // address of the proposer
       string title; // Title of the Proposal
       string description; // Description of the Proposal
+      string freefield;
+      string raw_release_hash;
   }
 
 // main data of Proposal:
@@ -542,20 +590,19 @@ struct Period{
       uint lasteditor_weight; // period editor weight of proposal
   }
 
-  struct ProposalIpfs{
-    // IPFS hashes of the files:
-    string raw_release_hash; // IPFS hash of the files of the proposal
-    string related_hash; // raw IPFS hash of a related proposal
-    string other_related_hash; // raw IPFS hash of an other related proposal
-  }
-
-  struct ProposalFreefield{
-    string firstfield;
-    string secondfield;
-    string thirdfield;
-  }
-
   // -----------  PROPOSALS STRUCTS ------------  //
+
+    // -----------  CHUNKS STRUCTS ------------  //
+
+    struct Chunk{
+    uint id;
+    bytes32 diseaseid; // hash of the disease
+    uint idx;
+    string title;
+    string desc;
+  }
+
+  // -----------  CHUNKS STRUCTS ------------  //
 
   // -----------  VOTES STRUCTS ----------------  //
   struct Vote{
@@ -597,14 +644,25 @@ uint public diseasesCounter;
 mapping(bytes32 => uint) public diseasesbyIds; // get disease.index by giving its disease_hash: example: [leiojej757575ero] => [0]  where leiojej757575ero is disease_hash of a Disease
 mapping(string => bytes32) private diseasesbyNames; // get disease.disease_hash by giving its name: example: ["name of a disease"] => [leiojej757575ero]  where leiojej757575ero is disease_hash of a Disease. Set visibility to private because mapping with strings as keys have issues when public visibility
 
+mapping(bytes32 => mapping(uint => bytes32)) public diseaseproposals; // mapping of mapping of all proposals for a disease
+mapping(bytes32 => uint) public diseaseProposalsCounter; // keeps track of how many proposals for each disease
+
 // -----------  PROPOSALS MAPPINGS ------------  //
 mapping(bytes32 => Proposal) public proposals;
+mapping(uint => bytes32) public proposalsbyIndex; // get proposal.proposed_release_hash by giving its id (index): example: [2] => [huhihgfytoouhi]  where huhihgfytoouhi is proposed_release_hash of a Proposal
 uint public proposalsCounter;
 
 mapping(bytes32 => ProposalData) public propsdatas;
-mapping(bytes32 => ProposalIpfs) public propsipfs;
-mapping(bytes32 => ProposalFreefield) public propsfreefields;
 // -----------  PROPOSALS MAPPINGS ------------  //
+
+// -----------  CHUNKS MAPPINGS ----------------  //
+mapping(uint => Chunk) public chunks;
+uint public chunksCounter;
+mapping(bytes32 => mapping(uint => uint)) public diseasechunks; // chunks of a disease
+mapping(uint => mapping(uint => bytes32)) public chunkproposals; // proposals of a chunk
+mapping(bytes32 => uint) public diseaseChunksCounter; // keeps track of how many chunks for each disease
+mapping(uint => uint) public chunkProposalsCounter; // keeps track of how many proposals for each chunk
+// -----------  CHUNKS MAPPINGS ----------------  //
 
 // -----------  VOTES MAPPINGS ----------------  //
 mapping(bytes32 => mapping(address => Vote)) public votes;
@@ -621,15 +679,16 @@ mapping(address => uint) public blockedeticas;
 
 // ---------- EVENTS ----------- //
 event CreatedPeriod(uint period_id, uint interval);
-event IssuedPeriod(uint period_id, uint periodreward, uint periodrwdcuration, uint periodrwdeditor);
-event NewStake(address indexed staker, uint amount);
-event StakeClaimed(address indexed staker, uint stakeidx);
 event NewDisease(uint diseaseindex, string title);
-event NewProposal(bytes32 proposed_release_hash);
-event VoteClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
-event NewCommit(bytes32 votehash);
-event NewReveal(bytes32 votehash);
-event NewSnap(uint stakeidx, uint amount);
+event NewProposal(bytes32 proposed_release_hash, address _proposer, bytes32 diseasehash, uint chunkid);
+event NewChunk(uint chunkid, bytes32 diseasehash);
+event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
+event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
+event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
+event NewCommit(address _voter, bytes32 votehash);
+event NewReveal(address _voter, bytes32 _proposal);
+event NewStake(address indexed staker, uint amount);
+event StakeClaimed(address indexed staker, uint stakeamount);
 // ----------- EVENTS ---------- //
 
 
@@ -656,11 +715,11 @@ if(rwd != 0x0) revert();  //prevent the same period from issuing twice
 
 uint _periodsupply;
 
-// era 2 (after 21 000 000 ETI has been reached)
+// Phase 2 (after 21 000 000 ETI has been reached)
 if(supply >= 21000000 * 10**(decimals)){
 _periodsupply = uint((supply.mul(inflationrate)).div(10**(31)));
 }
-// era 1 (before 21 000 000 ETI has been reached)
+// Phase 1 (before 21 000 000 ETI has been reached)
 else {
   _periodsupply = periodrewardtemp;
 }
@@ -674,8 +733,6 @@ supply = supply.add(_periodsupply);
 balances[address(this)] = balances[address(this)].add(_periodsupply);
 PeriodsIssued[period.id] = _periodsupply;
 PeriodsIssuedCounter = PeriodsIssuedCounter.add(1);
-
-emit IssuedPeriod(periodsCounter, _periodsupply, period.reward_for_curation, period.reward_for_editor);
 
 return true;
 
@@ -700,7 +757,6 @@ function newPeriod() internal {
     _interval,
     0x0, //_curation_sum
     0x0, //_editor_sum
-    0x0, //_total_voters;
     0x0, //_reward_for_curation
     0x0, //_reward_for_editor
     0x0, // _forprops
@@ -752,12 +808,12 @@ for(uint _periodidx = periodsCounter.sub(PERIODS_PER_THRESHOLD); _periodidx <= p
            uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval));
 
            // require lower APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 100 % of (APPROVAL_THRESHOLD - 45)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 27.50 % of (APPROVAL_THRESHOLD - 45)
          }else{
            uint excess_approvals_rate = uint((_meanapproval.sub(PROTOCOL_RATIO_TARGET)));
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 100 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 27.50 % of (100 - APPROVAL_THRESHOLD)
          }
 
 
@@ -800,9 +856,7 @@ function eticatobosoms(address _staker, uint _amount) public returns (bool succe
 function bosomget (address _staker, uint _amount) internal {
 
 addStake(_staker, _amount);
-
-uint newBosoms = _amount.mul(ETICA_TO_BOSOM_RATIO);
-bosoms[_staker] = bosoms[_staker].add(newBosoms);
+bosoms[_staker] = bosoms[_staker].add(_amount);
 
 }
 
@@ -824,7 +878,6 @@ function addStake(address _staker, uint _amount) internal returns (bool success)
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // startTime
       endTime // endTime
     );
 
@@ -845,7 +898,6 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      block.timestamp, // startTime
       _endTime // endTime
     );
 
@@ -858,7 +910,7 @@ function addConsolidation(address _staker, uint _amount, uint _endTime) internal
 
 // ----  split Stake ------  //
 
-function splitStake(address _staker, uint _amount, uint _startTime, uint _endTime) internal returns (bool success) {
+function splitStake(address _staker, uint _amount, uint _endTime) internal returns (bool success) {
 
     require(_amount > 0);
     stakesCounters[_staker] = stakesCounters[_staker].add(1); // notice that first stake will have the index of 1 thus not 0 !
@@ -866,11 +918,9 @@ function splitStake(address _staker, uint _amount, uint _startTime, uint _endTim
     // store this stake in _staker's stakes with the index stakesCounters[_staker]
     stakes[_staker][stakesCounters[_staker]] = Stake(
       _amount, // stake amount
-      _startTime, // startTime
       _endTime // endTime
     );
 
-    emit NewStake(_staker, _amount);
 
     return true;
 }
@@ -900,7 +950,7 @@ function stakeclmidx (uint _stakeidx) public {
   balances[msg.sender] = balances[msg.sender].add(_stake.amount);
 
   emit Transfer(address(this), msg.sender, _stake.amount);
-  emit StakeClaimed(msg.sender, _stakeidx);
+  emit StakeClaimed(msg.sender, _stake.amount);
 
   // deletes the stake
   _deletestake(msg.sender, _stakeidx);
@@ -924,7 +974,6 @@ function _deletestake(address _staker,uint _index) internal {
   // remove last stake
   stakes[_staker][stakesCounters[_staker]] = Stake(
     0x0, // amount
-    0x0, // startTime
     0x0 // endTime
     );
 
@@ -940,7 +989,7 @@ function _deletestake(address _staker,uint _index) internal {
 
 // slashing function needs to loop trough stakes. Can create issues for claiming votes:
 // The function stakescsldt() has been created to consolidate (gather) stakes when user has too much stakes
-function stakescsldt(address _staker, uint _endTime, uint _min_limit, uint _maxidx) public {
+function stakescsldt(uint _endTime, uint _min_limit, uint _maxidx) public {
 
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
 require(_endTime < block.timestamp.add(730 days)); // _endTime cannot be more than two years ahead  
@@ -1023,12 +1072,10 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
   // store this stake in _staker's stakes with the index stakesCounters[_staker]
   stakes[msg.sender][stakesCounters[msg.sender]] = Stake(
       _restAmount, // stake amount
-      block.timestamp, // startTime
       _stake.endTime // endTime
     );
   // ------ creates a new stake with the rest ------- //  
 
-emit NewSnap(_stakeidx, _snapamount);
 
 }
 
@@ -1052,6 +1099,8 @@ function createdisease(string memory _name) public {
   require(balances[msg.sender] >= DISEASE_CREATION_AMOUNT);
   // transfer DISEASE_CREATION_AMOUNT ETI from user wallet to contract wallet:
   transfer(address(this), DISEASE_CREATION_AMOUNT);
+
+  UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(DISEASE_CREATION_AMOUNT);
 
   // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
@@ -1080,8 +1129,7 @@ function createdisease(string memory _name) public {
 
 
 
-function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash,
-  string memory related_hash, string memory other_related_hash, string memory _firstfield, string memory _secondfield, string memory _thirdfield) public {
+function propose(bytes32 _diseasehash, string memory _title, string memory _description, string memory raw_release_hash, string memory _freefield, uint _chunkid) public {
 
     //check if the disease exits
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
@@ -1089,9 +1137,11 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 
 
      bytes32 _proposed_release_hash = keccak256(abi.encode(raw_release_hash, _diseasehash));
+     diseaseProposalsCounter[_diseasehash] = diseaseProposalsCounter[_diseasehash].add(1);
+     diseaseproposals[_diseasehash][diseaseProposalsCounter[_diseasehash]] = _proposed_release_hash;
 
      proposalsCounter = proposalsCounter.add(1); // notice that first proposal will have the index of 1 thus not 0 !
-
+     proposalsbyIndex[proposalsCounter] = _proposed_release_hash;
 
      // Check that proposal does not already exist
      // only allow one proposal for each {raw_release_hash,  _diseasehash} combinasion
@@ -1114,19 +1164,8 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposal.proposer = msg.sender;
        proposal.title = _title;
        proposal.description = _description;
-
-
-       // Proposal IPFS:
-       ProposalIpfs storage proposalipfs = propsipfs[_proposed_release_hash];
-       proposalipfs.raw_release_hash = raw_release_hash;
-       proposalipfs.related_hash = related_hash;
-       proposalipfs.other_related_hash = other_related_hash;
-
-       // Proposal freefields:
-       ProposalFreefield storage proposalfree = propsfreefields[_proposed_release_hash];
-       proposalfree.firstfield = _firstfield;
-       proposalfree.secondfield = _secondfield;
-       proposalfree.thirdfield = _thirdfield;
+       proposal.raw_release_hash = raw_release_hash;
+       proposal.freefield = _freefield;
 
 
        //  Proposal Data:
@@ -1144,44 +1183,12 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.endtime = block.timestamp.add(DEFAULT_VOTING_TIME);
 
 
-  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+// --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
-  defaultvote(_proposed_release_hash);
-
-  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-
-  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
-
-    emit NewProposal(_proposed_release_hash);
-
-}
-
-
-
- function defaultvote(bytes32 _proposed_release_hash) internal {
-
-   require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
-
-   //check if the proposal exists and that we get the right proposal:
-   Proposal storage proposal = proposals[_proposed_release_hash];
-   require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
-
-
-   ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
-    // Verify voting is still in progress
-    require( block.timestamp < proposaldata.endtime);
-
-
-    // default vote can't be called twice on same proposal:
-    // can vote for proposal only if default vote hasn't changed prestatus of Proposal yet. Thus can default vote only if default vote has not occured yet
-    require(proposaldata.prestatus == ProposalStatus.Pending);
+    require(bosoms[msg.sender] >= PROPOSAL_DEFAULT_VOTE); // this check is not mandatory as handled by safemath sub function: (bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE))
 
     // Consume bosom:
     bosoms[msg.sender] = bosoms[msg.sender].sub(PROPOSAL_DEFAULT_VOTE);
-
-
-   // get Period of Proposal:
-   Period storage period = periods[proposal.period_id];
 
 
     // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
@@ -1202,7 +1209,22 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       // UPDATE PROPOSAL:
       proposaldata.prestatus = ProposalStatus.Singlevoter;
 
- }
+      // if chunk exists updates proposal.chunk_id and diseasechunks:
+      uint existing_chunk = chunks[_chunkid].id;
+      if(existing_chunk != 0x0 && chunks[_chunkid].diseaseid == _diseasehash) {
+        proposal.chunk_id = _chunkid;
+        // updates chunk proposals infos:
+        chunkProposalsCounter[_chunkid] = chunkProposalsCounter[_chunkid].add(1);
+        chunkproposals[_chunkid][chunkProposalsCounter[_chunkid]] = proposal.proposed_release_hash;
+      }
+
+  // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _proposed_release_hash)); // updates RANDOMHASH
+
+    emit NewProposal(_proposed_release_hash, msg.sender, proposal.disease_id, _chunkid);
+
+}
 
 
  function updatecost() public {
@@ -1223,7 +1245,7 @@ DISEASE_CREATION_AMOUNT = _new_disease_cost;
 
  function commitvote(uint _amount, bytes32 _votehash) public {
 
-require(_amount > 0);
+require(_amount > 10);
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
@@ -1238,12 +1260,12 @@ require(_amount > 0);
 
  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH
 
-emit NewCommit(_votehash);
+emit NewCommit(msg.sender, _votehash);
 
  }
 
 
- function revealvote(bytes32 _proposed_release_hash, bool _approved, uint _amount, string memory _vary) public {
+ function revealvote(bytes32 _proposed_release_hash, bool _approved, string memory _vary) public {
  
 
 // --- check commit --- //
@@ -1362,7 +1384,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
         }
         // updates period forvotes and againstvotes system done
-        period.total_voters = period.total_voters.add(1);
 
          // Proposal and Period new weight
          if (_istie) {
@@ -1394,12 +1415,12 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          
         // resets commit to save space: 
-        _removecommit(msg.sender, _votehash);
-        emit NewReveal(_votehash);
+        _removecommit(_votehash);
+        emit NewReveal(msg.sender, proposal.proposed_release_hash);
 
   }
 
-  function _removecommit(address _voter, bytes32 _votehash) internal {
+  function _removecommit(bytes32 _votehash) internal {
         commits[msg.sender][_votehash].amount = 0;
         commits[msg.sender][_votehash].timestamp = 0;
   }
@@ -1477,12 +1498,49 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      _extraTimeInt = uint(_extraTimeInt.mul(PROPOSERS_INCREASER));
      }
 
+
+// REQUIRE FEE if slashingratio is superior to 90.50%:
+if(proposaldata.slashingratio > 9050){
+    // 33% fee if voter is not proposer or 100% fee if voter is proposer
+    uint _feeRemaining = uint(vote.amount.mul(33).div(100));
+      if(vote.is_editor){
+        _feeRemaining = vote.amount;
+      }
+    emit NewFee(msg.sender, _feeRemaining, vote.proposal_hash);  
+    UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
+     // update _slashRemaining 
+    _slashRemaining = vote.amount.sub(_feeRemaining);
+
+         for(uint _stakeidxa = 1; _stakeidxa <= stakesCounters[msg.sender];  _stakeidxa++) {
+      //if stake is big enough and can take into account the whole fee:
+      if(stakes[msg.sender][_stakeidxa].amount > _feeRemaining) {
+ 
+        stakes[msg.sender][_stakeidxa].amount = stakes[msg.sender][_stakeidxa].amount.sub(_feeRemaining);
+        stakesAmount[msg.sender] = stakesAmount[msg.sender].sub(_feeRemaining);
+        _feeRemaining = 0;
+         break;
+      }
+      else {
+        // The fee amount is more than or equal to a full stake, so the stake needs to be deleted:
+          _feeRemaining = _feeRemaining.sub(stakes[msg.sender][_stakeidxa].amount);
+          _deletestake(msg.sender, _stakeidxa);
+          if(_feeRemaining == 0){
+           break;
+          }
+      }
+    }
+}
+
+
+
+// SLASH only if slash remaining > 0
+if(_slashRemaining > 0){
+  emit NewSlash(msg.sender, _slashRemaining, vote.proposal_hash);
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
  
         stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
-        stakes[msg.sender][_stakeidx].startTime = block.timestamp;
         _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
         
        if(_slashRemaining == 0){
@@ -1492,7 +1550,6 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
       else {
         // The slash amount does not fill a full stake, so the stake needs to be split
         uint newAmount = stakes[msg.sender][_stakeidx].amount.sub(_slashRemaining);
-        uint oldTimestamp = stakes[msg.sender][_stakeidx].startTime;
         uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
 
         // slash amount split in _slashRemaining and newAmount
@@ -1501,12 +1558,13 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
         if(newAmount > 0){
           // create a new stake with the rest of what remained from original stake that was split in 2
-          splitStake(msg.sender, newAmount, oldTimestamp, oldCompletionTime);
+          splitStake(msg.sender, newAmount, oldCompletionTime);
         }
 
         break;
       }
     }
+}
     // the slash is over
    }
    else {
@@ -1534,12 +1592,49 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
     balances[msg.sender] = balances[msg.sender].add(_reward_amount);
 
     emit Transfer(address(this), msg.sender, _reward_amount);
-    emit VoteClaimed(msg.sender, _reward_amount, _proposed_release_hash);
+    emit RewardClaimed(msg.sender, _reward_amount, _proposed_release_hash);
    }
 
   }   // end bracket if (proposaldata.istie not true)
   
   }
+
+
+    function createchunk(bytes32 _diseasehash, string memory _title, string memory _description) public {
+
+  //check if the disease exits
+  require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
+  if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
+
+  // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  // make sure the user has enough ETI to create a chunk
+  require(balances[msg.sender] >= 5 * 10**(decimals));
+  // transfer 5 ETI from user wallet to contract wallet:
+  transfer(address(this), 5 * 10**(decimals));
+
+  // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
+
+  chunksCounter = chunksCounter.add(1); // get general id of Chunk
+
+  // updates disease's chunks infos:
+  diseaseChunksCounter[_diseasehash] = diseaseChunksCounter[_diseasehash].add(1); // Increase chunks index of Disease
+  diseasechunks[_diseasehash][diseaseChunksCounter[_diseasehash]] = chunksCounter;
+  
+
+  // store the Chunk
+   chunks[chunksCounter] = Chunk(
+     chunksCounter, // general id of the chunk
+     _diseasehash, // disease of the chunk
+     diseaseChunksCounter[_diseasehash], // Index of chunk within disease
+     _title,
+     _description
+   );
+
+  emit NewChunk(chunksCounter, _diseasehash);
+
+  }
+
 
 // -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
 
@@ -1553,6 +1648,16 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
 
  function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
      return diseasesbyNames[_name];
+ }
+
+ function getallproposals() public view returns (bytes32[] memory _proposals){
+   uint _indx = 0;
+   bytes32[] memory _okproposals;
+   for(uint _propidx = 1; _propidx <= proposalsCounter;  _propidx++) {
+    _okproposals[_indx] = proposals[proposalsbyIndex[_propidx]].proposed_release_hash;
+    _indx = _indx.add(1);
+    }
+     return _okproposals;
  }
 // -------------  GETTER FUNCTIONS ---------------- //
 

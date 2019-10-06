@@ -112,7 +112,7 @@ contract EticaToken is ERC20Interface{
 
     // We don't want fake Satoshi again. Using it to prove founder's identity
     address public founder;
-    string public constant foundermsgproof = "Useless in the hands of idiots but a revolution in the hands of purposeful people. Discovering our best Futures. Kevin Wad";
+    string public constant foundermsgproof = "Discovering our best Futures. Kevin Wad";
 
     mapping(address => uint) public balances;
 

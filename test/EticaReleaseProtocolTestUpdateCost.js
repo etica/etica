@@ -203,7 +203,7 @@ await eticatobosom(test_account8, '3.1805');
       assert.equal(PERIODS_COUNTER, '467', 'Next tests assume 467 Periods have been created. Please launch the test again, will be more lucky nex time !');
       
       // after this creaproposal() should be in period 468:
-      await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1T, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+      await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1T, "Use this field as the community created standards","0",false);
      
       
       PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestUpdateCostInstance.PROPOSAL_DEFAULT_VOTE(); 
@@ -245,7 +245,7 @@ console.log('PERIODS_COUNTER BEFORE PERIOD 469 IS ', PERIODS_COUNTER.toString())
 assert.equal(PERIODS_COUNTER, '468', 'Next tests assume 468 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
 // after this creaproposal() should be in period 469:
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1U, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1U, "Use this field as the community created standards","0",false);
 
 PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestUpdateCostInstance.PROPOSAL_DEFAULT_VOTE(); 
 console.log('PROPOSAL_DEFAULT_VOTE ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
@@ -281,11 +281,11 @@ assert.equal(PERIODS_COUNTER, '469', 'Next tests assume 469 Periods have been cr
   let IPFS1_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS1, EXPECTED_FIRST_DISEASE_HASH);
   let IPFS2_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS2, EXPECTED_FIRST_DISEASE_HASH);
 
-  await getcost_createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
- await getcost_createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+  await getcost_createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "Use this field as the community created standards","0");
+ await getcost_createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "Use this field as the community created standards","0");
 
- await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
- await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "", "", "Targets:[one_target_here,another_target_here]","Compounds:[one_compound_here, another_compound_here]","Use this field as the community created standards");
+ await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1, "Use this field as the community created standards","0",false);
+ await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "Use this field as the community created standards","0",false);
 
 await getcost_commitvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '5', "random123");
 await getcost_commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
@@ -296,11 +296,11 @@ await commitvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random1
 // advance time to enter revealing Period:
 await advanceseconds(DEFAULT_VOTING_TIME);
 
-await getcost_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
-await getcost_revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await getcost_revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, "random123");
+await getcost_revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, "random123");
 
-await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, '15', "random123");
-await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, '5', "random123");
+await revealvote(test_account3, IPFS1_WITH_FIRTDISEASEHASH, true, "random123");
+await revealvote(test_account4, IPFS2_WITH_FIRTDISEASEHASH, false, "random123");
 
 // advance time to enter claimable Period:
 let REVEALING_TIME_ADD_1 = Number(DEFAULT_VOTING_TIME) + 1;
@@ -450,10 +450,10 @@ await clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
     }
 
          // propose should fail:
-         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary) {
+         async function should_fail_revealvote(_from_account, _proposed_release_hash, _choice, _vary) {
      
           console.log('should fail this revealvote');
-          await truffleAssert.fails(EticaReleaseProtocolTestUpdateCostInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}));
+          await truffleAssert.fails(EticaReleaseProtocolTestUpdateCostInstance.revealvote(_proposed_release_hash, _choice, _vary, {from: _from_account.address}));
           console.log('as expected failed to make this revealvote');
       
         }
@@ -657,63 +657,67 @@ await clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
    }
 
 
- async function createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield){
+   async function createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _freefield, _chunkid, _ischunk_right){
 
-  console.log('................................  START CREATION OF NEW PROPOSAL', _title,' ....................... ');
+    console.log('................................  START CREATION OF NEW PROPOSAL', _title,' ....................... ');
+  
+    let oldproposalsCounter = await EticaReleaseProtocolTestUpdateCostInstance.proposalsCounter();
+  
+    let _from_accountbalancebefore = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(_from_account.address);
+    //console.log('_from_account ETI balance before:', web3.utils.fromWei(_from_accountbalancebefore, "ether" ));
+  
+    let _from_accountbosomsbefore = await EticaReleaseProtocolTestUpdateCostInstance.bosoms(_from_account.address);
+    //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
+  
+    return EticaReleaseProtocolTestUpdateCostInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _freefield, _chunkid, {from: _from_account.address}).then(async function(response){
+  
+      let first_proposal = await EticaReleaseProtocolTestUpdateCostInstance.proposals(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
+      let proposalsCounter = await EticaReleaseProtocolTestUpdateCostInstance.proposalsCounter();
+      //console.log('THE FIRST PROPOSAL IS:', first_proposal);
+  
+      //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
+  
+      let first_proposal_data = await EticaReleaseProtocolTestUpdateCostInstance.propsdatas(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
+      //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
+  
+      // check Proposal's general information:
+      assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
+      assert(first_proposal.period_id >= 1);
+      assert.equal(first_proposal.title, _title, 'First proposal should exist with right name');
+      assert.equal(first_proposal.description, _description, 'First proposal should exist with right description');
+      assert.equal(first_proposal.raw_release_hash, _raw_release_hash, 'First proposal should exist with right raw_release_hash');
+      assert.equal(first_proposal.freefield, _freefield, 'First proposal should exist with right free_field');
+      if(_ischunk_right){
+        assert.equal(first_proposal.chunk_id, _chunkid, 'First proposal should exist with right chunkid');
+        console.log('chunk was right and proposal was succesfully added to chunk');
+      }
+      else {
+        assert.equal(first_proposal.chunk_id, 0, 'First proposal should exist with right chunid');
+        console.log('chunk was wrong and proposal was not added to chunk');
+      }
+      assert.equal(proposalsCounter, web3.utils.toBN(oldproposalsCounter).add(web3.utils.toBN('1')).toString(), 'There should be exactly 1 more proposal at this point');
+  
+      // check Proposal's DATA:
+      assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
+      assert.equal(first_proposal_data.istie, true, 'First proposal should exist with right istie');
+      assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
+      assert.equal(first_proposal_data.nbvoters, '0', 'First proposal should exist with right nbvoters');
+      assert.equal(first_proposal_data.slashingratio.toNumber(), '0', 'First proposal should exist with right slashingratio');
+      assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), '0', 'First proposal should exist with right forvotes');
+      assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
+      assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), '0', 'First proposal should exist with right lastcuration_weight');
+      assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), '0', 'First proposal should exist with right lasteditor_weight');
+  
+      // ------------ WARNING
+      // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
+      // ------------ WARNING
+  
+      console.log('................................  CREATED NEW  PROPOSAL', _title,' WITH SUCCESS ....................... ');
+      });
+   }
 
-  let oldproposalsCounter = await EticaReleaseProtocolTestUpdateCostInstance.proposalsCounter();
 
-  let _from_accountbalancebefore = await EticaReleaseProtocolTestUpdateCostInstance.balanceOf(_from_account.address);
-  //console.log('_from_account ETI balance before:', web3.utils.fromWei(_from_accountbalancebefore, "ether" ));
-
-  let _from_accountbosomsbefore = await EticaReleaseProtocolTestUpdateCostInstance.bosoms(_from_account.address);
-  //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
-
-  return EticaReleaseProtocolTestUpdateCostInstance.propose(_diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}).then(async function(response){
-
-    let first_proposal = await EticaReleaseProtocolTestUpdateCostInstance.proposals(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
-    let proposalsCounter = await EticaReleaseProtocolTestUpdateCostInstance.proposalsCounter();
-    //console.log('THE FIRST PROPOSAL IS:', first_proposal);
-
-    let first_proposal_ipfs = await EticaReleaseProtocolTestUpdateCostInstance.propsipfs(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
-    //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
-
-    let first_proposal_data = await EticaReleaseProtocolTestUpdateCostInstance.propsdatas(get_expected_keccak256_hash_two(_raw_release_hash, _diseasehash));
-    //console.log('THE FIRST PROPOSAL DATA IS:', first_proposal_data);
-
-    // check Proposal's general information:
-    assert.equal(first_proposal.disease_id, EXPECTED_FIRST_DISEASE_HASH, 'First proposal should exist with right disease_id');
-    assert(first_proposal.period_id >= 1);
-    assert.equal(first_proposal.title, _title, 'First proposal should exist with right name');
-    assert.equal(first_proposal.description, _description, 'First proposal should exist with right description');
-    assert.equal(proposalsCounter, web3.utils.toBN(oldproposalsCounter).add(web3.utils.toBN('1')).toString(), 'There should be exactly 1 more proposal at this point');
-
-    // check Proposal's IPFS:
-    assert.equal(first_proposal_ipfs.raw_release_hash, _raw_release_hash, 'First proposal should exist with right raw_release_hash');
-    assert.equal(first_proposal_ipfs.related_hash, _related_hash, 'First proposal should exist with right related_hash');
-    assert.equal(first_proposal_ipfs.other_related_hash, _other_related_hash, 'First proposal should exist with right other_related_hash');
-
-    // check Proposal's DATA:
-    assert.equal(first_proposal_data.status, '2', 'First proposal should exist with right status');
-    assert.equal(first_proposal_data.istie, true, 'First proposal should exist with right istie');
-    assert.equal(first_proposal_data.prestatus, '3', 'First proposal should exist with right prestatus');
-    assert.equal(first_proposal_data.nbvoters, '0', 'First proposal should exist with right nbvoters');
-    assert.equal(first_proposal_data.slashingratio.toNumber(), '0', 'First proposal should exist with right slashingratio');
-    assert.equal(web3.utils.fromWei(first_proposal_data.forvotes.toString()), '0', 'First proposal should exist with right forvotes');
-    assert.equal(web3.utils.fromWei(first_proposal_data.againstvotes.toString()), '0', 'First proposal should exist with right againstvotes');
-    assert.equal(web3.utils.fromWei(first_proposal_data.lastcuration_weight, "ether" ), '0', 'First proposal should exist with right lastcuration_weight');
-    assert.equal(web3.utils.fromWei(first_proposal_data.lasteditor_weight, "ether" ), '0', 'First proposal should exist with right lasteditor_weight');
-
-    // ------------ WARNING
-    // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
-    // ------------ WARNING
-
-    console.log('................................  CREATED NEW  PROPOSAL', _title,' WITH SUCCESS ....................... ');
-    });
- }
-
-
- async function getcost_createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield){
+ async function getcost_createproposal(_from_account, _diseasehash, _title, _description, _raw_release_hash, _freefield, _chunkid){
 
   console.log('................................  ESTIMATING COST CREATION OF NEW PROPOSAL', _title,' ....................... ');
 
@@ -725,7 +729,7 @@ await clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
   let _from_accountbosomsbefore = await EticaReleaseProtocolTestUpdateCostInstance.bosoms(_from_account.address);
   //console.log('_from_account Bosoms before:', web3.utils.fromWei(_from_accountbosomsbefore, "ether" ));
 
-  return EticaReleaseProtocolTestUpdateCostInstance.propose.estimateGas(_diseasehash, _title, _description, _raw_release_hash, _related_hash, _other_related_hash, _firstfield, _secondfield, _thirdfield, {from: _from_account.address}).then(async function(response){
+  return EticaReleaseProtocolTestUpdateCostInstance.propose.estimateGas(_diseasehash, _title, _description, _raw_release_hash, _freefield, _chunkid, {from: _from_account.address}).then(async function(response){
 
     let gas = Number(response);
     let gasprice = Number(gas * GASPRICE).toString();
@@ -858,17 +862,17 @@ await truffleAssert.fails(EticaReleaseProtocolTestUpdateCostInstance.commitvote(
 console.log('as expected failed to make this commitvote');
         }
 
- async function revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
-  return EticaReleaseProtocolTestUpdateCostInstance.revealvote(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}).then(async function(response){
+ async function revealvote(_from_account, _proposed_release_hash, _choice, _vary){
+  return EticaReleaseProtocolTestUpdateCostInstance.revealvote(_proposed_release_hash, _choice, _vary, {from: _from_account.address}).then(async function(response){
  let expected_votehash = get_expected_votehash(_proposed_release_hash, _choice, _from_account.address, _vary);
   let _newcommit = await EticaReleaseProtocolTestUpdateCostInstance.commits(_from_account.address, expected_votehash);
   assert.equal(_newcommit.amount, 0, 'New commit amount should be 0 after revealvote');
-  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS',' ....................... ');
   });
  }
 
- async function getcost_revealvote(_from_account, _proposed_release_hash, _choice, _amount, _vary){
-  return EticaReleaseProtocolTestUpdateCostInstance.revealvote.estimateGas(_proposed_release_hash, _choice, web3.utils.toWei(_amount, 'ether'), _vary, {from: _from_account.address}).then(async function(response){
+ async function getcost_revealvote(_from_account, _proposed_release_hash, _choice, _vary){
+  return EticaReleaseProtocolTestUpdateCostInstance.revealvote.estimateGas(_proposed_release_hash, _choice, _vary, {from: _from_account.address}).then(async function(response){
     let gas = Number(response);
     let gasprice = Number(gas * GASPRICE).toString();
     let ethprice = web3.utils.fromWei(gasprice, 'ether');
@@ -877,7 +881,7 @@ console.log('as expected failed to make this commitvote');
     console.log("gas cost estimation of revealvote = " + (gas * GASPRICE) + " wei");
     console.log("eth cost estimation of revealvote = " + ethprice + " ether");
     console.log("usd cost estimation of revealvote = " + usdprice + " USD");
-  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' and  VOTE AMOUNT IS', _amount,' ....................... ');
+  console.log('................................  REVEALED ON PROPOSAL ', _proposed_release_hash,' THE CHOICE IS', _choice,' ....................... ');
   });
  }
 

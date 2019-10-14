@@ -80,7 +80,13 @@ module.exports = {
          host: "localhost",
          port: 7545,
          network_id: "*" // Match any network id
-    }
+    },
+
+    privatenode: {
+      host: "localhost",
+      port: 8545,
+      network_id: 4224
+ }
 
   },
 

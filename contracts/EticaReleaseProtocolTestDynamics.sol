@@ -1109,7 +1109,7 @@ function createdisease(string memory _name) public {
 
   //check: if the disease is new we continue, otherwise we exit
    if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will not have index of 0 thus should pass this check
-
+require(diseasesbyNames[_name] != 0); // make sure it is not overwriting another disease thanks to unexpected string tricks from user
 
    // store the Disease
    diseases[diseasesCounter] = Disease(
@@ -1133,6 +1133,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
      require(diseasesbyIds[_diseasehash] > 0 && diseasesbyIds[_diseasehash] <= diseasesCounter);
      if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
+    require(_chunkid <= chunksCounter);
 
      bytes32 _proposed_release_hash = keccak256(abi.encode(raw_release_hash, _diseasehash));
      diseaseProposalsCounter[_diseasehash] = diseaseProposalsCounter[_diseasehash].add(1);
@@ -1207,7 +1208,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
       // UPDATE PROPOSAL:
       proposaldata.prestatus = ProposalStatus.Singlevoter;
 
-      // if chunk exists updates proposal.chunk_id and diseasechunks:
+      // if chunk exists and belongs to disease updates proposal.chunk_id:
       uint existing_chunk = chunks[_chunkid].id;
       if(existing_chunk != 0x0 && chunks[_chunkid].diseaseid == _diseasehash) {
         proposal.chunk_id = _chunkid;
@@ -1605,11 +1606,11 @@ if(_slashRemaining > 0){
   if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-  uint _cost = DISEASE_CREATION_AMOUNT.div(20);
+  uint _cost = uint(DISEASE_CREATION_AMOUNT.div(20));
   // make sure the user has enough ETI to create a chunk
-  require(balances[msg.sender] >= _cost * 10**(decimals));
+  require(balances[msg.sender] >= _cost);
   // transfer DISEASE_CREATION_AMOUNT / 20  ETI from user wallet to contract wallet:
-  transfer(address(this), _cost * 10**(decimals));
+  transfer(address(this), _cost);
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 

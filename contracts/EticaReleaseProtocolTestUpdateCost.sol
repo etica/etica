@@ -1500,8 +1500,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      }
 
 
-// REQUIRE FEE if slashingratio is superior to 90.50%:
-if(proposaldata.slashingratio > 9050){
+// REQUIRE FEE if slashingratio is superior to 90.00%:
+if(proposaldata.slashingratio > 9000){
     // 33% fee if voter is not proposer or 100% fee if voter is proposer
     uint _feeRemaining = uint(vote.amount.mul(33).div(100));
       if(vote.is_editor){
@@ -1632,6 +1632,7 @@ if(_slashRemaining > 0){
      _description
    );
 
+  UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_cost);
   emit NewChunk(chunksCounter, _diseasehash);
 
   }

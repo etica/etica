@@ -110,9 +110,8 @@ contract EticaToken is ERC20Interface{
 
     uint public UNRECOVERABLE_ETI;
 
-    // We don't want fake Satoshi again. Using it to prove founder's identity
-    address public founder;
-    string public constant foundermsg = "Discovering our best Futures. Kevin Wad";
+    // Etica is a neutral protocol, it has no founder I am only an initiator:
+    string public constant initiatormsg = "Discovering our best Futures. Kevin Wad";
 
     mapping(address => uint) public balances;
 
@@ -181,7 +180,7 @@ contract EticaToken is ERC20Interface{
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
       /* Phase 1 will last about 10 years:
-      --> 11 550 000 ETI to be distributed trough MINING as block reward
+      --> 11 550 000 ETI to be distributed through MINING as block reward
       --> 9 450 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
       
 
@@ -244,10 +243,9 @@ contract EticaToken is ERC20Interface{
     // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
 
 
-       //The founder gets nothing! You must mine or earn the Etica ERC20 token
-       //balances[founder] = _totalMiningSupply;
-       //Transfer(address(0), founder, _totalMiningSupply);
-       founder = msg.sender;
+       //The creator gets nothing! The only way to earn Etica is to mine it or earn it as protocol reward
+       //balances[creator] = _totalMiningSupply;
+       //Transfer(address(0), creator, _totalMiningSupply);
     }
 
 
@@ -326,21 +324,25 @@ contract EticaToken is ERC20Interface{
  
               if(tokensMinted >= 6300000 * 10**uint(decimals)) {
                 // 6 300 000 = 5 040 000 + 1 260 000;
+                //era5 to era10
                 blockreward = 19977152530194267420; // 19.977152530194267420 per block (amounts to 1050000 ETI a year)
                 periodrewardtemp = 20136969750435821559600; // from era5 to era 10: 20136.9697504358215596 ETI per week
               }
 
               else if (tokensMinted < 3570000 * 10**uint(decimals)) {
                 // 3 570 000 = 1 890 000 + 1 680 000;
+                // era2
                 blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
                 periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
               }
               else if (tokensMinted < 5040000 * 10**uint(decimals)) {
                 // 5 040 000 = 3 570 000 + 1 470 000;
+                //era3
                 blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
                 periodrewardtemp = 12082181850261492935800; // era3 12082.181850261492935800 ETI per week
               }
               else {
+                // era4
                 blockreward = 23972583036233120904; // 23.972583036233120904 per block (amounts to 1260000 ETI a year)
                 periodrewardtemp = 16109575800348657247700; // era4 16109.575800348657247700 ETI per week
               }
@@ -978,7 +980,7 @@ function _deletestake(address _staker,uint _index) internal {
 
 // ----- Stakes consolidation  ----- //
 
-// slashing function needs to loop trough stakes. Can create issues for claiming votes:
+// slashing function needs to loop through stakes. Can create issues for claiming votes:
 // The function stakescsldt() has been created to consolidate (gather) stakes when user has too much stakes
 function stakescsldt(uint _endTime, uint _min_limit, uint _maxidx) public {
 
@@ -1491,8 +1493,8 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      }
 
 
-// REQUIRE FEE if slashingratio is superior to 90.50%:
-if(proposaldata.slashingratio > 9050){
+// REQUIRE FEE if slashingratio is superior to 90.00%:
+if(proposaldata.slashingratio > 9000){
     // 33% fee if voter is not proposer or 100% fee if voter is proposer
     uint _feeRemaining = uint(vote.amount.mul(33).div(100));
       if(vote.is_editor){
@@ -1623,6 +1625,7 @@ if(_slashRemaining > 0){
      _description
    );
 
+  UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_cost);
   emit NewChunk(chunksCounter, _diseasehash);
 
   }

@@ -725,8 +725,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     let disease1_proposal1_before = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,1);
                     console.log('disease1_proposal1 before proposal creation', disease1_proposal1_before);
 
-                    let all_proposals_before = await EticaReleaseInstance.getallproposals();
-                    console.log('all_proposals before proposal creation', all_proposals_before);
+                    
                     assert(disease1_proposal1_before == 0x0, 'This disease should not have any proposal yet');
 
                     
@@ -771,8 +770,7 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                     console.log('disease1_proposal1 after proposal creation', disease1_proposal1_after);
                     assert(disease1_proposal1_after != 0x0, 'This disease should have one proposal now');
 
-                    /*let all_proposals_after = await EticaReleaseInstance.getallproposals();
-                    console.log('all_proposals after proposal creation', all_proposals_after);*/
+                    
 
                     // ------------ WARNING
                     // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered
@@ -2005,8 +2003,7 @@ return EticaReleaseInstance.eticatobosoms(miner_account.address,  web3.utils.toB
   let disease1_proposal2_before = await EticaReleaseInstance.diseaseproposals(EXPECTED_FIRST_DISEASE_HASH,2);
   console.log('disease1_proposal2 before proposal creation', disease1_proposal2_before);
 
-  //let all_proposals_before = await EticaReleaseInstance.getallproposals();
-  //console.log('all_proposals before proposal creation', all_proposals_before);
+  
   assert(disease1_proposal2_before == 0x0, 'This disease should only have 1 proposal now');
 
   assert(web3.utils.fromWei(miner_accountbosomsbefore, "ether" ) >= 10, 'miner_account should have enough Bosoms before CALLING propose FUNCTION, please rekaunch the tests will be more lucky next time !');
@@ -2055,9 +2052,6 @@ return EticaReleaseInstance.eticatobosoms(miner_account.address,  web3.utils.toB
   console.log('chunk2_proposal1_after proposal creation', chunk2_proposal1_after);
   assert(chunk2_proposal1_after == EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH, 'THE CHUNK 2 first proposal should be EXPECTED_SECOND_PROPOSAL_PROPOSED_RELEASE_HASH');
 
-
-  /*let all_proposals_after = await EticaReleaseInstance.getallproposals();
-  console.log('all_proposals after proposal creation', all_proposals_after);*/
 
   // ------------ WARNING
   // NEED TO CHECK test_acount has 10 ETI less than before creating propoosal and CHECK if default vote has been registered

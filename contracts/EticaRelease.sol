@@ -141,8 +141,8 @@ contract EticaToken is ERC20Interface{
 
     //a big number is easier ; just find a solution that is smaller
     //uint public  _MAXIMUM_TARGET = 2**224;  bitcoin uses 224
-    uint public  _MAXIMUM_TARGET = 2**242; // used for tests 243 much faster, 242 seems to be the limit where mining gets much harder
-    // uint public  _MAXIMUM_TARGET = 2**234; // used for prod
+    //uint public  _MAXIMUM_TARGET = 2**242; // used for tests 243 much faster, 242 seems to be the limit where mining gets much harder
+     uint public  _MAXIMUM_TARGET = 2**234; // used for prod
 
 
     uint public miningTarget;
@@ -506,19 +506,19 @@ function () payable external {
 
 
 contract EticaRelease is EticaToken {
-  /* --------- PROD VALUES -------------
-uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
-uint STAKING_DURATION = 28 days; // default stake duration 28 jours
-uint DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
+  /* --------- PROD VALUES -------------  */
+uint public REWARD_INTERVAL = 7 days; // periods duration 7 jours
+uint public STAKING_DURATION = 28 days; // default stake duration 28 jours
+uint public DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 days
-     --------- PROD VALUES ------------- */
+    /* --------- PROD VALUES ------------- */
 
-/* --------- TESTING VALUES -------------*/
+/* --------- TESTING VALUES -------------
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
 uint public DEFAULT_VOTING_TIME = 3 minutes; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 1 minutes; // default revealing duration 7 days
-/* --------- TESTING VALUES -------------*/
+ --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -669,15 +669,15 @@ mapping(address => uint) public stakesAmount; // keeps track of total amount of 
 mapping(address => uint) public blockedeticas;
 
 // ---------- EVENTS ----------- //
-event CreatedPeriod(uint period_id, uint interval);
-event NewDisease(uint diseaseindex, string title);
-event NewProposal(bytes32 proposed_release_hash, address _proposer, bytes32 diseasehash, uint chunkid);
-event NewChunk(uint chunkid, bytes32 diseasehash);
+event CreatedPeriod(uint indexed period_id, uint interval);
+event NewDisease(uint indexed diseaseindex, string title);
+event NewProposal(bytes32 proposed_release_hash, address indexed _proposer, bytes32 indexed diseasehash, uint indexed chunkid);
+event NewChunk(uint indexed chunkid, bytes32 indexed diseasehash);
 event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
 event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
-event NewCommit(address _voter, bytes32 votehash);
-event NewReveal(address _voter, bytes32 _proposal);
+event NewCommit(address indexed _voter, bytes32 votehash);
+event NewReveal(address indexed _voter, bytes32 indexed _proposal);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeamount);
 // ----------- EVENTS ---------- //
@@ -1639,16 +1639,6 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
 
  function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
      return diseasesbyNames[_name];
- }
-
- function getallproposals() public view returns (bytes32[] memory _proposals){
-   uint _indx = 0;
-   bytes32[] memory _okproposals;
-   for(uint _propidx = 1; _propidx <= proposalsCounter;  _propidx++) {
-    _okproposals[_indx] = proposals[proposalsbyIndex[_propidx]].proposed_release_hash;
-    _indx = _indx.add(1);
-    }
-     return _okproposals;
  }
 // -------------  GETTER FUNCTIONS ---------------- //
 

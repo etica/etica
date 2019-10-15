@@ -253,7 +253,7 @@ contract EticaToken is ERC20Interface{
        //The founder gets nothing! You must mine or earn the Etica ERC20 token
        //balances[founder] = _totalMiningSupply;
        //Transfer(address(0), founder, _totalMiningSupply);
-      founder = msg.sender;
+       founder = msg.sender;
     }
 
 
@@ -675,15 +675,15 @@ mapping(address => uint) public stakesAmount; // keeps track of total amount of 
 mapping(address => uint) public blockedeticas;
 
 // ---------- EVENTS ----------- //
-event CreatedPeriod(uint period_id, uint interval);
-event NewDisease(uint diseaseindex, string title);
-event NewProposal(bytes32 proposed_release_hash, address _proposer, bytes32 diseasehash, uint chunkid);
-event NewChunk(uint chunkid, bytes32 diseasehash);
+event CreatedPeriod(uint indexed period_id, uint interval);
+event NewDisease(uint indexed diseaseindex, string title);
+event NewProposal(bytes32 proposed_release_hash, address indexed _proposer, bytes32 indexed diseasehash, uint indexed chunkid);
+event NewChunk(uint indexed chunkid, bytes32 indexed diseasehash);
 event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
 event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
-event NewCommit(address _voter, bytes32 votehash);
-event NewReveal(address _voter, bytes32 _proposal);
+event NewCommit(address indexed _voter, bytes32 votehash);
+event NewReveal(address indexed _voter, bytes32 indexed _proposal);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeamount);
 // ----------- EVENTS ---------- //
@@ -1370,12 +1370,12 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
         else if(_newstatus != proposaldata.prestatus){
 
          if(_newstatus == ProposalStatus.Accepted){
-          period.againstprops -= 1;
+          period.againstprops = period.againstprops.sub(1);
           period.forprops = period.forprops.add(1);
          }
          // in this case proposal is necessarily Rejected:
          else {
-          period.forprops -= 1;
+          period.forprops = period.forprops.sub(1);
           period.againstprops = period.againstprops.add(1);
          }
 
@@ -1604,11 +1604,11 @@ if(_slashRemaining > 0){
   if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-
+  uint _cost = DISEASE_CREATION_AMOUNT.div(20);
   // make sure the user has enough ETI to create a chunk
-  require(balances[msg.sender] >= 5 * 10**(decimals));
-  // transfer 5 ETI from user wallet to contract wallet:
-  transfer(address(this), 5 * 10**(decimals));
+  require(balances[msg.sender] >= _cost * 10**(decimals));
+  // transfer DISEASE_CREATION_AMOUNT / 20  ETI from user wallet to contract wallet:
+  transfer(address(this), _cost * 10**(decimals));
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
@@ -1645,16 +1645,6 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
 
  function getdiseasehashbyName(string memory _name) public view returns (bytes32 _diseasehash){
      return diseasesbyNames[_name];
- }
-
- function getallproposals() public view returns (bytes32[] memory _proposals){
-   uint _indx = 0;
-   bytes32[] memory _okproposals;
-   for(uint _propidx = 1; _propidx <= proposalsCounter;  _propidx++) {
-    _okproposals[_indx] = proposals[proposalsbyIndex[_propidx]].proposed_release_hash;
-    _indx = _indx.add(1);
-    }
-     return _okproposals;
  }
 // -------------  GETTER FUNCTIONS ---------------- //
 

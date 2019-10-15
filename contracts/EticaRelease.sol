@@ -987,8 +987,8 @@ function stakescsldt(uint _endTime, uint _min_limit, uint _maxidx) public {
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
 require(_endTime < block.timestamp.add(730 days)); // _endTime cannot be more than two years ahead  
 
-// _maxidx must be less or equal to nb of stakes and we set a limit for loop of 100:
-require(_maxidx <= 100 && _maxidx <= stakesCounters[msg.sender]);
+// _maxidx must be less or equal to nb of stakes and we set a limit for loop of 50:
+require(_maxidx <= 50 && _maxidx <= stakesCounters[msg.sender]);
 
 uint newAmount = 0;
 
@@ -1007,7 +1007,7 @@ for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
       // if _stakeidx > stakesCounters[msg.sender] it means the _deletestake() function has pushed the next stakes at the begining:
       _currentidx = _stakeidx.sub(_nbdeletes); //Notice: initial stakesCounters[msg.sender] = stakesCounters[msg.sender] + _nbdeletes. 
       //So "_stackidx <= _maxidx <= initial stakesCounters[msg.sender]" ===> "_stakidx <= stakesCounters[msg.sender] + _nbdeletes" ===> "_stackidx - _nbdeletes <= stakesCounters[msg.sender]"
-      require(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
+      assert(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
     }
       
       //if stake should end sooner than _endTime it can be consolidated into a stake that end latter:
@@ -1069,6 +1069,7 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
     );
   // ------ creates a new stake with the rest ------- //  
 
+assert(_restAmount > 0);
 
 }
 

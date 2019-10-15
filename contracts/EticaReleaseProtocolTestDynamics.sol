@@ -116,9 +116,8 @@ contract EticaToken is ERC20Interface{
 
     uint public UNRECOVERABLE_ETI;
 
-    // We don't want fake Satoshi again. Using it to prove founder's identity
-    address public founder;
-    string public constant foundermsg = "Discovering our best Futures. Kevin Wad";
+    // Etica is a neutral protocol, it has no founder I am only an initiator:
+    string public constant initiatormsg = "Discovering our best Futures. Kevin Wad";
 
     mapping(address => uint) public balances;
 
@@ -148,7 +147,7 @@ contract EticaToken is ERC20Interface{
     //a big number is easier ; just find a solution that is smaller
     //uint public  _MAXIMUM_TARGET = 2**224;  bitcoin uses 224
     uint public  _MAXIMUM_TARGET = 2**242; // used for tests 243 much faster, 242 seems to be the limit where mining gets much harder
-    // uint public  _MAXIMUM_TARGET = 2**234; // used for prod
+    //uint public  _MAXIMUM_TARGET = 2**234; // used for prod
 
 
     uint public miningTarget;
@@ -188,7 +187,7 @@ contract EticaToken is ERC20Interface{
     // ------------ PHASE 1 (before 21 Million ETI has been reached) -------------- //
       
       /* Phase 1 will last about 10 years:
-      --> 11 550 000 ETI to be distributed trough MINING as block reward
+      --> 11 550 000 ETI to be distributed through MINING as block reward
       --> 9 450 000 ETI to be issued during phase 1 as periodrewardtemp for ETICA reward system
       
 
@@ -251,10 +250,9 @@ contract EticaToken is ERC20Interface{
     // ------------ PHASE 2 (after the first 21 Million ETI have been issued) -------------- //
 
 
-       //The founder gets nothing! You must mine or earn the Etica ERC20 token
-       //balances[founder] = _totalMiningSupply;
-       //Transfer(address(0), founder, _totalMiningSupply);
-       founder = msg.sender;
+       //The creator gets nothing! The only way to earn Etica is to mine it or earn it as protocol reward
+       //balances[creator] = _totalMiningSupply;
+       //Transfer(address(0), creator, _totalMiningSupply);
     }
 
 
@@ -333,21 +331,25 @@ contract EticaToken is ERC20Interface{
  
               if(tokensMinted >= 6300000 * 10**uint(decimals)) {
                 // 6 300 000 = 5 040 000 + 1 260 000;
+                //era5 to era10
                 blockreward = 19977152530194267420; // 19.977152530194267420 per block (amounts to 1050000 ETI a year)
                 periodrewardtemp = 20136969750435821559600; // from era5 to era 10: 20136.9697504358215596 ETI per week
               }
 
               else if (tokensMinted < 3570000 * 10**uint(decimals)) {
                 // 3 570 000 = 1 890 000 + 1 680 000;
+                // era2
                 blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
                 periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
               }
               else if (tokensMinted < 5040000 * 10**uint(decimals)) {
                 // 5 040 000 = 3 570 000 + 1 470 000;
+                //era3
                 blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
                 periodrewardtemp = 12082181850261492935800; // era3 12082.181850261492935800 ETI per week
               }
               else {
+                // era4
                 blockreward = 23972583036233120904; // 23.972583036233120904 per block (amounts to 1260000 ETI a year)
                 periodrewardtemp = 16109575800348657247700; // era4 16109.575800348657247700 ETI per week
               }
@@ -513,19 +515,19 @@ function () payable external {
 
 
 contract EticaReleaseProtocolTestDynamics is EticaToken {
-  /* --------- PROD VALUES -------------
-uint REWARD_INTERVAL = 7 days; // periods duration 7 jours
-uint STAKING_DURATION = 28 days; // default stake duration 28 jours
-uint DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
+  /* --------- PROD VALUES -------------  
+uint public REWARD_INTERVAL = 7 days; // periods duration 7 jours
+uint public STAKING_DURATION = 28 days; // default stake duration 28 jours
+uint public DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 days
-     --------- PROD VALUES ------------- */
+    /* --------- PROD VALUES ------------- */
 
 /* --------- TESTING VALUES -------------*/
 uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
 uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
 uint public DEFAULT_VOTING_TIME = 3 minutes; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 1 minutes; // default revealing duration 7 days
-/* --------- TESTING VALUES -------------*/
+ /*--------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -985,15 +987,15 @@ function _deletestake(address _staker,uint _index) internal {
 
 // ----- Stakes consolidation  ----- //
 
-// slashing function needs to loop trough stakes. Can create issues for claiming votes:
+// slashing function needs to loop through stakes. Can create issues for claiming votes:
 // The function stakescsldt() has been created to consolidate (gather) stakes when user has too much stakes
 function stakescsldt(uint _endTime, uint _min_limit, uint _maxidx) public {
 
 // security to avoid blocking ETI by front end apps that could call function with too high _endTime:
 require(_endTime < block.timestamp.add(730 days)); // _endTime cannot be more than two years ahead  
 
-// _maxidx must be less or equal to nb of stakes and we set a limit for loop of 100:
-require(_maxidx <= 100 && _maxidx <= stakesCounters[msg.sender]);
+// _maxidx must be less or equal to nb of stakes and we set a limit for loop of 50:
+require(_maxidx <= 50 && _maxidx <= stakesCounters[msg.sender]);
 
 uint newAmount = 0;
 
@@ -1012,7 +1014,7 @@ for(uint _stakeidx = 1; _stakeidx <= _maxidx;  _stakeidx++) {
       // if _stakeidx > stakesCounters[msg.sender] it means the _deletestake() function has pushed the next stakes at the begining:
       _currentidx = _stakeidx.sub(_nbdeletes); //Notice: initial stakesCounters[msg.sender] = stakesCounters[msg.sender] + _nbdeletes. 
       //So "_stackidx <= _maxidx <= initial stakesCounters[msg.sender]" ===> "_stakidx <= stakesCounters[msg.sender] + _nbdeletes" ===> "_stackidx - _nbdeletes <= stakesCounters[msg.sender]"
-      require(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
+      assert(_currentidx >= 1); // makes sure _currentidx is within existing stakes range
     }
       
       //if stake should end sooner than _endTime it can be consolidated into a stake that end latter:
@@ -1074,6 +1076,7 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
     );
   // ------ creates a new stake with the rest ------- //  
 
+assert(_restAmount > 0);
 
 }
 
@@ -1109,7 +1112,7 @@ function createdisease(string memory _name) public {
 
   //check: if the disease is new we continue, otherwise we exit
    if(diseasesbyIds[_diseasehash] != 0x0) revert();  //prevent the same disease from being created twice. The software manages diseases uniqueness based on their unique english name. Note that even the first disease will not have index of 0 thus should pass this check
-require(diseasesbyNames[_name] != 0); // make sure it is not overwriting another disease thanks to unexpected string tricks from user
+   require(diseasesbyNames[_name] == 0); // make sure it is not overwriting another disease thanks to unexpected string tricks from user
 
    // store the Disease
    diseases[diseasesCounter] = Disease(
@@ -1606,7 +1609,7 @@ if(_slashRemaining > 0){
   if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-  uint _cost = uint(DISEASE_CREATION_AMOUNT.div(20));
+  uint _cost = DISEASE_CREATION_AMOUNT.div(20);
   // make sure the user has enough ETI to create a chunk
   require(balances[msg.sender] >= _cost);
   // transfer DISEASE_CREATION_AMOUNT / 20  ETI from user wallet to contract wallet:

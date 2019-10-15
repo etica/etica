@@ -212,9 +212,9 @@ await createdisease(FIRST_DISEASE_NAME);
 let indexfromhash = await EticaReleaseProtocolTestDynamicsInstance.diseasesbyIds(EXPECTED_FIRST_DISEASE_HASH);
 let hashfromname = await EticaReleaseProtocolTestDynamicsInstance.getdiseasehashbyName(EXPECTED_FIRST_DISEASE_HASH);
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1,"Use this field as the community created standards",1,false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "Use this field as the community created standards",1,false);
-await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 2", IPFS3, "Use this field as the community created standards",1,false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1,"Use this field as the community created standards",0,false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2, "Use this field as the community created standards",0,false);
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 2", IPFS3, "Use this field as the community created standards",0,false);
 
 
 let _general_proposal1 = await EticaReleaseProtocolTestDynamicsInstance.proposals(IPFS1_WITH_FIRTDISEASEHASH);
@@ -274,7 +274,7 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD II IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '1', 'Next tests assume ONLY 1 Period have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1B, "Use this field as the community created standards","1",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1B, "Use this field as the community created standards","0",false);
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2B, "Use this field as the community created standards","0",false);
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 3 Malaria", "Description 2", IPFS3B, "Use this field as the community created standards","0",false);
 
@@ -324,8 +324,8 @@ let IPFS5C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5C, EXPECT
 let IPFS6C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6C, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS7C_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS7C, EXPECTED_FIRST_DISEASE_HASH);
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1C, "Use this field as the community created standards","1",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2C, "Use this field as the community created standards","2",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1C, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2C, "Use this field as the community created standards","0",false);
 
 // New Period III should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -370,10 +370,10 @@ let IPFS4D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4D, EXPECT
 let IPFS5D_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5D, EXPECTED_FIRST_DISEASE_HASH);
 
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1D, "Use this field as the community created standards","0",false);
-await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2D, "Use this field as the community created standards","1",false);
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2D, "Use this field as the community created standards","0",false);
 await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS3D, "Use this field as the community created standards","0",false);
 await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS4D, "Targets:[one_target_here,another_target_here]","0",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5D, "Targets:[one_target_here,another_target_here]","1",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5D, "Targets:[one_target_here,another_target_here]","0",false);
 
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
 console.log('NEW APPROVAL THRESHOLD for PERIOD IV IS ', APPROVAL_THRESHOLD.toString());
@@ -420,12 +420,12 @@ let IPFS4E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS4E, EXPECT
 let IPFS5E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS5E, EXPECTED_FIRST_DISEASE_HASH);
 let IPFS6E_WITH_FIRTDISEASEHASH = get_expected_keccak256_hash_two(IPFS6E, EXPECTED_FIRST_DISEASE_HASH);
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1E, "Use this field as the community created standards","1",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2E, "Compounds:[one_compound_here, another_compound_here]","1",false);
-await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3E, "Compounds:[one_compound_here, another_compound_here]","1",false);
-await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS4E, "Compounds:[one_compound_here, another_compound_here]","1",false);
-await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5E, "Compounds:[one_compound_here, another_compound_here]","1",false);
-await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS6E, "Compounds:[one_compound_here, another_compound_here]","1",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1E, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2E, "Compounds:[one_compound_here, another_compound_here]","0",false);
+await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3E, "Compounds:[one_compound_here, another_compound_here]","0",false);
+await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS4E, "Compounds:[one_compound_here, another_compound_here]","0",false);
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5E, "Compounds:[one_compound_here, another_compound_here]","0",false);
+await createproposal(test_account6, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS6E, "Compounds:[one_compound_here, another_compound_here]","0",false);
 
 PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter();
 console.log('NEW PERIODS_COUNTER PERIOD V IS ', PERIODS_COUNTER.toString());
@@ -521,8 +521,8 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD VII IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '6', 'Next tests assume ONLY 6 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1G,"Targets:[one_target_here,another_target_here]","1",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2G, "Use this field as the community created standards","1",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1G,"Targets:[one_target_here,another_target_here]","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2G, "Use this field as the community created standards","0",false);
 
 // New Period VII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -556,8 +556,8 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD VIII IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '7', 'Next tests assume ONLY 7 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1H, "Use this field as the community created standards","5",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2H, "Use this field as the community created standards","8",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1H, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2H, "Use this field as the community created standards","0",false);
 
 // New Period VIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -703,11 +703,11 @@ console.log('PERIODS_COUNTER BEFORE PERIOD XII IS ', PERIODS_COUNTER.toString())
 assert.equal(PERIODS_COUNTER, '11', 'Next tests assume ONLY 11 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1L, "Use this field as the community created standards","1",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2L, "Use this field as the community created standards","1",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1L, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2L, "Use this field as the community created standards","0",false);
 await createproposal(test_account3, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS3L, "Use this field as the community created standards","0",false);
 await createproposal(test_account4, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS4L, "Use this field as the community created standards","0",false);
-await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5L, "Use this field as the community created standards","1",false);
+await createproposal(test_account5, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS5L, "Use this field as the community created standards","0",false);
 
 // New Period XII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -783,8 +783,8 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD XIV IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '13', 'Next tests assume ONLY 13 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1N, "Use this field as the community created standards","1",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2N, "Use this field as the community created standards","2",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1N, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2N, "Use this field as the community created standards","0",false);
 
 // New Period XIV should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -852,8 +852,8 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD XVI IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '15', 'Next tests assume ONLY 15 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1P, "Use this field as the community created standards","1",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2P, "Use this field as the community created standards","3",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1P, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2P, "Use this field as the community created standards","0",false);
 
 // New Period XVI should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -887,8 +887,8 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD XVII IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '16', 'Next tests assume ONLY 16 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1Q, "Use this field as the community created standards","2",false);
-await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2Q, "Use this field as the community created standards","1",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1Q, "Use this field as the community created standards","0",false);
+await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2Q, "Use this field as the community created standards","0",false);
 
 // New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:
 APPROVAL_THRESHOLD = await EticaReleaseProtocolTestDynamicsInstance.APPROVAL_THRESHOLD();
@@ -1018,7 +1018,7 @@ PERIODS_COUNTER = await EticaReleaseProtocolTestDynamicsInstance.periodsCounter(
 console.log('PERIODS_COUNTER BEFORE PERIOD XXI IS ', PERIODS_COUNTER.toString());
 assert.equal(PERIODS_COUNTER, '20', 'Next tests assume ONLY 20 Periods have been created. Please launch the test again, will be more lucky nex time !');
 
-await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1U, "Use this field as the community created standards","1",false);
+await createproposal(test_account, EXPECTED_FIRST_DISEASE_HASH, "Title 1 Malaria", "Description 1", IPFS1U, "Use this field as the community created standards","0",false);
 await createproposal(test_account2, EXPECTED_FIRST_DISEASE_HASH, "Title 2 Malaria", "Description 2", IPFS2U, "Use this field as the community created standards","0",false);
 
 // New Period XVIII should have been created and thus APPROVAL_THRESHOLD SHOULD HAVE BEEN UPDATED:

@@ -10,6 +10,11 @@ console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------')
 console.log('---------------> NEUTRAL PROTOCOL FOR DECENTRALISED RESEARCH <------------------');
 console.log('');
 
+
+// This series of tests aims to test the functions that will update protocol costs
+// The ProtocolTest contract has been initialised with an initial supply so that accounts don't have to mine
+// 
+
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
 var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
@@ -215,7 +220,9 @@ await eticatobosom(test_account8, '3.1805');
       SUPPPLY = await EticaReleaseProtocolTestUpdateCostInstance.totalSupply(); 
       console.log('OLD SUPPLY IS ', web3.utils.fromWei(SUPPPLY, "ether" ));
       
-        await updatecost(test_account3);
+        await updatecost(test_account3, PERIODS_COUNTER.toString());
+        // should fail update cost twice in same period:
+        await should_fail_to_updatecost(test_account3, PERIODS_COUNTER.toString());
       
         PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestUpdateCostInstance.PROPOSAL_DEFAULT_VOTE(); 
         console.log('NEW PROPOSAL_DEFAULT_VOTE IS ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));
@@ -322,11 +329,11 @@ await clmpropbyhash(test_account2, IPFS2_WITH_FIRTDISEASEHASH);
   });
 
 
-  async function updatecost(useraccount){
+  async function updatecost(useraccount, _periodcounter){
 
-    console.log('---> UPDATING COSTS');
+    console.log('---> UPDATING COSTS', _periodcounter);
     return EticaReleaseProtocolTestUpdateCostInstance.updatecost({from: useraccount.address}).then(async function(receipt){
-    console.log('---> The cost update of DISEASE AND PROPOSAL AMOUNT CREATION was successfull');
+    console.log('---> The cost update of DISEASE AND PROPOSAL AMOUNT CREATION was successfull', _periodcounter);
 
       }).catch(async function(error){
         console.log('An error has occured !', error);

@@ -10,6 +10,14 @@ console.log('------------------- WELCOME ON THE ETICA PROTOCOL ---------------')
 console.log('--------------->  NEUTRAL PROTOCOL FOR DECENTRALISED RESEARCH <------------------');
 console.log('');
 
+
+// This series of tests aims to test the protocol workflow, without having to simulate real mining in parralle.
+// The ProtocolTest contract has been initialised with an initial supply so that accounts don't have to mine
+// These tests are done in the context of Phase1
+
+// Rq: sometimes the test throw an error because proposals were not created in same period.
+// In fact I assume the proposals belong to same period so if they happen not to, just relaunch the test.
+
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
 var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME

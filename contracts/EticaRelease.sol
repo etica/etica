@@ -531,7 +531,7 @@ uint public PERIODS_PER_THRESHOLD = 5; // number of Periods before readjusting A
 uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
 uint public PROTOCOL_RATIO_TARGET = 7250; // 7250 means the Protocol has a goal of 72.50% proposals approved and 27.5% proposals rejected
-
+uint public LAST_PERIOD_COST_UPDATE = 0;
 
 
 struct Period{
@@ -1233,6 +1233,9 @@ uint _new_proposal_vote = supply.mul(47619046).div(10**14); // default vote amou
 
 PROPOSAL_DEFAULT_VOTE = _new_proposal_vote;
 DISEASE_CREATION_AMOUNT = _new_disease_cost;
+
+assert(LAST_PERIOD_COST_UPDATE < periodsCounter);
+LAST_PERIOD_COST_UPDATE = periodsCounter;
 
  }
 

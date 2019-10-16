@@ -13,14 +13,12 @@ console.log('');
 
 // This series of tests aims to test the functions that will update protocol costs
 // The ProtocolTest contract has been initialised with an initial supply so that accounts don't have to mine
-// 
 
 var PERIOD_CURATION_REWARD_RATIO = 0; // initialize global variable PERIOD_CURATION_REWARD_RATIO
 var PERIOD_EDITOR_REWARD_RATIO = 0; // initialize global variable PERIOD_EDITOR_REWARD_RATIO
 var DEFAULT_VOTING_TIME = 0; // initialize global variable DEFAULT_VOTING_TIME
 var DEFAULT_REVEALING_TIME = 0;
 var REWARD_INTERVAL = 0; // initialize global variable REWARD_INTERVAL
-
 var ETH_PRICE_USD = 198.54;
 
 // test suite

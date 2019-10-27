@@ -575,6 +575,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
             // wait long enough so that miner_account has mined enough blocks and thus has enough ETI available (more than DISEASE_CREATION_AMOUNT)
             await timeout(80000);
 
+            let accessibleSupply = await EticaReleaseInstance.accessibleSupply();
+            console.log('old accessible supply is', accessibleSupply);
+
             let miner_balance = await EticaReleaseInstance.balanceOf(miner_account.address);
             //console.log('asserting miner_account balance(', web3.utils.fromWei(miner_balance, "ether" ),'ETI) is greater than DISEASE_CREATION_AMOUNT');
             assert(web3.utils.fromWei(miner_balance, "ether" ) > 100, 'miner_account should have mined more than 100 ETI after 80000 ms! Please relaunch the test, you will be more lucky next time !');
@@ -624,6 +627,9 @@ assert(web3.utils.fromWei(receipt, "ether" ) > 0x0, 'miner_account should have m
                   assert.equal(web3.utils.fromWei(contract_balance_after_createdisease, "ether" ) - web3.utils.fromWei(contract_balance_before_createdisease, "ether" ), 100);
                   //console.log('contract balance after Disease Creation is', web3.utils.fromWei(contract_balance_after_createdisease, "ether" ));
 
+
+                  accessibleSupply = await EticaReleaseInstance.accessibleSupply();
+                  console.log('new accessible supply is', accessibleSupply);
 
             console.log('................................  CAN CREATE A DISEASE  ....................... ');
             console.log('------------------------------- END OF TEST with SUCCESS ----------------------------');

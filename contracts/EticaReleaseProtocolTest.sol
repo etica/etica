@@ -401,11 +401,10 @@ contract EticaToken is ERC20Interface{
 
 
 
-     //https://en.bitcoin.it/wiki/Difficulty#What_is_the_formula_for_difficulty.3F
-     //as of 2017 the bitcoin difficulty was up to 17 zeroes, it was only 8 in the early days
-
-     //readjust the target by up to 50 percent
+     //readjust the target with same rules as bitcoin
      function _reAdjustDifficulty() internal {
+
+         uint _oldtarget = miningTarget;
 
           // should get as close as possible to (2016 * 10 minutes) seconds => 1 209 600 seconds
          uint ethTimeSinceLastDifficultyPeriod = block.timestamp.sub(latestDifficultyPeriodStarted);      
@@ -413,26 +412,37 @@ contract EticaToken is ERC20Interface{
          //we want miners to spend 10 minutes to mine each 'block'
          uint targetTimePerDiffPeriod = _BLOCKS_PER_READJUSTMENT.mul(10 minutes); //Target is 1 209 600 seconds. (2016 * 10 minutes) seconds to mine _BLOCKS_PER_READJUSTMENT blocks of ETI.
 
-         //if there were less eth seconds-timestamp than expected
+         //if there were less ethereum seconds-timestamp than expected, make it harder
          if( ethTimeSinceLastDifficultyPeriod < targetTimePerDiffPeriod )
          {
-           uint excess_block_pct = (targetTimePerDiffPeriod.mul(100)).div( ethTimeSinceLastDifficultyPeriod );
 
-           uint excess_block_pct_extra = excess_block_pct.sub(100).limitLessThan(1000);
-           // If there were 5% more blocks mined than expected then this is 5.  If there were 100% more blocks mined than expected then this is 100.
+              // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)  
+              miningTarget = miningTarget.mul(ethTimeSinceLastDifficultyPeriod).div(targetTimePerDiffPeriod);
 
-           //make it harder
-           miningTarget = miningTarget.sub(miningTarget.div(2000).mul(excess_block_pct_extra));   //by up to 50 %
+              // the maximum factor of 4 will be applied as in bitcoin
+              if(miningTarget < _oldtarget.div(4)){
+
+              //make it harder
+              miningTarget = _oldtarget.div(4);
+
+              }
+
          }else{
-           uint shortage_block_pct = (ethTimeSinceLastDifficultyPeriod.mul(100)).div( targetTimePerDiffPeriod );
 
-           uint shortage_block_pct_extra = shortage_block_pct.sub(100).limitLessThan(1000); //always between 0 and 1000
+                // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)
+                 miningTarget = miningTarget.mul(ethTimeSinceLastDifficultyPeriod).div(targetTimePerDiffPeriod);
 
-           //make it easier
-           miningTarget = miningTarget.add(miningTarget.div(2000).mul(shortage_block_pct_extra));   //by up to 50 %
+                // the maximum factor of 4 will be applied as in bitcoin
+                if(miningTarget > _oldtarget.mul(4)){
+
+                 //make it easier
+                 miningTarget = _oldtarget.mul(4);
+
+                }
+
          }
 
-
+        
 
          latestDifficultyPeriodStarted = block.timestamp;
 

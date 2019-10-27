@@ -372,6 +372,7 @@ contract EticaToken is ERC20Interface{
               _startNewMiningEpoch();
 
                emit Mint(msg.sender, blockreward, epochCount, challengeNumber );
+               emit Transfer(address(this), msg.sender,blockreward);
 
             return true;
 

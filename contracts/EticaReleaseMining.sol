@@ -282,6 +282,10 @@ contract EticaToken is ERC20Interface{
         return supply;
     }
 
+    function accessibleSupply() public view returns (uint){
+        return supply.sub(UNRECOVERABLE_ETI);
+    }
+
     function balanceOf(address tokenOwner) public view returns (uint balance){
          return balances[tokenOwner];
      }

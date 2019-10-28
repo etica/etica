@@ -161,13 +161,13 @@ await eticatobosom(test_account7, '0.1805');
 await eticatobosom(test_account8, '3.1805');
 
 
-    let accessibleSupply = await EticaReleaseProtocolTestPhase2Instance.accessibleSupply();
-    console.log('old accessible supply is', accessibleSupply);
+    let accessibleSupply = await EticaReleaseProtocolTestUpdateCostInstance.accessibleSupply();
+    console.log('old accessible supply is',web3.utils.fromWei(accessibleSupply, "ether" ));
 
     await createdisease(FIRST_DISEASE_NAME);
 
-    accessibleSupply = await EticaReleaseProtocolTestPhase2Instance.accessibleSupply();
-    console.log('new accessible supply is', accessibleSupply);
+    accessibleSupply = await EticaReleaseProtocolTestUpdateCostInstance.accessibleSupply();
+    console.log('new accessible supply is', web3.utils.fromWei(accessibleSupply, "ether" ));
 
     let PROPOSAL_DEFAULT_VOTE = await EticaReleaseProtocolTestUpdateCostInstance.PROPOSAL_DEFAULT_VOTE(); 
     console.log('PROPOSAL_DEFAULT_VOTE ', web3.utils.fromWei(PROPOSAL_DEFAULT_VOTE, "ether" ));

@@ -3185,7 +3185,7 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, "random123");
 
   let oldproposalsCounter = await EticaReleaseProtocolTestPhase2Instance.proposalsCounter();
   let accessibleSupply = await EticaReleaseProtocolTestPhase2Instance.accessibleSupply();
-  console.log('old accessible supply is', accessibleSupply);
+  console.log('old accessible supply is', web3.utils.fromWei(accessibleSupply, "ether" ));
 
   let _from_accountbalancebefore = await EticaReleaseProtocolTestPhase2Instance.balanceOf(_from_account.address);
   //console.log('_from_account ETI balance before:', web3.utils.fromWei(_from_accountbalancebefore, "ether" ));
@@ -3200,7 +3200,7 @@ await revealvote(test_account6, IPFS5F_WITH_FIRTDISEASEHASH, true, "random123");
     //console.log('THE FIRST PROPOSAL IS:', first_proposal);
 
     accessibleSupply = await EticaReleaseProtocolTestPhase2Instance.accessibleSupply();
-    console.log('new accessible supply is', accessibleSupply);
+    console.log('new accessible supply is', web3.utils.fromWei(accessibleSupply, "ether" ));
 
     //console.log('THE FIRST PROPOSAL IPFS IS:', first_proposal_ipfs);
 

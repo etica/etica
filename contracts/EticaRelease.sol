@@ -414,10 +414,17 @@ contract EticaToken is ERC20Interface{
          if( ethTimeSinceLastDifficultyPeriod < targetTimePerDiffPeriod )
          {
 
-              // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)  
-              miningTarget = miningTarget.mul(ethTimeSinceLastDifficultyPeriod).div(targetTimePerDiffPeriod);
+              uint denom = targetTimePerDiffPeriod.mul(1000).div(ethTimeSinceLastDifficultyPeriod);
 
-              // the maximum factor of 4 will be applied as in bitcoin
+              if(denom > 4000){
+                  denom = 4000;
+                }
+
+              // protected against overflow because max case is miningTarget * 1000 (2pow12): miningtarget * 2pow12 < 2pow256
+              // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)  
+              miningTarget = miningTarget.mul(1000).div(denom);
+
+              // extra security (unecessary but we never know) the maximum factor of 4 will be applied as in bitcoin
               if(miningTarget < _oldtarget.div(4)){
 
               //make it harder
@@ -427,9 +434,17 @@ contract EticaToken is ERC20Interface{
 
          }else{
 
-                // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)
-                 miningTarget = miningTarget.mul(ethTimeSinceLastDifficultyPeriod).div(targetTimePerDiffPeriod);
+                uint coeff = ethTimeSinceLastDifficultyPeriod.mul(1000).div(targetTimePerDiffPeriod);
 
+                if(coeff > 4000){
+                  coeff = 4000;
+                }
+
+                // protected against overflow because max case is miningTarget * 4000 (2pow12): miningtarget * 2pow12 < 2pow256
+                // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)
+                 miningTarget = miningTarget.mul(coeff).div(1000);
+
+                // extra security (unecessary but we never know)
                 // the maximum factor of 4 will be applied as in bitcoin
                 if(miningTarget > _oldtarget.mul(4)){
 

@@ -560,7 +560,7 @@ uint public APPROVAL_THRESHOLD = 5000; // threshold for proposal to be accepted.
 uint public PERIODS_PER_THRESHOLD = 5; // number of Periods before readjusting APPROVAL_THRESHOLD
 uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
 uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
-uint public PROTOCOL_RATIO_TARGET = 7250; // 7250 means the Protocol has a goal of 72.50% proposals approved and 27.5% proposals rejected
+uint public PROTOCOL_RATIO_TARGET = 6180; // 6180 means the Protocol has a goal of 61.80% proposals approved and 38.2% proposals rejected
 uint public LAST_PERIOD_COST_UPDATE = 0;
 
 
@@ -831,12 +831,12 @@ for(uint _periodidx = periodsCounter.sub(PERIODS_PER_THRESHOLD); _periodidx <= p
            uint shortage_approvals_rate = (PROTOCOL_RATIO_TARGET.sub(_meanapproval));
 
            // require lower APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 27.50 % of (APPROVAL_THRESHOLD - 45)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.sub(((APPROVAL_THRESHOLD.sub(4500)).mul(shortage_approvals_rate)).div(10000)));   // decrease by up to 38.2 % of (APPROVAL_THRESHOLD - 45)
          }else{
            uint excess_approvals_rate = uint((_meanapproval.sub(PROTOCOL_RATIO_TARGET)));
 
            // require higher APPROVAL_THRESHOLD for next period:
-           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 27.50 % of (100 - APPROVAL_THRESHOLD)
+           APPROVAL_THRESHOLD = uint(APPROVAL_THRESHOLD.add(((10000 - APPROVAL_THRESHOLD).mul(excess_approvals_rate)).div(10000)));   // increase by up to 38.2 % of (100 - APPROVAL_THRESHOLD)
          }
 
 

@@ -141,7 +141,7 @@ contract EticaToken is ERC20Interface{
     //a big number is easier ; just find a solution that is smaller
     //uint public  _MAXIMUM_TARGET = 2**224;  bitcoin uses 224
     //uint public  _MAXIMUM_TARGET = 2**242; // used for tests 243 much faster, 242 seems to be the limit where mining gets much harder
-    uint public  _MAXIMUM_TARGET = 2**220; // used for prod
+    uint public  _MAXIMUM_TARGET = 2**224; // used for prod
 
 
     uint public miningTarget;

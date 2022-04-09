@@ -712,6 +712,8 @@ event NewCommit(address indexed _voter, bytes32 votehash, uint amount);
 event NewReveal(address indexed _voter, bytes32 indexed _proposal);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeamount);
+event NewStakescsldt(address indexed staker, uint endtime, uint minlimit);
+event NewStakesnap(address indexed staker, uint snapamount);
 // ----------- EVENTS ---------- //
 
 
@@ -1060,6 +1062,8 @@ if (newAmount > 0){
 addConsolidation(msg.sender, newAmount, _endTime);
 }
 
+emit NewStakescsldt(msg.sender, _endTime, _min_limit);
+
 }
 
 // ----- Stakes consolidation  ----- //
@@ -1100,6 +1104,8 @@ function stakesnap(uint _stakeidx, uint _snapamount) public {
   // ------ creates a new stake with the rest ------- //  
 
 assert(_restAmount > 0);
+
+emit NewStakesnap(msg.sender, _snapamount);
 
 }
 

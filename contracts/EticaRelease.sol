@@ -693,7 +693,7 @@ event NewChunk(uint indexed chunkid, bytes32 indexed diseasehash);
 event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
 event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
-event NewCommit(address indexed _voter, bytes32 votehash);
+event NewCommit(address indexed _voter, bytes32 votehash, uint amount);
 event NewReveal(address indexed _voter, bytes32 indexed _proposal);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeamount);
@@ -1273,7 +1273,7 @@ require(_amount > 10);
 
  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH
 
-emit NewCommit(msg.sender, _votehash);
+emit NewCommit(msg.sender, _votehash, _amount);
 
  }
 

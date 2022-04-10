@@ -611,6 +611,7 @@ struct Period{
       uint againstvotes;
       uint lastcuration_weight; // period curation weight of proposal
       uint lasteditor_weight; // period editor weight of proposal
+      uint approvalthreshold; // proposal approvalthreshold
   }
 
   // -----------  PROPOSALS STRUCTS ------------  //
@@ -1220,6 +1221,7 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
        proposaldata.lasteditor_weight = 0;
        proposaldata.starttime = block.timestamp;
        proposaldata.endtime = block.timestamp.add(DEFAULT_VOTING_TIME);
+       proposaldata.approvalthreshold = APPROVAL_THRESHOLD;
 
 
 // --- REQUIRE DEFAULT VOTE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
@@ -1373,22 +1375,22 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
      uint _forvotes_numerator = proposaldata.forvotes.mul(10000); // (newproposal_forvotes / totalVotes) will give a number between 0 and 1. Multiply by 10000 to store it as uint
      uint _ratio_slashing = 0;
 
-     if ((_forvotes_numerator.div(totalVotes)) > APPROVAL_THRESHOLD){
+     if ((_forvotes_numerator.div(totalVotes)) > proposaldata.approvalthreshold){
     _isapproved = true;
     }
-    if ((_forvotes_numerator.div(totalVotes)) == APPROVAL_THRESHOLD){
+    if ((_forvotes_numerator.div(totalVotes)) == proposaldata.approvalthreshold){
         _istie = true;
     }
 
     proposaldata.istie = _istie;
 
     if (_isapproved){
-    _ratio_slashing = uint(((10000 - APPROVAL_THRESHOLD).mul(totalVotes)).div(10000));
+    _ratio_slashing = uint(((10000 - proposaldata.approvalthreshold).mul(totalVotes)).div(10000));
     _ratio_slashing = uint((proposaldata.againstvotes.mul(10000)).div(_ratio_slashing));  
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }
     else{
-    _ratio_slashing = uint((totalVotes.mul(APPROVAL_THRESHOLD)).div(10000));
+    _ratio_slashing = uint((totalVotes.mul(proposaldata.approvalthreshold)).div(10000));
     _ratio_slashing = uint((proposaldata.forvotes.mul(10000)).div(_ratio_slashing));
     proposaldata.slashingratio = uint(10000 - _ratio_slashing);
     }

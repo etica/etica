@@ -969,6 +969,14 @@ function stakeclmidx (uint _stakeidx) public {
   // the amount to be unstaked must be less or equal to the amount of ETI currently marked as blocked in blockedeticas as they need to go through the clmpropbyhash before being unstaked !
   require(_stake.amount <= stakesAmount[msg.sender].sub(blockedeticas[msg.sender]));
 
+
+// Make sure user doesnt have excess Bosoms due to early stake claim without using bosoms:
+  if(stakesAmount[msg.sender].sub(_stake.amount) < bosoms[msg.sender]){
+
+  bosoms[msg.sender] = stakesAmount[msg.sender].sub(_stake.amount);
+
+  }
+
   // transfer back ETI from contract to staker:
   balances[address(this)] = balances[address(this)].sub(_stake.amount);
 

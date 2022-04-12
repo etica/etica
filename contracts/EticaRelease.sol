@@ -708,7 +708,7 @@ event NewProposal(bytes32 proposed_release_hash, address indexed _proposer, byte
 event NewChunk(uint indexed chunkid, bytes32 indexed diseasehash);
 event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
-event NewSlash(address indexed voter, uint duration, bytes32 proposal_hash);
+event NewSlash(address indexed voter, uint amount, bytes32 proposal_hash, uint duration);
 event NewCommit(address indexed _voter, bytes32 votehash, uint amount);
 event NewReveal(address indexed _voter, bytes32 indexed _proposal);
 event NewStake(address indexed staker, uint amount);
@@ -1579,7 +1579,7 @@ if(proposaldata.slashingratio > 9000){
 
 // SLASH only if slash remaining > 0
 if(_slashRemaining > 0){
-  emit NewSlash(msg.sender, _slashRemaining, vote.proposal_hash);
+  emit NewSlash(msg.sender, _slashRemaining, vote.proposal_hash, _extraTimeInt);
          for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {

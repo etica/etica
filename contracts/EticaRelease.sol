@@ -558,8 +558,8 @@ uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to
 
 uint public APPROVAL_THRESHOLD = 5000; // threshold for proposal to be accepted. 5000 means 50.00 %, 6000 would mean 60.00%
 uint public PERIODS_PER_THRESHOLD = 5; // number of Periods before readjusting APPROVAL_THRESHOLD
-uint public SEVERITY_LEVEL = 4; // level of severity of the protocol, the higher the more slash to wrong voters
-uint public PROPOSERS_INCREASER = 3; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
+uint public SEVERITY_LEVEL = 2; // level of severity of the protocol, the higher the more slash to wrong voters
+uint public PROPOSERS_INCREASER = 2; // the proposers should get more slashed than regular voters to avoid spam, the higher this var the more severe the protocol will be against bad proposers
 uint public PROTOCOL_RATIO_TARGET = 6180; // 6180 means the Protocol has a goal of 61.80% proposals approved and 38.2% proposals rejected
 uint public LAST_PERIOD_COST_UPDATE = 0;
 

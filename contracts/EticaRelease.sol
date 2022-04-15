@@ -715,6 +715,7 @@ event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeamount);
 event NewStakescsldt(address indexed staker, uint endtime, uint minlimit);
 event NewStakesnap(address indexed staker, uint snapamount);
+event TieClaimed(address indexed voter, bytes32 proposal_hash);
 // ----------- EVENTS ---------- //
 
 
@@ -1641,6 +1642,12 @@ if(_slashRemaining > 0){
 
   }   // end bracket if (proposaldata.istie not true)
   
+  // if proposaldata.istie is tie emit event so that blockchain can know this tx belongs to etica smart contract
+  if(proposaldata.istie){
+  emit TieClaimed(msg.sender, _proposed_release_hash);
+  }
+  
+
   }
 
 

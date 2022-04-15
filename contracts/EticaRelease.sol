@@ -710,7 +710,7 @@ event RewardClaimed(address indexed voter, uint amount, bytes32 proposal_hash);
 event NewFee(address indexed voter, uint fee, bytes32 proposal_hash);
 event NewSlash(address indexed voter, uint amount, bytes32 proposal_hash, uint duration);
 event NewCommit(address indexed _voter, bytes32 votehash, uint amount);
-event NewReveal(address indexed _voter, bytes32 indexed _proposal);
+event NewReveal(address indexed _voter, bytes32 indexed _proposal, uint amount);
 event NewStake(address indexed staker, uint amount);
 event StakeClaimed(address indexed staker, uint stakeamount);
 event NewStakescsldt(address indexed staker, uint endtime, uint minlimit);
@@ -1459,9 +1459,10 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          }
          
+        
+        emit NewReveal(msg.sender, proposal.proposed_release_hash, commits[msg.sender][_votehash].amount);
         // resets commit to save space: 
         _removecommit(_votehash);
-        emit NewReveal(msg.sender, proposal.proposed_release_hash);
 
   }
 

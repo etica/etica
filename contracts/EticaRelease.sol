@@ -1460,7 +1460,7 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
          }
          
         
-        emit NewReveal(msg.sender, proposal.proposed_release_hash, commits[msg.sender][_votehash].amount);
+        emit NewReveal(msg.sender, proposal.proposed_release_hash, vote.amount);
         // resets commit to save space: 
         _removecommit(_votehash);
 

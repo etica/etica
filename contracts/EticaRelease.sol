@@ -1,4 +1,4 @@
-pragma solidity ^0.5.2;
+pragma solidity ^0.6.0;
 
 /*
 ETICA: a type1 civilization neutral protocol for medical research
@@ -76,15 +76,15 @@ library ExtendedMath {
 
 
 
-contract ERC20Interface {
-    function totalSupply() public view returns (uint);
-    function balanceOf(address tokenOwner) public view returns (uint balance);
-    function transfer(address to, uint tokens) public returns (bool success);
+abstract contract ERC20Interface {
+    function totalSupply() public view virtual returns (uint);
+    function balanceOf(address tokenOwner) public view virtual returns (uint balance);
+    function transfer(address to, uint tokens) public virtual returns (bool success);
 
 
-    function allowance(address tokenOwner, address spender) public view returns (uint remaining);
-    function approve(address spender, uint tokens) public returns (bool success);
-    function transferFrom(address from, address to, uint tokens) public returns (bool success);
+    function allowance(address tokenOwner, address spender) public view virtual returns (uint remaining);
+    function approve(address spender, uint tokens) public virtual returns (bool success);
+    function transferFrom(address from, address to, uint tokens) public virtual returns (bool success);
 
     event Transfer(address indexed from, address indexed to, uint tokens);
     event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
@@ -249,13 +249,13 @@ contract EticaToken is ERC20Interface{
     }
 
 
-    function allowance(address tokenOwner, address spender) view public returns(uint){
+    function allowance(address tokenOwner, address spender) view public override returns(uint){
         return allowed[tokenOwner][spender];
     }
 
 
     //approve allowance
-    function approve(address spender, uint tokens) public returns(bool){
+    function approve(address spender, uint tokens) public override returns(bool){
         require(balances[msg.sender] >= tokens);
         require(tokens > 0);
 
@@ -265,7 +265,7 @@ contract EticaToken is ERC20Interface{
     }
 
     //transfer tokens from the  owner account to the account that calls the function
-    function transferFrom(address from, address to, uint tokens) public returns(bool){
+    function transferFrom(address from, address to, uint tokens) public override returns(bool){
 
       balances[from] = balances[from].sub(tokens);
 
@@ -278,7 +278,7 @@ contract EticaToken is ERC20Interface{
       return true;
     }
 
-    function totalSupply() public view returns (uint){
+    function totalSupply() public view override returns (uint){
         return supply;
     }
 
@@ -286,12 +286,12 @@ contract EticaToken is ERC20Interface{
         return supply.sub(UNRECOVERABLE_ETI);
     }
 
-    function balanceOf(address tokenOwner) public view returns (uint balance){
+    function balanceOf(address tokenOwner) public view override returns (uint balance){
          return balances[tokenOwner];
      }
 
 
-    function transfer(address to, uint tokens) public returns (bool success){
+    function transfer(address to, uint tokens) public override returns (bool success){
          require(tokens > 0);
 
          balances[msg.sender] = balances[msg.sender].sub(tokens);
@@ -526,7 +526,7 @@ contract EticaToken is ERC20Interface{
 
 // ------------------------------------------------------------------------
 
-function () payable external {
+receive() external payable {
 
     revert();
 

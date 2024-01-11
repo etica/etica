@@ -1,4 +1,4 @@
-pragma solidity ^0.6.0;
+pragma solidity ^0.7.0;
 
 /*
 ETICA: a type1 civilization neutral protocol for medical research
@@ -95,6 +95,7 @@ abstract contract ERC20Interface {
 contract EticaToken is ERC20Interface{
 
     using SafeMath for uint;
+    using SafeMath for uint256;
     using ExtendedMath for uint;
 
     string public name = "Etica";
@@ -167,8 +168,8 @@ contract EticaToken is ERC20Interface{
 
 
 
-    event Transfer(address indexed from, address indexed to, uint tokens);
-    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
+    //event Transfer(address indexed from, address indexed to, uint tokens);
+    //event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
     event Mint(address indexed from, uint blockreward, uint epochCount, bytes32 newChallengeNumber);
 
 
@@ -538,6 +539,9 @@ receive() external payable {
 
 
 contract EticaRelease is EticaToken {
+
+using SafeMath for uint256;
+
   /* --------- PROD VALUES -------------  */
 uint public REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint public STAKING_DURATION = 28 days; // default stake duration 28 jours

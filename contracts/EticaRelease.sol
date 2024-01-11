@@ -392,7 +392,7 @@ contract EticaToken is ERC20Interface{
        //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
        //do this last since this is a protection mechanism in the mint() function
        challengeNumber = blockhash(block.number.sub(1));
-       challengeNumber = keccak256(abi.encode(challengeNumber, RANDOMHASH)); // updates challengeNumber with merged mining protection
+       challengeNumber = keccak256(abi.encode(challengeNumber, RANDOMHASH, epochCount)); // updates challengeNumber with merged mining protection
 
      }
 
@@ -718,6 +718,17 @@ event NewStakesnap(address indexed staker, uint snapamount);
 event TieClaimed(address indexed voter, bytes32 proposal_hash);
 // ----------- EVENTS ---------- //
 
+// WARNING NEW STORAGE VARIABLES V2 //
+  
+  // DO NOT INSERT THESE VARIABLES BEFORE OLDER VARIABLES, 
+  // OTHERWISE WOULD CREATE STORAGE COLLISION:
+bool public UPDATEDV2 = false;
+uint public DEFAULT_EXTRA_TIME = 7 days; // 7 days slash penalty for recover commits on proposals without voters
+
+event NewRecover(address indexed _voter, bytes32 indexed _proposal, uint amount);
+
+
+// WARNING NEW STORAGE VARIABLES V2 //
 
 
 // -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
@@ -975,7 +986,12 @@ function stakeclmidx (uint _stakeidx) public {
 // Make sure user doesnt have excess Bosoms due to early stake claim without using bosoms:
   if(stakesAmount[msg.sender].sub(_stake.amount) < bosoms[msg.sender]){
 
-  bosoms[msg.sender] = stakesAmount[msg.sender].sub(_stake.amount);
+     if(stakesAmount[msg.sender].sub(_stake.amount).sub(blockedeticas[msg.sender]) > 0){
+        bosoms[msg.sender] = stakesAmount[msg.sender].sub(_stake.amount).sub(blockedeticas[msg.sender]);
+     }
+     else {
+        bosoms[msg.sender] = 0;
+     }
 
   }
 
@@ -1131,7 +1147,8 @@ function stakescount(address _staker) public view returns (uint slength){
 
 // -------------  PUBLISHING SYSTEM CORE FUNCTIONS ---------------- //
 function createdisease(string memory _name) public {
-
+  
+  require(keccak256(abi.encodePacked(_name)) != keccak256(abi.encodePacked('')));
 
   // --- REQUIRE PAYMENT FOR ADDING A DISEASE TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
 
@@ -1586,7 +1603,13 @@ if(_slashRemaining > 0){
       //if stake is too small and will only be able to take into account a part of the slash:
       if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
  
-        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
+        if(stakes[msg.sender][_stakeidx].endTime > block.timestamp){
+              stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
+        }
+        else {
+              stakes[msg.sender][_stakeidx].endTime = block.timestamp.add(_extraTimeInt);
+        }
+        
         _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
         
        if(_slashRemaining == 0){
@@ -1600,7 +1623,14 @@ if(_slashRemaining > 0){
 
         // slash amount split in _slashRemaining and newAmount
         stakes[msg.sender][_stakeidx].amount = _slashRemaining; // only slash the part of the stake that amounts to _slashRemaining
-        stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt); // slash the stake
+
+        if(stakes[msg.sender][_stakeidx].endTime > block.timestamp){
+              stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt); // slash the stake
+        }
+        else {
+              stakes[msg.sender][_stakeidx].endTime = block.timestamp.add(_extraTimeInt); // slash the stake
+        }
+
 
         if(newAmount > 0){
           // create a new stake with the rest of what remained from original stake that was split in 2
@@ -1703,5 +1733,271 @@ function bosomsOf(address tokenOwner) public view returns (uint _bosoms){
      return diseasesbyNames[_name];
  }
 // -------------  GETTER FUNCTIONS ---------------- //
+
+// ETICA V2 //
+
+function updatev2() public {
+
+// only update variables to v2 once
+require(!UPDATEDV2);
+
+PROPOSAL_DEFAULT_VOTE = 100 * 10**uint(decimals); // Pass from 10 ETI to 100 ETI. Amount to vote for creating a new proposal. Necessary in order to avoid spam.
+_BLOCKS_PER_READJUSTMENT = 144;
+_reAdjustDifficulty();
+
+DEFAULT_EXTRA_TIME = 7 days; // 7 days slash penalty for recover commits on proposals without voters
+
+UPDATEDV2 = true;
+
+}
+
+
+function recovercommit(bytes32 _proposed_release_hash, bool _approved, string memory _vary) public {
+ 
+
+// --- check commit --- //
+bytes32 _votehash;
+_votehash = keccak256(abi.encode(_proposed_release_hash, _approved, msg.sender, _vary));
+
+require(commits[msg.sender][_votehash].amount > 0);
+// --- check commit done --- //
+
+//check if the proposal exists and that we get the right proposal:
+Proposal storage proposal = proposals[_proposed_release_hash];
+require(proposal.id > 0 && proposal.proposed_release_hash == _proposed_release_hash);
+
+
+ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
+
+ // Verify we are after proposal revealing time:
+ require( block.timestamp > proposaldata.endtime.add(DEFAULT_REVEALING_TIME));
+
+
+    // De-Block Eticas from eticablkdtbl to enable user to unstake these Eticas
+    blockedeticas[msg.sender] = blockedeticas[msg.sender].sub(commits[msg.sender][_votehash].amount);
+
+
+    // get Period of Proposal:
+    Period storage period = periods[proposal.period_id];
+
+    uint _current_interval = uint((block.timestamp).div(REWARD_INTERVAL));
+
+    // Check if Period is ready for claims or if it needs to wait more
+    uint _min_intervals = uint(((DEFAULT_VOTING_TIME.add(DEFAULT_REVEALING_TIME)).div(REWARD_INTERVAL)).add(1)); // Minimum intervals before claimable
+    require(_current_interval >= period.interval.add(_min_intervals)); // Period not ready for claims yet. Need to wait more !
+
+    // convert boolean to enum format for making comparasion with proposaldata.status possible:
+    ProposalStatus voterChoice = ProposalStatus.Rejected;
+    if(_approved){
+      voterChoice = ProposalStatus.Accepted;
+    }
+
+     // slash loosers: voter has voted wrongly and needs to be slashed
+     // Add Penalty multiplier for unrevealing on time
+     uint _slashRemaining = commits[msg.sender][_votehash].amount;
+     uint _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(proposaldata.slashingratio).div(10000));
+
+     // if no voters on proposal apply default slash penalty: 
+     if(proposaldata.prestatus == ProposalStatus.Singlevoter){
+           _extraTimeInt = DEFAULT_EXTRA_TIME;
+     }
+
+     
+     if(voterChoice == proposaldata.prestatus){
+            // Add leser Penalty multiplier if unreveal was on right side, but should be high enough to discourage using it:
+            _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(proposaldata.slashingratio).div(10000));
+     }
+     
+
+    // REQUIRE FEE if slashingratio is superior to 90.00%:
+    if(proposaldata.slashingratio > 9000 && voterChoice != proposaldata.prestatus){
+        // 33% fee if voter is not proposer or 100% fee if voter is proposer
+        // Add Penalty multiplier for unrevealing on time
+        uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(33).div(100));
+
+        emit NewFee(msg.sender, _feeRemaining, _proposed_release_hash);  
+        UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
+        // update _slashRemaining 
+        _slashRemaining = commits[msg.sender][_votehash].amount.sub(_feeRemaining);
+
+            for(uint _stakeidxa = 1; _stakeidxa <= stakesCounters[msg.sender];  _stakeidxa++) {
+          //if stake is big enough and can take into account the whole fee:
+          if(stakes[msg.sender][_stakeidxa].amount > _feeRemaining) {
+    
+            stakes[msg.sender][_stakeidxa].amount = stakes[msg.sender][_stakeidxa].amount.sub(_feeRemaining);
+            stakesAmount[msg.sender] = stakesAmount[msg.sender].sub(_feeRemaining);
+            _feeRemaining = 0;
+            break;
+          }
+          else {
+            // The fee amount is more than or equal to a full stake, so the stake needs to be deleted:
+              _feeRemaining = _feeRemaining.sub(stakes[msg.sender][_stakeidxa].amount);
+              _deletestake(msg.sender, _stakeidxa);
+              if(_feeRemaining == 0){
+              break;
+              }
+          }
+        }
+    }
+
+    // SLASH only if slash remaining > 0
+    if(_slashRemaining > 0){
+      emit NewSlash(msg.sender, _slashRemaining, _proposed_release_hash, _extraTimeInt);
+            for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
+          //if stake is too small and will only be able to take into account a part of the slash:
+          if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
+    
+            if(stakes[msg.sender][_stakeidx].endTime > block.timestamp){
+                  stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
+            }
+            else {
+                  stakes[msg.sender][_stakeidx].endTime = block.timestamp.add(_extraTimeInt);
+            }
+            
+            _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
+            
+          if(_slashRemaining == 0){
+            break;
+          }
+          }
+          else {
+            // The slash amount does not fill a full stake, so the stake needs to be split
+            uint newAmount = stakes[msg.sender][_stakeidx].amount.sub(_slashRemaining);
+            uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
+
+            // slash amount split in _slashRemaining and newAmount
+            stakes[msg.sender][_stakeidx].amount = _slashRemaining; // only slash the part of the stake that amounts to _slashRemaining
+
+            if(stakes[msg.sender][_stakeidx].endTime > block.timestamp){
+                  stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt); // slash the stake
+            }
+            else {
+                  stakes[msg.sender][_stakeidx].endTime = block.timestamp.add(_extraTimeInt); // slash the stake
+            }
+
+
+            if(newAmount > 0){
+              // create a new stake with the rest of what remained from original stake that was split in 2
+              splitStake(msg.sender, newAmount, oldCompletionTime);
+            }
+
+            break;
+          }
+        }
+    }
+    // the slash is over
+  
+  
+  emit NewRecover(msg.sender, proposal.proposed_release_hash, commits[msg.sender][_votehash].amount);
+  // resets commit to save space: 
+  _removecommit(_votehash);
+
+
+  }
+
+
+
+  function recoverlostcommit(bytes32 _votehash) public {
+ 
+
+    // --- check commit --- //
+    require(commits[msg.sender][_votehash].amount > 0);
+    // --- check commit done --- //
+
+
+    // De-Block Eticas from eticablkdtbl to enable user to unstake these Eticas
+    blockedeticas[msg.sender] = blockedeticas[msg.sender].sub(commits[msg.sender][_votehash].amount);
+
+
+     // slash loosers: voter has voted wrongly and needs to be slashed
+     // Add Penalty high multiplier, should be higher than recovercommit:
+     uint _slashRemaining = commits[msg.sender][_votehash].amount;
+     uint _extraTimeInt = DEFAULT_EXTRA_TIME; // Add Penalty high multiplier, should be higher than recovercommit:
+     
+
+        // 33% fee for all votes
+        // Add Penalty multiplier for unrevealing on time
+        uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(33).div(100)); // Add Penalty high multiplier, should be higher than recovercommit:
+
+        emit NewFee(msg.sender, _feeRemaining, '0x000000000000000000000000000000');  
+        UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
+        // update _slashRemaining 
+        _slashRemaining = commits[msg.sender][_votehash].amount.sub(_feeRemaining);
+
+            for(uint _stakeidxa = 1; _stakeidxa <= stakesCounters[msg.sender];  _stakeidxa++) {
+          //if stake is big enough and can take into account the whole fee:
+          if(stakes[msg.sender][_stakeidxa].amount > _feeRemaining) {
+    
+            stakes[msg.sender][_stakeidxa].amount = stakes[msg.sender][_stakeidxa].amount.sub(_feeRemaining);
+            stakesAmount[msg.sender] = stakesAmount[msg.sender].sub(_feeRemaining);
+            _feeRemaining = 0;
+            break;
+          }
+          else {
+            // The fee amount is more than or equal to a full stake, so the stake needs to be deleted:
+              _feeRemaining = _feeRemaining.sub(stakes[msg.sender][_stakeidxa].amount);
+              _deletestake(msg.sender, _stakeidxa);
+              if(_feeRemaining == 0){
+              break;
+              }
+          }
+        }
+
+    // SLASH only if slash remaining > 0
+    if(_slashRemaining > 0){
+      emit NewSlash(msg.sender, _slashRemaining, '0x000000000000000000000000000000', _extraTimeInt);
+            for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
+          //if stake is too small and will only be able to take into account a part of the slash:
+          if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
+    
+            if(stakes[msg.sender][_stakeidx].endTime > block.timestamp){
+                  stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt);
+            }
+            else {
+                  stakes[msg.sender][_stakeidx].endTime = block.timestamp.add(_extraTimeInt);
+            }
+            
+            _slashRemaining = _slashRemaining.sub(stakes[msg.sender][_stakeidx].amount);
+            
+          if(_slashRemaining == 0){
+            break;
+          }
+          }
+          else {
+            // The slash amount does not fill a full stake, so the stake needs to be split
+            uint newAmount = stakes[msg.sender][_stakeidx].amount.sub(_slashRemaining);
+            uint oldCompletionTime = stakes[msg.sender][_stakeidx].endTime;
+
+            // slash amount split in _slashRemaining and newAmount
+            stakes[msg.sender][_stakeidx].amount = _slashRemaining; // only slash the part of the stake that amounts to _slashRemaining
+
+            if(stakes[msg.sender][_stakeidx].endTime > block.timestamp){
+                  stakes[msg.sender][_stakeidx].endTime = stakes[msg.sender][_stakeidx].endTime.add(_extraTimeInt); // slash the stake
+            }
+            else {
+                  stakes[msg.sender][_stakeidx].endTime = block.timestamp.add(_extraTimeInt); // slash the stake
+            }
+
+
+            if(newAmount > 0){
+              // create a new stake with the rest of what remained from original stake that was split in 2
+              splitStake(msg.sender, newAmount, oldCompletionTime);
+            }
+
+            break;
+          }
+        }
+    }
+    // the slash is over
+  
+  
+  emit NewRecover(msg.sender, '0x000000000000000000000000000000', commits[msg.sender][_votehash].amount);
+  // resets commit to save space: 
+  _removecommit(_votehash);
+
+
+  }
+
+// ETICA V2 // 
 
 }

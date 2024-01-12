@@ -1,4 +1,5 @@
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.22;
+import { UD60x18, ud } from "@prb/math/src/UD60x18.sol";
 
 /*
 ETICA: a type1 civilization neutral protocol for medical research
@@ -1381,12 +1382,14 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
  proposaldata.nbvoters = proposaldata.nbvoters.add(1);
 
+     uint qamount = ((ud(commits[msg.sender][_votehash].amount)).pow(ud(0.75e18))).intoUint256(); // quadratic vote amount x^0.75
+
      // PROPOSAL VAR UPDATE
      if(_approved){
-      proposaldata.forvotes = proposaldata.forvotes.add(commits[msg.sender][_votehash].amount);
+      proposaldata.forvotes = proposaldata.forvotes.add(qamount);
      }
      else {
-       proposaldata.againstvotes = proposaldata.againstvotes.add(commits[msg.sender][_votehash].amount);
+       proposaldata.againstvotes = proposaldata.againstvotes.add(qamount);
      }
 
 

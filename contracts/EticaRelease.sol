@@ -727,6 +727,13 @@ event TieClaimed(address indexed voter, bytes32 proposal_hash);
   
   // DO NOT INSERT THESE VARIABLES BEFORE OLDER VARIABLES, 
   // OTHERWISE WOULD CREATE STORAGE COLLISION:
+
+  // -----------  Quadratic VOTES amount STRUCTS ----------------  //
+  struct Qamount{
+    uint amount;
+  }
+// -----------  QOTES MAPPINGS ----------------  //
+mapping(address => mapping(bytes32 => Qamount)) public qamounts;
 bool public UPDATEDV2 = false;
 uint public DEFAULT_EXTRA_TIME = 7 days; // 7 days slash penalty for recover commits on proposals without voters
 
@@ -1383,13 +1390,14 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
  proposaldata.nbvoters = proposaldata.nbvoters.add(1);
 
      uint qamount = ((ud(commits[msg.sender][_votehash].amount)).pow(ud(0.75e18))).intoUint256(); // quadratic vote amount x^0.75
+     qamounts[msg.sender][proposal.proposed_release_hash].amount = qamount;
 
      // PROPOSAL VAR UPDATE
      if(_approved){
       proposaldata.forvotes = proposaldata.forvotes.add(qamount);
      }
      else {
-       proposaldata.againstvotes = proposaldata.againstvotes.add(qamount);
+      proposaldata.againstvotes = proposaldata.againstvotes.add(qamount);
      }
 
 
@@ -1658,7 +1666,15 @@ if(_slashRemaining > 0){
    require(period.curation_sum > 0); // period curation sum pb !
    // get curation reward only if voter is not the proposer:
    if (!vote.is_editor){
-   _reward_amount = _reward_amount.add((vote.amount.mul(period.reward_for_curation)).div(period.curation_sum));
+
+    // If vote used quadratic funding (only v1 votes dont use quadratic):
+    if(qamounts[msg.sender][_proposed_release_hash].amount > 0){
+    _reward_amount = _reward_amount.add((qamounts[msg.sender][_proposed_release_hash].amount.mul(period.reward_for_curation)).div(period.curation_sum));
+    }
+    else {
+    _reward_amount = _reward_amount.add((vote.amount.mul(period.reward_for_curation)).div(period.curation_sum));
+    }
+   
    }
 
        // if voter is editor and proposal accepted:
@@ -1680,6 +1696,11 @@ if(_slashRemaining > 0){
 
   }   // end bracket if (proposaldata.istie not true)
   
+
+  if(qamounts[msg.sender][_proposed_release_hash].amount > 0){
+     qamounts[msg.sender][_proposed_release_hash].amount = 0;
+  }
+
   // if proposaldata.istie is tie emit event so that blockchain can know this tx belongs to etica smart contract
   if(proposaldata.istie){
   emit TieClaimed(msg.sender, _proposed_release_hash);

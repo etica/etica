@@ -1,0 +1,23 @@
+{
+  "name": "etica-smartcontract",
+  "version": "2.0.0",
+  "description": "The smart contract that handles the core system of the Etica Protocol. Join and build ",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Kevin Wad",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.19.5",
+    "hardhat-storage-layout": "^0.1.7"
+  },
+  "dependencies": {
+    "@prb/math": "^4.0.2"
+  }
+}

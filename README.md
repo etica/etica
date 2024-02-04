@@ -34,7 +34,7 @@ Legacy versions of the Etica smart contract can be found in the `contracts/legac
 
 ### Running Tests
 
-Tests located in /test need to be migrated to Hardhat. However, these tests can be run using the legacy v1 smart contract with Truffle.
+Tests located in /test need to be migrated from Truffle to Hardhat. However, these tests can be run using the legacy v1 smart contract with Truffle.
 
 To run tests with Truffle:
 
@@ -46,5 +46,5 @@ Hardhat example tasks:
 ```shell
 npx hardhat help
 npx hardhat test
-npx hardhat run scripts/deploy.js
+npx hardhat run scripts/deploy.js --network crucible
 ```

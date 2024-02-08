@@ -1319,7 +1319,7 @@ LAST_PERIOD_COST_UPDATE = periodsCounter;
 
  function commitvote(uint _amount, bytes32 _votehash) public {
 
-require(_amount > 10);
+require(_amount > 10000);
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
@@ -1389,7 +1389,16 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
  proposaldata.nbvoters = proposaldata.nbvoters.add(1);
 
-     uint qamount = ((ud(commits[msg.sender][_votehash].amount)).pow(ud(0.75e18))).intoUint256(); // quadratic vote amount x^0.75
+
+ uint qamount;
+
+      if (commits[msg.sender][_votehash].amount < 1e18) {
+            qamount = (commits[msg.sender][_votehash].amount).div(2);
+      }
+      else {
+            qamount = ((ud(commits[msg.sender][_votehash].amount)).pow(ud(0.75e18))).intoUint256(); // quadratic vote amount x^0.75
+      }
+
      qamounts[msg.sender][proposal.proposed_release_hash].amount = qamount;
 
      // PROPOSAL VAR UPDATE
@@ -1579,11 +1588,19 @@ if(existing_vote != 0x0 || votes[proposal.proposed_release_hash][msg.sender].amo
 
 // REQUIRE FEE if slashingratio is superior to 90.00%:
 if(proposaldata.slashingratio > 9000){
-    // 33% fee if voter is not proposer or 100% fee if voter is proposer
-    uint _feeRemaining = uint(vote.amount.mul(33).div(100));
-      if(vote.is_editor){
-        _feeRemaining = vote.amount;
-      }
+    // 3% fee if voter is not proposer and 90% < slashingratio <= 99%
+    uint _feeRemaining = uint(vote.amount.mul(3).div(100));
+
+    // 7% fee if voter is not proposer and 99% < slashingratio
+    if(proposaldata.slashingratio > 9900){
+    _feeRemaining = uint(vote.amount.mul(7).div(100));
+    }
+
+    // 100% fee on collateral if voter is proposer
+    if(vote.is_editor){
+          _feeRemaining = vote.amount;
+    }
+
     emit NewFee(msg.sender, _feeRemaining, vote.proposal_hash);  
     UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
      // update _slashRemaining 
@@ -1773,7 +1790,7 @@ PROPOSAL_DEFAULT_VOTE = 100 * 10**uint(decimals); // Pass from 10 ETI to 100 ETI
 _BLOCKS_PER_READJUSTMENT = 144;
 _reAdjustDifficulty();
 
-DEFAULT_EXTRA_TIME = 7 days; // 7 days slash penalty for recover commits on proposals without voters
+DEFAULT_EXTRA_TIME = 14 days; // 14 days slash penalty for recover commits on proposals without voters
 
 UPDATEDV2 = true;
 
@@ -1821,9 +1838,9 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     }
 
      // slash loosers: voter has voted wrongly and needs to be slashed
-     // Add Penalty multiplier for unrevealing on time
+     // Add x4 Penalty multiplier for not revealing on time
      uint _slashRemaining = commits[msg.sender][_votehash].amount;
-     uint _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(proposaldata.slashingratio).div(10000));
+     uint _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(4).mul(proposaldata.slashingratio).div(10000)); // Apply slash x4 higher than if vote had been revealed on time
 
      // if no voters on proposal apply default slash penalty: 
      if(proposaldata.prestatus == ProposalStatus.Singlevoter){
@@ -1832,16 +1849,19 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
      
      if(voterChoice == proposaldata.prestatus){
-            // Add leser Penalty multiplier if unreveal was on right side, but should be high enough to discourage using it:
-            _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(proposaldata.slashingratio).div(10000));
+            // Add lesser Penalty multiplier if unreveal was on right side, based on opposite of the slashing ratio for wrong side vote (10001 - proposaldata.slashingratio)
+            // proposaldata.slashingratio >= 0 and <= 10000, so use 10001 to avoid case extra time equals 0 (if slashing ratio 100%)
+            _extraTimeInt = uint(STAKING_DURATION.mul(SEVERITY_LEVEL).mul(2).mul(10001 - proposaldata.slashingratio).div(10000));
      }
      
 
-    // REQUIRE FEE if slashingratio is superior to 90.00%:
-    if(proposaldata.slashingratio > 9000 && voterChoice != proposaldata.prestatus){
-        // 33% fee if voter is not proposer or 100% fee if voter is proposer
-        // Add Penalty multiplier for unrevealing on time
-        uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(33).div(100));
+        // 10% base fee for all commits using this function
+        uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(10).div(100));
+
+        // REQUIRE FEE apply 20% fee (2 x 10%) if slashingratio is superior to 99.00%:
+        if(proposaldata.slashingratio > 9900 && voterChoice != proposaldata.prestatus){
+             _feeRemaining = uint(_feeRemaining.mul(2));
+        }
 
         emit NewFee(msg.sender, _feeRemaining, _proposed_release_hash);  
         UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
@@ -1866,7 +1886,6 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
               }
           }
         }
-    }
 
     // SLASH only if slash remaining > 0
     if(_slashRemaining > 0){
@@ -1943,9 +1962,9 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
      uint _extraTimeInt = DEFAULT_EXTRA_TIME; // Add Penalty high multiplier, should be higher than recovercommit:
      
 
-        // 33% fee for all votes
-        // Add Penalty multiplier for unrevealing on time
-        uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(33).div(100)); // Add Penalty high multiplier, should be higher than recovercommit:
+        // 21% fee for all commits using this function
+        // Add Penalty multiplier for not revealing on time
+        uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(21).div(100)); // Add highest Penalty possible of the system for voters: 21% fee
 
         emit NewFee(msg.sender, _feeRemaining, '0x000000000000000000000000000000');  
         UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  

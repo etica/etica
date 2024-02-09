@@ -1792,9 +1792,9 @@ PROPOSAL_DEFAULT_VOTE = 100 * 10**uint(decimals); // Pass from 10 ETI to 100 ETI
 _BLOCKS_PER_READJUSTMENT = 144;
 _totalMiningSupply = 15750000 * 10**uint(decimals); // due to postponement of the increase of research rewards total max mineable supply increase
 _reAdjustDifficulty();
-if(miningTarget.mul(64) <= _MAXIMUM_TARGET)
+if(miningTarget.mul(256) <= _MAXIMUM_TARGET)
 {
-  miningTarget = miningTarget.mul(64);
+  miningTarget = miningTarget.mul(256);
 }
 
 DEFAULT_EXTRA_TIME = 14 days; // 14 days slash penalty for recover commits on proposals without voters

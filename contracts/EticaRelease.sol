@@ -1966,7 +1966,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
         // Add Penalty multiplier for not revealing on time
         uint _feeRemaining = uint(commits[msg.sender][_votehash].amount.mul(21).div(100)); // Add highest Penalty possible of the system for voters: 21% fee
 
-        emit NewFee(msg.sender, _feeRemaining, '0x000000000000000000000000000000');  
+        emit NewFee(msg.sender, _feeRemaining, bytes32(0));  
         UNRECOVERABLE_ETI = UNRECOVERABLE_ETI.add(_feeRemaining);  
         // update _slashRemaining 
         _slashRemaining = commits[msg.sender][_votehash].amount.sub(_feeRemaining);
@@ -1992,7 +1992,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
     // SLASH only if slash remaining > 0
     if(_slashRemaining > 0){
-      emit NewSlash(msg.sender, _slashRemaining, '0x000000000000000000000000000000', _extraTimeInt);
+      emit NewSlash(msg.sender, _slashRemaining, bytes32(0), _extraTimeInt);
             for(uint _stakeidx = 1; _stakeidx <= stakesCounters[msg.sender];  _stakeidx++) {
           //if stake is too small and will only be able to take into account a part of the slash:
           if(stakes[msg.sender][_stakeidx].amount <= _slashRemaining) {
@@ -2038,7 +2038,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     // the slash is over
   
   
-  emit NewRecover(msg.sender, '0x000000000000000000000000000000', commits[msg.sender][_votehash].amount);
+  emit NewRecover(msg.sender, bytes32(0), commits[msg.sender][_votehash].amount);
   // resets commit to save space: 
   _removecommit(_votehash);
 

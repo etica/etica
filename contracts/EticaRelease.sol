@@ -328,11 +328,11 @@ contract EticaToken is ERC20Interface{
 
               if(tokensMinted > 1890000 * 10**uint(decimals)){
  
-              if(tokensMinted >= 6300000 * 10**uint(decimals)) {
-                // 6 300 000 = 5 040 000 + 1 260 000;
+              if(tokensMinted >= 6930000 * 10**uint(decimals)) {
+                // 6 930 000 = 5 250 000 + 1 680 000;
                 //era5 to era10
-                blockreward = 19977152530194267420; // 19.977152530194267420 per block (amounts to 1050000 ETI a year)
-                periodrewardtemp = 20136969750435821559600; // from era5 to era 10: 20136.9697504358215596 ETI per week
+                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
+                periodrewardtemp = 12082181850261492935800; // era5 12082.181850261492935800 ETI per week
               }
 
               else if (tokensMinted < 3570000 * 10**uint(decimals)) {
@@ -341,16 +341,18 @@ contract EticaToken is ERC20Interface{
                 blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
                 periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
               }
-              else if (tokensMinted < 5040000 * 10**uint(decimals)) {
-                // 5 040 000 = 3 570 000 + 1 470 000;
+              else if (tokensMinted < 5250000 * 10**uint(decimals)) {
+                 // 5 250 000 = 3 570 000 + 1 680 000;
                 //era3
-                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
-                periodrewardtemp = 12082181850261492935800; // era3 12082.181850261492935800 ETI per week
+                // as discussed with community, postpone increase of research rewards
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
               }
               else {
-                // era4
-                blockreward = 23972583036233120904; // 23.972583036233120904 per block (amounts to 1260000 ETI a year)
-                periodrewardtemp = 16109575800348657247700; // era4 16109.575800348657247700 ETI per week
+                //era4
+                // as discussed with community, postpone increase of research rewards
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
               }
 
               }
@@ -1788,6 +1790,7 @@ require(!UPDATEDV2);
 
 PROPOSAL_DEFAULT_VOTE = 100 * 10**uint(decimals); // Pass from 10 ETI to 100 ETI. Amount to vote for creating a new proposal. Necessary in order to avoid spam.
 _BLOCKS_PER_READJUSTMENT = 144;
+_totalMiningSupply = 15750000 * 10**uint(decimals); // due to postponement of the increase of research rewards total max mineable supply increase
 _reAdjustDifficulty();
 
 DEFAULT_EXTRA_TIME = 14 days; // 14 days slash penalty for recover commits on proposals without voters

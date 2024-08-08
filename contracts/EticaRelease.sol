@@ -113,7 +113,7 @@ contract EticaToken is ERC20Interface{
     uint public UNRECOVERABLE_ETI;
 
     // Etica is a neutral protocol, it has no founder I am only an initiator:
-    string public constant initiatormsg = "Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0). This smart contract is running Meticulous Hardfork, Etica v2.";
+    string public constant initiatormsg = "Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0). This smart contract is running Guardian Hardfork, Etica v3.";
 
     mapping(address => uint) public balances;
 
@@ -310,72 +310,8 @@ contract EticaToken is ERC20Interface{
 
          function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
 
-
-             //the PoW must contain work that includes a recent ethereum block hash (challenge number) and the msg.sender's address to prevent MITM attacks
-             bytes32 digest =  keccak256(abi.encodePacked(challengeNumber, msg.sender, nonce));
-
-             //the challenge digest must match the expected
-             if (digest != challenge_digest) revert();
-
-             //the digest must be smaller than the target
-             if(uint256(digest) > miningTarget) revert();
-
-
-             //only allow one reward for each challenge
-              bytes32 solution = solutionForChallenge[challengeNumber];
-              solutionForChallenge[challengeNumber] = digest;
-              if(solution != 0x0) revert();  //prevent the same answer from awarding twice
-
-              if(tokensMinted > 1890000 * 10**uint(decimals)){
- 
-              if(tokensMinted >= 6930000 * 10**uint(decimals)) {
-                // 6 930 000 = 5 250 000 + 1 680 000;
-                //era5 to era10
-                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
-                periodrewardtemp = 12082181850261492935800; // era5 12082.181850261492935800 ETI per week
-              }
-
-              else if (tokensMinted < 3570000 * 10**uint(decimals)) {
-                // 3 570 000 = 1 890 000 + 1 680 000;
-                // era2
-                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
-                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
-              }
-              else if (tokensMinted < 5250000 * 10**uint(decimals)) {
-                 // 5 250 000 = 3 570 000 + 1 680 000;
-                //era3
-                // as discussed with community, postpone increase of research rewards
-                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
-                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
-              }
-              else {
-                //era4
-                // as discussed with community, postpone increase of research rewards
-                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
-                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
-              }
-
-              }
-
-             tokensMinted = tokensMinted.add(blockreward);
-             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply
-             assert(tokensMinted < _totalMiningSupply);
-
-             supply = supply.add(blockreward);
-             balances[msg.sender] = balances[msg.sender].add(blockreward);
-
-
-             //set readonly diagnostics data
-             lastRewardTo = msg.sender;
-             lastRewardEthBlockNumber = block.number;
-
-
-              _startNewMiningEpoch();
-
-               emit Mint(msg.sender, blockreward, epochCount, challengeNumber );
-               emit Transfer(address(this), msg.sender,blockreward);
-
-            return true;
+            // replaced by mintrandomX() since EticaV3
+            return false;
 
          }
 
@@ -424,9 +360,13 @@ contract EticaToken is ERC20Interface{
                   denom = 4000;
                 }
 
-              // protected against overflow because max case is miningTarget * 1000 (2pow12): miningtarget * 2pow12 < 2pow256
               // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)  
-              miningTarget = miningTarget.mul(1000).div(denom);
+              // Prevent underflow, (necessary since now _MAXIMUM_TARGET was set to max uint value)
+              if (miningTarget < _MAXIMUM_TARGET.div(1000)) {
+                  miningTarget = miningTarget.mul(1000).div(denom);
+              } else {
+                  miningTarget = _MAXIMUM_TARGET.div(denom);
+              }
 
               // extra security (unecessary but we never know) the maximum factor of 4 will be applied as in bitcoin
               if(miningTarget < _oldtarget.div(4)){
@@ -444,9 +384,13 @@ contract EticaToken is ERC20Interface{
                   coeff = 4000;
                 }
 
-                // protected against overflow because max case is miningTarget * 4000 (2pow12): miningtarget * 2pow12 < 2pow256
                 // New Mining Difficulty = Previous Mining Difficulty * (Time To Mine Last 2016 blocks / 1 209 600 seconds)
-                 miningTarget = miningTarget.mul(coeff).div(1000);
+                // Prevent overflow, (necessary since now _MAXIMUM_TARGET was set to max uint value)
+                if (miningTarget <= _MAXIMUM_TARGET.div(coeff)) {
+                    miningTarget = miningTarget.mul(coeff).div(1000);
+                } else {
+                    miningTarget = _MAXIMUM_TARGET;
+                }
 
                 // extra security (unecessary but we never know)
                 // the maximum factor of 4 will be applied as in bitcoin
@@ -743,6 +687,19 @@ event NewRecover(address indexed _voter, bytes32 indexed _proposal, uint amount)
 
 
 // WARNING NEW STORAGE VARIABLES V2 //
+
+// WARNING NEW STORAGE VARIABLES V3 //
+
+// DO NOT INSERT THESE VARIABLES BEFORE OLDER VARIABLES, 
+// OTHERWISE WOULD CREATE STORAGE COLLISION:
+bool public UPDATEDV3 = false;
+mapping(bytes32 => mapping(address => bytes32)) public randomxSealSolutions; // randomxSealSolutions['challengeNumber']['mineraddress'] = validatedrandomXsolutionDiggest where validatedrandomXsolutionDiggest is a Keccak256 hash of (validatedrandomXsolution, difficulty)
+bytes public randomxBlob;
+bytes public randomxSeedhash;   //generate a new randomxSeedhash every SEEDHASH_EPOCH_BLOCKS, should always be size bytes32 but use bytes in case randomX changes seedhash size in the future
+uint SEEDHASH_EPOCH_BLOCKS = 2048;
+uint SEEDHASH_EPOCH_LAG = 64;
+
+// WARNING NEW STORAGE VARIABLES V3 //
 
 
 // -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
@@ -2053,5 +2010,156 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
   }
 
 // ETICA V2 // 
+
+
+// ETICA V3 //
+
+    function updatev3() public {
+
+            // only update variables to v3 once
+            require(!UPDATEDV3);
+
+            PROPOSAL_DEFAULT_VOTE = 1000 * 10**uint(decimals); // Pass from 100 ETI to 1000 ETI. Amount for creating a new proposal. Necessary in order to avoid spam.
+
+            randomxBlob = _generateRandomxBlob();
+
+            randomxSeedhash = _generateNewSeedhash();
+
+            _MAXIMUM_TARGET = type(uint256).max; // randomx Hardfork, same maxTarget as XMR (2^256 - 1)
+
+            UPDATEDV3 = true;
+
+    }
+
+    function _generateRandomxBlob() internal view returns (bytes memory) {
+        bytes32 part1 = keccak256(abi.encode(blockhash(block.number - 1), RANDOMHASH, challengeNumber));
+        bytes32 part2 = keccak256(abi.encode(part1, block.timestamp, msg.sender));
+        bytes16 part3 = bytes16(keccak256(abi.encode(part2, epochCount)));
+        
+        return abi.encodePacked(part1, part2, part3);
+    }
+
+    function _generateNewSeedhash() internal view returns (bytes memory) {
+      return abi.encodePacked(keccak256(abi.encode(randomxSeedhash, RANDOMHASH, epochCount)));
+    }
+
+    // Had to create new _startNewMiningEpoch because other instantiated before RandomX variables
+     function _startNewMiningEpochRx() internal {
+
+
+       epochCount = epochCount.add(1);
+
+       //every so often, readjust difficulty. Dont readjust when deploying
+       if(epochCount % _BLOCKS_PER_READJUSTMENT == 0)
+       {
+         _reAdjustDifficulty();
+       }
+
+       if(epochCount % SEEDHASH_EPOCH_BLOCKS == 0)
+       {
+         randomxSeedhash = _generateNewSeedhash();
+       }
+
+
+       //make the latest ethereum block hash a part of the next challenge for PoW to prevent pre-mining future blocks
+       //do this last since this is a protection mechanism in the mint() function
+       challengeNumber = blockhash(block.number.sub(1));
+       challengeNumber = keccak256(abi.encode(challengeNumber, RANDOMHASH, epochCount)); // updates challengeNumber with merged mining protection
+       // Generate RandomX blob
+       randomxBlob = _generateRandomxBlob();
+
+     }
+
+    function mintrandomX(bytes4 nonce, bytes memory blockHeader, bytes32 currentChallenge, bytes memory randomxHash, uint claimedTarget, bytes memory seedHash, bytes8 extraNonce) public returns (bool success) {
+
+             /*//the blockHeader must match the current randomxBlob
+             if (blockHeader != randomxBlob) revert();*/
+             require(keccak256(blockHeader) == keccak256(randomxBlob), "BlockHeader mismatch");
+
+             //the challengeNumber must match the current challengeNumber
+             if (currentChallenge != challengeNumber) revert();
+
+             /*//the randomX seedHash must match the current randomxSeedhash
+             if (seedHash != randomxSeedhash) revert(); */
+             // Compare seedHash with randomxSeedhash
+             require(keccak256(seedHash) == keccak256(randomxSeedhash), "Seedhash mismatch");
+
+             // additional check not mandatory, if randomx starts using hash results bigger than 32bytes, will need to adjust that part: bytes32(randomxHash) to keep this hashDifficulty additional check
+             uint hashDifficulty = uint256(bytes32(randomxHash)); // we call it difficulty but actually it's not a difficulty it's a hashValue, difficulty would be actualDifficulty = maxTarget / hashDifficulty;
+
+             //additional difficulty checks, main check happens on randomx verification randomX Go process
+             if(claimedTarget > miningTarget) revert();
+             if(hashDifficulty > miningTarget) revert();
+
+             bytes32 solutionSeal = randomxSealSolutions[challengeNumber][msg.sender];
+             if(solutionSeal == 0x0) revert();  // revert if no solutionSeal for this miner and challenge number
+
+             // Check nonce, claimedTarget, randomxHash and seedhash are confirmed by randomX Go process, randomx process should have set expectedSolutionSeal in randomxSealSolutions
+             bytes32 expectedSolutionSeal =  keccak256(abi.encodePacked(nonce, claimedTarget, seedHash, randomxHash));
+             //makes sure solution was accepted with this nonce, randomxHash, claimedTarget and seedhash by randomX, the solutionSeal must match the expected
+             if (expectedSolutionSeal !=  solutionSeal) revert();
+
+            
+              //only allow one reward for each challenge
+              bytes32 solution = solutionForChallenge[challengeNumber];
+              if(solution != 0x0) revert();  //prevent the same answer from awarding twice
+              solutionForChallenge[challengeNumber] = solutionSeal;
+
+
+              if(tokensMinted > 1890000 * 10**uint(decimals)){
+ 
+              if(tokensMinted >= 6930000 * 10**uint(decimals)) {
+                // 6 930 000 = 5 250 000 + 1 680 000;
+                //era5 to era10
+                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
+                periodrewardtemp = 12082181850261492935800; // era5 12082.181850261492935800 ETI per week
+              }
+
+              else if (tokensMinted < 3570000 * 10**uint(decimals)) {
+                // 3 570 000 = 1 890 000 + 1 680 000;
+                // era2
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
+              }
+              else if (tokensMinted < 5250000 * 10**uint(decimals)) {
+                 // 5 250 000 = 3 570 000 + 1 680 000;
+                //era3
+                // as discussed with community, postpone increase of research rewards
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
+              }
+              else {
+                //era4
+                // as discussed with community, postpone increase of research rewards
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
+                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
+              }
+
+              }
+
+             tokensMinted = tokensMinted.add(blockreward);
+             //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply
+             assert(tokensMinted < _totalMiningSupply);
+
+             supply = supply.add(blockreward);
+             balances[msg.sender] = balances[msg.sender].add(blockreward);
+
+
+             //set readonly diagnostics data
+             lastRewardTo = msg.sender;
+             lastRewardEthBlockNumber = block.number;
+
+
+              _startNewMiningEpochRx();
+
+               emit Mint(msg.sender, blockreward, epochCount, challengeNumber );
+               emit Transfer(address(this), msg.sender,blockreward);
+
+            return true;
+
+    }
+
+// ETICA V3 //
+
 
 }

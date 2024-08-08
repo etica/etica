@@ -12,6 +12,8 @@ async function main() {
 
   });
 
+  await hre.storageLayout.export();
+
   await eticarelease.waitForDeployment();
 
   console.log(

@@ -954,8 +954,8 @@ function stakeclmidx (uint _stakeidx) public {
   require(_stake.amount <= stakesAmount[msg.sender].sub(blockedeticas[msg.sender]));
 
 
-// Make sure user doesnt have excess Bosoms due to early stake claim without using bosoms:
-  if(stakesAmount[msg.sender].sub(_stake.amount) < bosoms[msg.sender]){
+  // Make sure user doesnt have excess Bosoms due to early stake claim without using bosoms:
+  if(stakesAmount[msg.sender].sub(_stake.amount) < bosoms[msg.sender].add(blockedeticas[msg.sender])){
 
      if(stakesAmount[msg.sender].sub(_stake.amount).sub(blockedeticas[msg.sender]) > 0){
         bosoms[msg.sender] = stakesAmount[msg.sender].sub(_stake.amount).sub(blockedeticas[msg.sender]);
@@ -1278,7 +1278,7 @@ LAST_PERIOD_COST_UPDATE = periodsCounter;
 
  function commitvote(uint _amount, bytes32 _votehash) public {
 
-require(_amount > 10000);
+ require(_amount > 10000);
 
  // Consume bosom:
  require(bosoms[msg.sender] >= _amount); // this check is not mandatory as handled by safemath sub function
@@ -1287,13 +1287,16 @@ require(_amount > 10000);
  // Block Eticas in eticablkdtbl to prevent user from unstaking before eventual slash
  blockedeticas[msg.sender] = blockedeticas[msg.sender].add(_amount);
 
+ // Make sure user doesnt have excess Bosoms before each vote, should never happen but added security:
+ require(stakesAmount[msg.sender] >= bosoms[msg.sender].add(blockedeticas[msg.sender]), "EticaRelease: Excess bosoms for this new vote amount, claim some stakes before new vote");
+
  // store _votehash in commits with _amount and current block.timestamp value:
  commits[msg.sender][_votehash].amount = commits[msg.sender][_votehash].amount.add(_amount);
  commits[msg.sender][_votehash].timestamp = block.timestamp;
 
  RANDOMHASH = keccak256(abi.encode(RANDOMHASH, _votehash)); // updates RANDOMHASH
 
-emit NewCommit(msg.sender, _votehash, _amount);
+ emit NewCommit(msg.sender, _votehash, _amount);
 
  }
 

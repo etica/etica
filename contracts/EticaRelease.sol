@@ -2109,36 +2109,58 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
               solutionForChallenge[challengeNumber] = solutionSeal;
 
 
-              if(tokensMinted > 1890000 * 10**uint(decimals)){
- 
-              if(tokensMinted >= 6930000 * 10**uint(decimals)) {
-                // 6 930 000 = 5 250 000 + 1 680 000;
-                //era5 to era10
-                blockreward = 27968013542271974388; // 27.968013542271974388 ETI per block (amounts to 1470000 ETI a year)
-                periodrewardtemp = 12082181850261492935800; // era5 12082.181850261492935800 ETI per week
-              }
+            // GUARDIAN HARDFORK TOKENOMICS, WITH ETI HALVINGS:
+            if (tokensMinted <= 1890000 * 10**uint(decimals)) {
+                    // Year 1: Initial block reward and research reward. 
+                    // Total issuance/year: 2.1M
+                    // Mining: 1,890,000 ETI/year Research: 210,000 ETI/year
+                    blockreward = 35958874554349681356; // 35.958874554349681356 ETI per block
+                    periodrewardtemp = 4027393950087164311900; // 4027.3939500871643119 ETI per week
+            } 
+           else if (tokensMinted < 6930000 * 10**uint(decimals)) {
+                // Year 2-4: Adjusted block reward and research reward. 
+                // Total issuance/year: 2.1M
+                // Mining: 1,680,000 ETI/year Research: 420,000 ETI/year
+                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block
+                periodrewardtemp = 8054787900174328623800; // 8054.7879001743286238 ETI per week
+            } 
+            else if (tokensMinted < 11250000 * 10**uint(decimals)) {
+                // First Halving: 2026-2030. 
+                // Total issuance/year: 1.35M
+                // Mining: 1,080,000 ETI/year Research: 270,000 ETI/year
+                blockreward = 20547928316771246489; // 20.5479283167712464893847167 ETI per block
+                periodrewardtemp = 5178077935826354115300; // 5178.0779358263541153 ETI per week
+            } 
+            else if (tokensMinted < 13410000 * 10**uint(decimals)) {
+                // Second Halving: 2030-2034
+                // Total issuance/year: 675k ETI/year
+                // Mining: 540,000 ETI/year Research: 135,000 ETI/year
+                blockreward = 10273964158385623244; // 10.2739641583856232447423667 ETI per block
+                periodrewardtemp = 2589038967913177057700; // 2589.0389679131770577 ETI per week
+            } 
+            else if (tokensMinted < 14490000 * 10**uint(decimals)) {
+                // Third Halving: 2034-2038
+                // Total issuance/year: 337.5k ETI/year
+                // Mining: 270,000 ETI/year Research: 67,500 ETI/year
+                blockreward = 5136982079192811622; // 5.1369820791928116223215333 ETI per block
+                periodrewardtemp = 1294519483956588528800; // 1294.5194839565885288 ETI per week
+            } 
+            else {
+                // Transition Phase: 2038 onwards, 1% annual inflation
+                // blocksPerYear = 52.1429 * 7 * 24 * 6 = 52560.0432
+                // Scale up by 10,000 to handle fractional part
+                uint scaledSupply = supply.mul(10000); // Scale up supply by 10,000 before dividing by 52560.0432 * 10 000
+                
+                // Calculate 1% of the scaled supply
+                uint annualInflationScaled = scaledSupply.div(100);
+                
+                // Calculate block reward (80% of 1% annual inflation)
+                blockreward = (annualInflationScaled.mul(80).div(100)).div(525600432); // 525600432 is 52560.0432 * 10,000
 
-              else if (tokensMinted < 3570000 * 10**uint(decimals)) {
-                // 3 570 000 = 1 890 000 + 1 680 000;
-                // era2
-                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
-                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
-              }
-              else if (tokensMinted < 5250000 * 10**uint(decimals)) {
-                 // 5 250 000 = 3 570 000 + 1 680 000;
-                //era3
-                // as discussed with community, postpone increase of research rewards
-                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
-                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
-              }
-              else {
-                //era4
-                // as discussed with community, postpone increase of research rewards
-                blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block (amounts to 1680000 ETI a year)
-                periodrewardtemp = 8054787900174328623800; // era2 8054.787900174328623800 ETI per week
-              }
+                // Calculate research reward (20% of 1% annual inflation)
+                periodrewardtemp = (annualInflationScaled.mul(20).div(100)).div(521429); // Weekly research reward, (521429 is 52.1429 * 10 000)            
 
-              }
+            }
 
              tokensMinted = tokensMinted.add(blockreward);
              //Cannot mint more tokens than there are: maximum ETI ever mined: _totalMiningSupply
@@ -2159,7 +2181,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
                emit Transfer(address(this), msg.sender,blockreward);
 
             return true;
-
+            
     }
 
 // ETICA V3 //

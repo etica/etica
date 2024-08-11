@@ -370,10 +370,8 @@ contract EticaToken is ERC20Interface{
 
               // extra security (unecessary but we never know) the maximum factor of 4 will be applied as in bitcoin
               if(miningTarget < _oldtarget.div(4)){
-
-              //make it harder
-              miningTarget = _oldtarget.div(4);
-
+                //make it harder
+                miningTarget = _oldtarget.div(4);
               }
 
          }else{
@@ -394,11 +392,11 @@ contract EticaToken is ERC20Interface{
 
                 // extra security (unecessary but we never know)
                 // the maximum factor of 4 will be applied as in bitcoin
-                if(miningTarget > _oldtarget.mul(4)){
-
-                 //make it easier
-                 miningTarget = _oldtarget.mul(4);
-
+                // Check for potential overflow before multiplication _oldtarget.mul(4) since _oldtarget can contain max solifdity uint value
+                if (_oldtarget <= type(uint256).max.div(4)) {
+                if (miningTarget > _oldtarget.mul(4)) {
+                     miningTarget = _oldtarget.mul(4);
+                    }
                 }
 
          }
@@ -2029,6 +2027,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             randomxSeedhash = _generateNewSeedhash();
 
             _MAXIMUM_TARGET = type(uint256).max; // randomx Hardfork, same maxTarget as XMR (2^256 - 1)
+            miningTarget = _MAXIMUM_TARGET.div(200000);
 
             UPDATEDV3 = true;
 

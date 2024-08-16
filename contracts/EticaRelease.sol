@@ -694,8 +694,7 @@ bool public UPDATEDV3 = false;
 mapping(bytes32 => mapping(address => bytes32)) public randomxSealSolutions; // randomxSealSolutions['challengeNumber']['mineraddress'] = validatedrandomXsolutionDiggest where validatedrandomXsolutionDiggest is a Keccak256 hash of (validatedrandomXsolution, difficulty)
 bytes public randomxBlob;
 bytes public randomxSeedhash;   //generate a new randomxSeedhash every SEEDHASH_EPOCH_BLOCKS, should always be size bytes32 but use bytes in case randomX changes seedhash size in the future
-uint SEEDHASH_EPOCH_BLOCKS = 2048;
-uint SEEDHASH_EPOCH_LAG = 64;
+uint SEEDHASH_EPOCH_BLOCKS = 410; // Adjusts randomxSeedhash about every 210 days (410/144) = 2.8 days
 
 // WARNING NEW STORAGE VARIABLES V3 //
 
@@ -2042,7 +2041,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     }
 
     function _generateNewSeedhash() internal view returns (bytes memory) {
-      return abi.encodePacked(keccak256(abi.encode(randomxSeedhash, RANDOMHASH, epochCount)));
+      return abi.encodePacked(keccak256(abi.encode(randomxSeedhash, RANDOMHASH, challengeNumber)));
     }
 
     // Had to create new _startNewMiningEpoch because other instantiated before RandomX variables

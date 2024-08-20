@@ -2092,7 +2092,8 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
              if(claimedTarget > miningTarget) revert();
              if(hashDifficulty > miningTarget) revert();
 
-             bytes32 solutionSeal = randomxSealSolutions[challengeNumber][msg.sender];
+             bytes32 sendernoncehash = keccak256(abi.encodePacked(msg.sender, nonce));
+             bytes32 solutionSeal = randomxSealSolutions[challengeNumber][sendernoncehash];
              if(solutionSeal == 0x0) revert();  // revert if no solutionSeal for this miner and challenge number
 
              // Check nonce, claimedTarget, randomxHash and seedhash are confirmed by randomX Go process, randomx process should have set expectedSolutionSeal in randomxSealSolutions

@@ -2085,12 +2085,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
              // Compare seedHash with randomxSeedhash
              require(keccak256(seedHash) == keccak256(randomxSeedhash), "Seedhash mismatch");
 
-             // additional check not mandatory, if randomx starts using hash results bigger than 32bytes, will need to adjust that part: bytes32(randomxHash) to keep this hashDifficulty additional check
-             uint hashDifficulty = uint256(bytes32(randomxHash)); // we call it difficulty but actually it's not a difficulty it's a hashValue, difficulty would be actualDifficulty = maxTarget / hashDifficulty;
-
-             //additional difficulty checks, main check happens on randomx verification randomX Go process
              if(claimedTarget > miningTarget) revert();
-             if(hashDifficulty > miningTarget) revert();
 
              bytes32 sendernoncehash = keccak256(abi.encodePacked(msg.sender, nonce));
              bytes32 solutionSeal = randomxSealSolutions[challengeNumber][sendernoncehash];

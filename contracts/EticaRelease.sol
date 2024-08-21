@@ -691,7 +691,7 @@ event NewRecover(address indexed _voter, bytes32 indexed _proposal, uint amount)
 // DO NOT INSERT THESE VARIABLES BEFORE OLDER VARIABLES, 
 // OTHERWISE WOULD CREATE STORAGE COLLISION:
 bool public UPDATEDV3 = false;
-mapping(bytes32 => mapping(address => bytes32)) public randomxSealSolutions; // randomxSealSolutions['challengeNumber']['mineraddress'] = validatedrandomXsolutionDiggest where validatedrandomXsolutionDiggest is a Keccak256 hash of (validatedrandomXsolution, difficulty)
+mapping(bytes32 => mapping(bytes32 => bytes32)) public randomxSealSolutions; // randomxSealSolutions['challengeNumber']['mineraddress'] = validatedrandomXsolutionDiggest where validatedrandomXsolutionDiggest is a Keccak256 hash of (validatedrandomXsolution, difficulty)
 bytes public randomxBlob;
 bytes public randomxSeedhash;   //generate a new randomxSeedhash every SEEDHASH_EPOCH_BLOCKS, should always be size bytes32 but use bytes in case randomX changes seedhash size in the future
 uint public SEEDHASH_EPOCH_BLOCKS = 410; // Adjusts randomxSeedhash about every 210 days (410/144) = 2.8 days

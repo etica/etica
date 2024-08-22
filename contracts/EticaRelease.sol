@@ -2028,6 +2028,8 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             _MAXIMUM_TARGET = type(uint256).max; // randomx Hardfork, same maxTarget as XMR (2^256 - 1)
             miningTarget = _MAXIMUM_TARGET.div(200000);
 
+            SEEDHASH_EPOCH_BLOCKS = 410;
+
             UPDATEDV3 = true;
 
     }

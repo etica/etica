@@ -2036,7 +2036,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
     function _generateRandomxBlob() internal view returns (bytes memory) {
         bytes32 part1 = keccak256(abi.encode(blockhash(block.number - 1), RANDOMHASH, challengeNumber));
-        bytes32 part2 = keccak256(abi.encode(part1, block.timestamp, msg.sender));
+        bytes32 part2 = keccak256(abi.encode(part1, blockhash(block.number - 1), msg.sender));
         bytes16 part3 = bytes16(keccak256(abi.encode(part2, epochCount)));
         
         return abi.encodePacked(part1, part2, part3);

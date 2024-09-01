@@ -17,6 +17,15 @@ The above copyright notice and this permission notice shall be included in all c
 The Software is provided “as is”, without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall the authors or copyright holders be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or the use or other dealings in the Software.
 */
 
+/*  CRUCIBLE CONTRACT DEPLOYED ON CRUCIBLE TESTNET FOR TESTING PURPOSES */
+/*  EXACTLY SAME CONTRACT AS ETICA CONTRACT with sligh following changes */
+
+/*  --> uses shorter periods, 2 minutes instead of 7 days
+uint public REWARD_INTERVAL = 2 minutes; // periods duration 7 jours
+uint public STAKING_DURATION = 8 minutes; // default stake duration 28 jours
+uint public DEFAULT_VOTING_TIME = 6 minutes; // default voting duration 21 days
+uint public DEFAULT_REVEALING_TIME = 2 minutes; // default revealing duration 7 days
+*/
 
 // ----------------------------------------------------------------------------
 
@@ -487,19 +496,19 @@ contract EticaRelease is EticaToken {
 
 using SafeMath for uint256;
 
-  /* --------- PROD VALUES -------------  */
+  /* --------- PROD VALUES -------------  
 uint public REWARD_INTERVAL = 7 days; // periods duration 7 jours
 uint public STAKING_DURATION = 28 days; // default stake duration 28 jours
 uint public DEFAULT_VOTING_TIME = 21 days; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 7 days; // default revealing duration 7 days
-    /* --------- PROD VALUES ------------- */
+     --------- PROD VALUES ------------- */
 
-/* --------- TESTING VALUES -------------
-uint public REWARD_INTERVAL = 1 minutes; // periods duration 7 jours
-uint public STAKING_DURATION = 4 minutes; // default stake duration 28 jours
-uint public DEFAULT_VOTING_TIME = 3 minutes; // default voting duration 21 days
-uint public DEFAULT_REVEALING_TIME = 1 minutes; // default revealing duration 7 days
- --------- TESTING VALUES -------------*/
+/* --------- TESTING VALUES ------------- */
+uint public REWARD_INTERVAL = 2 minutes; // periods duration 7 jours
+uint public STAKING_DURATION = 8 minutes; // default stake duration 28 jours
+uint public DEFAULT_VOTING_TIME = 6 minutes; // default voting duration 21 days
+uint public DEFAULT_REVEALING_TIME = 2 minutes; // default revealing duration 7 days
+/* --------- TESTING VALUES -------------*/
 
 uint public DISEASE_CREATION_AMOUNT = 100 * 10**uint(decimals); // 100 ETI amount to pay for creating a new disease. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
 uint public PROPOSAL_DEFAULT_VOTE = 10 * 10**uint(decimals); // 10 ETI amount to vote for creating a new proposal. Necessary in order to avoid spam. Will create a function that periodically increase it in order to take into account inflation
@@ -2180,6 +2189,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             return true;
             
     }
+    
 
     checkMintRandomxInputs(bytes4 nonce, bytes memory blockHeader, bytes32 currentChallenge, bytes memory randomxHash, uint claimedTarget, bytes memory seedHash, bytes8 extraNonce) public view returns (bool isValid, string memory errorMessage) {
 
@@ -2214,5 +2224,6 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     }
 
 // ETICA V3 //
+
 
 }

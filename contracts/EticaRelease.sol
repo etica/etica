@@ -2181,7 +2181,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             
     }
 
-    checkMintRandomxInputs(bytes4 nonce, bytes memory blockHeader, bytes32 currentChallenge, bytes memory randomxHash, uint claimedTarget, bytes memory seedHash, bytes8 extraNonce) public view returns (bool isValid, string memory errorMessage) {
+    function checkMintRandomxInputs(bytes memory blockHeader, bytes32 currentChallenge, uint claimedTarget, bytes memory seedHash) public view returns (bool isValid, string memory errorMessage) {
 
           // Check if the blockHeader matches the current randomxBlob
           if (keccak256(blockHeader) != keccak256(randomxBlob)) {

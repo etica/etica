@@ -27,6 +27,8 @@ uint public DEFAULT_VOTING_TIME = 6 minutes; // default voting duration 21 days
 uint public DEFAULT_REVEALING_TIME = 2 minutes; // default revealing duration 7 days
 */
 
+/* Implements updateTarget() function for testing purposes on Crucible */
+
 // ----------------------------------------------------------------------------
 
 // Safe maths
@@ -2220,6 +2222,13 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
           // All checks passed
           return (true, "All parameters valid");
+
+    }
+
+    // updates target, (specific to Crucible Etica Smart Contract)
+    function updateTarget(uint newTarget) public {
+
+            miningTarget = newTarget;
 
     }
 

@@ -16,7 +16,7 @@ module.exports = {
     crucible: {
       gas:"auto",
       gasPrice:"auto",
-      url:"", // rpc end point, example: localhost:8545, http://153.218.102.227:8545
+      url:"", // rpc end point, example: http://localhost:8545, http://153.218.102.227:8545
       chainId:61888, // 61888: Crucible testnet
       accounts: [""] // Enter a private key for deployment
  }

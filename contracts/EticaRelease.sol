@@ -1695,10 +1695,10 @@ if(_slashRemaining > 0){
   if(diseases[diseasesbyIds[_diseasehash]].disease_hash != _diseasehash) revert(); // second check not necessary but I decided to add it as the gas cost value for security is worth it
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
-  uint _cost = DISEASE_CREATION_AMOUNT.div(20);
+  uint _cost = DISEASE_CREATION_AMOUNT.div(5);
   // make sure the user has enough ETI to create a chunk
   require(balances[msg.sender] >= _cost);
-  // transfer DISEASE_CREATION_AMOUNT / 20  ETI from user wallet to contract wallet:
+  // transfer DISEASE_CREATION_AMOUNT/5  ETI from user wallet to contract wallet:
   transfer(address(this), _cost);
 
   // --- REQUIRE PAYMENT FOR ADDING A CHUNK TO CREATE A BARRIER TO ENTRY AND AVOID SPAM --- //
@@ -2031,6 +2031,8 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             miningTarget = _MAXIMUM_TARGET.div(2500000);
 
             SEEDHASH_EPOCH_BLOCKS = 410;
+
+            DISEASE_CREATION_AMOUNT = 500 * 10**uint(decimals);
 
             UPDATEDV3 = true;
 

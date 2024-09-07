@@ -112,8 +112,8 @@ contract EticaToken is ERC20Interface{
 
     uint public UNRECOVERABLE_ETI;
 
-    // Etica is a neutral protocol, it has no founder I am only an initiator:
-    string public constant initiatormsg = "Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0). This smart contract is running Guardian Hardfork, Etica v3.";
+    // Etica is a neutral censorship resistant protocol for open source medical research without intellectual property
+    string public constant initiatormsg = "This smart contract is running Guardian Hardfork, Etica v3. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
 
     mapping(address => uint) public balances;
 

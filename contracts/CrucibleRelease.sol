@@ -494,7 +494,7 @@ receive() external payable {
 
 
 
-contract EticaRelease is EticaToken {
+contract CrucibleRelease is EticaToken {
 
 using SafeMath for uint256;
 

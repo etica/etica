@@ -46,5 +46,6 @@ Hardhat example tasks:
 ```shell
 npx hardhat help
 npx hardhat test
+npx hardhat run scripts/deploy-crucible.js --network crucible
 npx hardhat run scripts/deploy.js --network crucible
 ```

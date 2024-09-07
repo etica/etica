@@ -706,6 +706,7 @@ mapping(bytes32 => mapping(bytes32 => bytes32)) public randomxSealSolutions; // 
 bytes public randomxBlob;
 bytes public randomxSeedhash;   //generate a new randomxSeedhash every SEEDHASH_EPOCH_BLOCKS, should always be size bytes32 but use bytes in case randomX changes seedhash size in the future
 uint public SEEDHASH_EPOCH_BLOCKS = 410; // Adjusts randomxSeedhash about every 210 days (410/144) = 2.8 days
+bytes32 public randomxBlobfirstpart; // first 32bytes of randomxBlob, used by Go process to verify nonce inputs
 
 // WARNING NEW STORAGE VARIABLES V3 //
 
@@ -2046,10 +2047,12 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
     }
 
-    function _generateRandomxBlob() internal view returns (bytes memory) {
+    function _generateRandomxBlob() internal returns (bytes memory) {
         bytes32 part1 = keccak256(abi.encode(blockhash(block.number - 1), RANDOMHASH, challengeNumber));
         bytes32 part2 = keccak256(abi.encode(part1, blockhash(block.number - 1), msg.sender));
         bytes16 part3 = bytes16(keccak256(abi.encode(part2, epochCount)));
+
+        randomxBlobfirstpart = part1;
         
         return abi.encodePacked(part1, part2, part3);
     }

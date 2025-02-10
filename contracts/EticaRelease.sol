@@ -257,7 +257,7 @@ contract EticaToken is ERC20Interface{
 
 
     //approve allowance
-    function approve(address spender, uint tokens) public override returns(bool){
+    function approve(address spender, uint tokens) public virtual override returns(bool){
         require(balances[msg.sender] >= tokens);
         require(tokens > 0);
 
@@ -267,7 +267,7 @@ contract EticaToken is ERC20Interface{
     }
 
     //transfer tokens from the  owner account to the account that calls the function
-    function transferFrom(address from, address to, uint tokens) public override returns(bool){
+    function transferFrom(address from, address to, uint tokens) public virtual override returns(bool){
 
       balances[from] = balances[from].sub(tokens);
 
@@ -698,6 +698,13 @@ uint public SEEDHASH_EPOCH_BLOCKS = 410; // Adjusts randomxSeedhash about every 
 bytes32 public randomxBlobfirstpart; // first 32bytes of randomxBlob, used by Go process to verify nonce inputs
 
 // WARNING NEW STORAGE VARIABLES V3 //
+
+// WARNING NEW STORAGE VARIABLES V4 //
+// OTHERWISE WOULD CREATE STORAGE COLLISION:
+bool public UPDATEDV4 = false;
+mapping(address => bool) public blackedlistedAddresses;
+
+// WARNING NEW STORAGE VARIABLES V4 //
 
 
 // -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
@@ -2219,5 +2226,48 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     }
 
 // ETICA V3 //
+
+
+// ETICA V4 //
+// ETICA V4 smart contract updates just update two EticaToken functions, other Etica V4 updates happen at blockchain level    
+    
+    function updatev4() public {
+
+            // only update variables to v4 once
+            require(!UPDATEDV4);
+
+            blackedlistedAddresses[address(0x8cdd13Cf8D127e3AD41f5fAAf57FC77CebB0A1f9)] = true;
+
+            UPDATEDV4 = true;
+
+    }
+    
+    //transfer tokens from the  owner account to the account that calls the function
+    function transferFrom(address from, address to, uint tokens) public override returns(bool){
+
+      // check if the from address is blacklisted
+      if(blackedlistedAddresses[from]){
+        revert("From address is blacklisted");
+      }
+      
+      balances[from] = balances[from].sub(tokens);
+
+
+      allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
+
+      balances[to] = balances[to].add(tokens);
+
+      emit Transfer(from, to, tokens);
+
+      return true;
+    }
+
+    // updates approve function to remove the user balance requirements statements to make it compatible with Defi protocols
+    function approve(address spender, uint tokens) public override returns(bool){
+        allowed[msg.sender][spender] = tokens;
+        emit Approval(msg.sender, spender, tokens);
+        return true;
+    }
+// ETICA V4 //
 
 }

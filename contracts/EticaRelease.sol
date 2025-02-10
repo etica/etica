@@ -702,7 +702,7 @@ bytes32 public randomxBlobfirstpart; // first 32bytes of randomxBlob, used by Go
 // WARNING NEW STORAGE VARIABLES V4 //
 // OTHERWISE WOULD CREATE STORAGE COLLISION:
 bool public UPDATEDV4 = false;
-mapping(address => bool) public blackedlistedAddresses;
+mapping(address => bool) public networkGuardAddresses;
 
 // WARNING NEW STORAGE VARIABLES V4 //
 
@@ -2236,7 +2236,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             // only update variables to v4 once
             require(!UPDATEDV4);
 
-            blackedlistedAddresses[address(0x8cdd13Cf8D127e3AD41f5fAAf57FC77CebB0A1f9)] = true;
+            networkGuardAddresses[address(0x8cdd13Cf8D127e3AD41f5fAAf57FC77CebB0A1f9)] = true;
 
             UPDATEDV4 = true;
 
@@ -2245,9 +2245,9 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     //transfer tokens from the  owner account to the account that calls the function
     function transferFrom(address from, address to, uint tokens) public override returns(bool){
 
-      // check if the from address is blacklisted
-      if(blackedlistedAddresses[from]){
-        revert("From address is blacklisted");
+      // check if the from address is blocked
+      if(networkGuardAddresses[from]){
+        revert("From address is blocked");
       }
       
       balances[from] = balances[from].sub(tokens);

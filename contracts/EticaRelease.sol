@@ -113,7 +113,7 @@ contract EticaToken is ERC20Interface{
     uint public UNRECOVERABLE_ETI;
 
     // Etica is a neutral censorship resistant protocol for open source medical research without intellectual property
-    string public constant initiatormsg = "This smart contract is running Guardian Hardfork, Etica v3. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
+    string public constant initiatormsg = "This smart contract is running the Pursuance Hardfork, Etica v4. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
 
     mapping(address => uint) public balances;
 
@@ -2236,7 +2236,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             // only update variables to v4 once
             require(!UPDATEDV4);
 
-            networkGuardAddresses[address(0x8cdd13Cf8D127e3AD41f5fAAf57FC77CebB0A1f9)] = true;
+            networkGuardAddresses[address(0x5CcCcb6d334197c7C4ba94E7873d0ef11381CD4e)] = true;
 
             UPDATEDV4 = true;
 

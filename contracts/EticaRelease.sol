@@ -113,7 +113,7 @@ contract EticaToken is ERC20Interface{
     uint public UNRECOVERABLE_ETI;
 
     // Etica is a neutral censorship resistant protocol for open source medical research without intellectual property
-    string public constant initiatormsg = "This smart contract is running the Pursuance Hardfork, Etica v4. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
+    string public constant initiatormsg = "This smart contract is running the Aegis Hardfork, Etica v5. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
 
     mapping(address => uint) public balances;
 
@@ -706,6 +706,12 @@ mapping(address => bool) public networkGuardAddresses;
 
 // WARNING NEW STORAGE VARIABLES V4 //
 
+// WARNING NEW STORAGE VARIABLES V5 //
+bool public UPDATEDV5 = false;
+uint public researchMinted = 0;
+
+// WARNING NEW STORAGE VARIABLES V5 //
+
 
 // -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
 
@@ -729,14 +735,67 @@ if(rwd != 0x0) revert();  //prevent the same period from issuing twice
 
 uint _periodsupply;
 
-// Phase 2 (after 21 000 000 ETI has been reached)
-if(supply >= 21000000 * 10**(decimals)){
-_periodsupply = uint((supply.mul(inflationrate)).div(10**(31)));
-}
-// Phase 1 (before 21 000 000 ETI has been reached)
-else {
-  _periodsupply = periodrewardtemp;
-}
+        // GUARDIAN HARDFORK TOKENOMICS, WITH ETI HALVINGS:
+        // RESEARCH REWARDS HALVINGS
+        if (tokensMinted <= 1890000 * 10**uint(decimals)) {
+                // The research Year 1 duration was based on mining supply
+                // Year 1: Initial block reward and research reward. 
+                // Total issuance/year: 2.1M
+                // Mining: 1,890,000 ETI/year Research: 210,000 ETI/year
+            _periodsupply = 4027393950087164311900; // 4027.3939500871643119 ETI per week
+        }
+        else if (researchMinted < 1470000 * 10**uint(decimals)) {
+                // Year 2-4: Adjusted block reward and research reward. 
+                // Total issuance/year: 2.1M
+                // Mining: 1,680,000 ETI/year Research: 420,000 ETI/year
+                // 1470000 is the total research issuance/year for year 1 to year 4
+                // 1470000 = 210000 + 420000 * 3
+            _periodsupply = 8054787900174328623800; // 8054.7879001743286238 ETI per week
+        }
+        else if (researchMinted < 2550000 * 10**uint(decimals)) {
+                // Year 4-8: First Research Halving
+                // 270,000 ETI/year for research
+                // First Halving: 2026-2030.
+                // Total issuance/year: 1.35M
+                // Mining: 1,080,000 ETI/year Research: 270,000 ETI/year
+                // 2550000 is the total research issuance/year up to year 8
+                // 2550000 = 1470000 + 270000 * 4
+
+            _periodsupply = 5178077935826354115300; // 5178.0779358263541153 ETI per week
+        }
+        else if (researchMinted < 3090000 * 10**uint(decimals)) {
+                // Second Research Halving
+                // 135,000 ETI/year for research
+                // Second Halving: 2030-2034
+                // Total issuance/year: 675k ETI/year
+                // Mining: 540,000 ETI/year Research: 135,000 ETI/year
+                // 2550000 is the total research issuance/year up to year 8
+                // 3090000 = 2550000 + 135000 * 4
+                _periodsupply = 2589038967913177057700; // 2589.0389679131770577 ETI per week
+
+        }
+        else if (researchMinted < 3360000 * 10**uint(decimals)) {
+                // Third Research Halving
+                // 67,500 ETI/year for research
+                // Third Halving: 2034-2038
+                // Total issuance/year: 337.5k ETI/year
+                // Mining: 270,000 ETI/year Research: 67,500 ETI/year
+                // 3090000 is the total research issuance/year up to year 8
+                // 3360000 = 3090000 + 67500 * 4
+            _periodsupply = 1294519483956588528800; // 1294.5194839565885288 ETI per week
+        }
+        else {
+            // Final Research Phase: 1% annual inflation for research (95% of total inflation)
+            uint scaledSupply = supply.mul(10000);
+            uint annualInflationScaled = scaledSupply.div(100);
+            _periodsupply = (annualInflationScaled.mul(95).div(100)).div(521429);
+        }
+
+        // Update research tokens minted
+        periodrewardtemp = _periodsupply;
+        researchMinted = researchMinted.add(_periodsupply);
+
+
 
 // update Period Reward:
 period.reward_for_curation = uint((_periodsupply.mul(PERIOD_CURATION_REWARD_RATIO)).div(10**(11)));
@@ -2124,35 +2183,30 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
                     // Total issuance/year: 2.1M
                     // Mining: 1,890,000 ETI/year Research: 210,000 ETI/year
                     blockreward = 35958874554349681356; // 35.958874554349681356 ETI per block
-                    periodrewardtemp = 4027393950087164311900; // 4027.3939500871643119 ETI per week
             } 
            else if (tokensMinted < 6930000 * 10**uint(decimals)) {
                 // Year 2-4: Adjusted block reward and research reward. 
                 // Total issuance/year: 2.1M
                 // Mining: 1,680,000 ETI/year Research: 420,000 ETI/year
                 blockreward = 31963444048310827872; // 31.963444048310827872 ETI per block
-                periodrewardtemp = 8054787900174328623800; // 8054.7879001743286238 ETI per week
             } 
             else if (tokensMinted < 11250000 * 10**uint(decimals)) {
                 // First Halving: 2026-2030. 
                 // Total issuance/year: 1.35M
                 // Mining: 1,080,000 ETI/year Research: 270,000 ETI/year
                 blockreward = 20547928316771246489; // 20.5479283167712464893847167 ETI per block
-                periodrewardtemp = 5178077935826354115300; // 5178.0779358263541153 ETI per week
             } 
             else if (tokensMinted < 13410000 * 10**uint(decimals)) {
                 // Second Halving: 2030-2034
                 // Total issuance/year: 675k ETI/year
                 // Mining: 540,000 ETI/year Research: 135,000 ETI/year
                 blockreward = 10273964158385623244; // 10.2739641583856232447423667 ETI per block
-                periodrewardtemp = 2589038967913177057700; // 2589.0389679131770577 ETI per week
             } 
             else if (tokensMinted < 14490000 * 10**uint(decimals)) {
                 // Third Halving: 2034-2038
                 // Total issuance/year: 337.5k ETI/year
                 // Mining: 270,000 ETI/year Research: 67,500 ETI/year
                 blockreward = 5136982079192811622; // 5.1369820791928116223215333 ETI per block
-                periodrewardtemp = 1294519483956588528800; // 1294.5194839565885288 ETI per week
             } 
             else {
                 // Transition Phase: 2038 onwards, 1% annual inflation
@@ -2163,12 +2217,9 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
                 // Calculate 1% of the scaled supply
                 uint annualInflationScaled = scaledSupply.div(100);
                 
-                // Calculate block reward (80% of 1% annual inflation)
-                blockreward = (annualInflationScaled.mul(80).div(100)).div(525600432); // 525600432 is 52560.0432 * 10,000
-
-                // Calculate research reward (20% of 1% annual inflation)
-                periodrewardtemp = (annualInflationScaled.mul(20).div(100)).div(521429); // Weekly research reward, (521429 is 52.1429 * 10 000)            
-
+                // Calculate block reward (5% of 1% annual inflation)
+                blockreward = (annualInflationScaled.mul(5).div(100)).div(525600432); // 525600432 is 52560.0432 * 10,000
+     
             }
 
              tokensMinted = tokensMinted.add(blockreward);
@@ -2236,7 +2287,7 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
             // only update variables to v4 once
             require(!UPDATEDV4);
 
-            networkGuardAddresses[address(0x5CcCcb6d334197c7C4ba94E7873d0ef11381CD4e)] = true;
+            networkGuardAddresses[address(0x5CcCcb6d334197c7C4ba94E7873d0ef11381CD4e)] = true; // Xeggex exchange address
 
             UPDATEDV4 = true;
 
@@ -2269,5 +2320,23 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
         return true;
     }
 // ETICA V4 //
+
+
+// ETICA V5 //
+
+    function updatev5() public {
+
+      // only update variables to v5 once
+      require(!UPDATEDV5);
+
+      networkGuardAddresses[address(0x5CcCcb6d334197c7C4ba94E7873d0ef11381CD4e)] = false; // unblock Xeggex exchange address
+      researchMinted = supply.sub(tokensMinted);
+
+      UPDATEDV5 = true;
+    }
+
+
+// ETICA V5 //
+
 
 }

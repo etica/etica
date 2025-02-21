@@ -702,7 +702,7 @@ bytes32 public randomxBlobfirstpart; // first 32bytes of randomxBlob, used by Go
 // WARNING NEW STORAGE VARIABLES V4 //
 // OTHERWISE WOULD CREATE STORAGE COLLISION:
 bool public UPDATEDV4 = false;
-mapping(address => bool) public networkGuardAddresses;
+mapping(address => bool) public networkGuardAddresses; // Not used anymore, was introduced by in Persuance Hardfork in emergency exchange address blocking
 
 // WARNING NEW STORAGE VARIABLES V4 //
 
@@ -2296,11 +2296,6 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     //transfer tokens from the  owner account to the account that calls the function
     function transferFrom(address from, address to, uint tokens) public override returns(bool){
 
-      // check if the from address is blocked
-      /* Removed emergency exchange address blocking introduced in Persuance Hardfork
-      if(networkGuardAddresses[from]){
-        revert("From address is blocked");
-      } */
       
       balances[from] = balances[from].sub(tokens);
 

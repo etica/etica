@@ -2297,9 +2297,10 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     function transferFrom(address from, address to, uint tokens) public override returns(bool){
 
       // check if the from address is blocked
+      /* Removed emergency exchange address blocking introduced in Persuance Hardfork
       if(networkGuardAddresses[from]){
         revert("From address is blocked");
-      }
+      } */
       
       balances[from] = balances[from].sub(tokens);
 

@@ -311,7 +311,7 @@ contract EticaToken is ERC20Interface{
          function mint(uint256 nonce, bytes32 challenge_digest) public returns (bool success) {
 
             // replaced by mintrandomX() since EticaV3
-            return false;
+            revert("Function disabled - replaced by mintrandomX function");
 
          }
 
@@ -1322,20 +1322,11 @@ function propose(bytes32 _diseasehash, string memory _title, string memory _desc
 }
 
 
- function updatecost() public {
+ // this function was supposed to automatically update the cost of diseases and proposals after 21M ETI were issued to keep up with inflation
+ // but it is not needed as all costs will be updated through hardforks
+ function updatecost() public returns (bool success){
 
-// only start to increase PROPOSAL AND DISEASE COSTS once we are in phase2
-require(supply >= 21000000 * 10**(decimals));
-// update disease and proposal cost each 52 periods to take into account inflation:
-require(periodsCounter % 52 == 0);
-uint _new_disease_cost = supply.mul(47619046).div(10**13); // disease cost is 0.00047619046% of supply
-uint _new_proposal_vote = supply.mul(47619046).div(10**14); // default vote amount is 0.000047619046% of supply
-
-PROPOSAL_DEFAULT_VOTE = _new_proposal_vote;
-DISEASE_CREATION_AMOUNT = _new_disease_cost;
-
-assert(LAST_PERIOD_COST_UPDATE < periodsCounter);
-LAST_PERIOD_COST_UPDATE = periodsCounter;
+ revert("Function disabled - costs updated via hardforks");
 
  }
 

@@ -113,7 +113,7 @@ contract EticaToken is ERC20Interface{
     uint public UNRECOVERABLE_ETI;
 
     // Etica is a neutral censorship resistant protocol for open source medical research without intellectual property
-    string public constant initiatormsg = "This smart contract is running the Aegis Hardfork, Etica v5. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
+    string public constant initiatormsg = "This smart contract is running the Themis Hardfork, Etica v6. Discovering our best Futures. No Intellectual Property, All proposals are made under the license Creative Commons Attribution 4.0 International (CC BY 4.0).";
 
     mapping(address => uint) public balances;
 
@@ -712,6 +712,10 @@ uint public researchMinted = 0;
 
 // WARNING NEW STORAGE VARIABLES V5 //
 
+// WARNING NEW STORAGE VARIABLES V6 //
+bool public UPDATEDV6 = false;
+
+// WARNING NEW STORAGE VARIABLES V6 //
 
 // -------------  PUBLISHING SYSTEM REWARD FUNCTIONS ---------------- //
 
@@ -2287,7 +2291,13 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
     //transfer tokens from the  owner account to the account that calls the function
     function transferFrom(address from, address to, uint tokens) public override returns(bool){
 
-      
+      // check if the from address is blocked
+      if(networkGuardAddresses[from]){
+
+        revert("From address is blocked");
+
+      }
+
       balances[from] = balances[from].sub(tokens);
 
 
@@ -2324,6 +2334,22 @@ ProposalData storage proposaldata = propsdatas[_proposed_release_hash];
 
 
 // ETICA V5 //
+
+// ETICA V6 //
+
+    function updatev6() public {
+
+      // only update variables to v6 once
+      require(!UPDATEDV6);
+
+      networkGuardAddresses[address(0x5CcCcb6d334197c7C4ba94E7873d0ef11381CD4e)] = true; // block Xeggex exchange address
+
+      UPDATEDV6 = true;
+
+    }
+
+
+// ETICA V6 //
 
 
 }
